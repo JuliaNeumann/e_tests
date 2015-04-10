@@ -32,5 +32,23 @@ CROSSWORD STYLE SHEET
 
 .table_inputfield {
 	width: 97%;
+}
 
+.filled_field, .empty_field {
+	float: left;
+	width: 20px;
+	height: 20px;
+	border: 1px solid black;
+}
+
+.empty_field {
+	background-color: gray;
+}
+
+.filled_field {
+	text-align: center;
+}
+
+.cw_row {
+	display: flex;
 }

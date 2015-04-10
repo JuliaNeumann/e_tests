@@ -14,7 +14,7 @@ $(document).ready(function() {
 	//set correct test data, according to action:
 	switch (action) {
 		case 'new':
-			$.getScript(root_path + "js/crossword_generator.js"); //load the crossword generator code
+			//$.getScript(root_path + "js/crossword_generator.js"); //load the crossword generator code
 			getTestNamesFromDb(0); //load test names from database for checking
 			break;
 		case 'view':
@@ -85,13 +85,32 @@ $(document).ready(function() {
 
 		var obj_id = addQuestionToObj({question_text: question, correct_answer: answer});
 		addQuestionToDisplay(obj_id);
-		$('#new_question').val('New Question...');
+		$('#new_question').val('New Question...').select();
 		$('#new_answer').val('New Answer...');
 	});
 
 	/*************************************************************************************************************************/
 
 	//generate crossword:
+	$('#create_crossword').click(function() {
+		if (crossword_test.questions.displayed > 1) { //at least two questions -> allow crossword creation
+			$('#crossword_container').html('<em>Generating your crossword...</em>');
+			var words = [];
+			for (var i = 0; i < crossword_test.questions.counter; i++) {
+				if (!crossword_test.questions.objects[i].deleted) {
+					words.push(crossword_test.questions.objects[i].correct_answer);
+				} //if
+			} //for
+			var worker = new Worker(root_path + "js/crossword_generator.js"); //create a web worker to do the calculation
+			worker.postMessage(words);
+			worker.onmessage = function(event) {
+				$('#crossword_container').html(event.data);
+			}
+		} //if
+		else {
+			alert("Please add more words to your crossword test!");
+		} //else
+	});
 
 }); //document ready function
 

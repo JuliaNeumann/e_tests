@@ -356,3 +356,10 @@ function shuffleArray(my_array) {
 	} //for
 	return shuffled_array;
 } //function shuffleArray
+
+//WEB WORKER CODE:
+onmessage = function (task) {
+	var best_crossword = generateCrossword(task.data);
+	var result_grid = best_crossword.testPrintGrid();
+	postMessage(result_grid);
+}

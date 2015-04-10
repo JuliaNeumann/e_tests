@@ -16,9 +16,6 @@ CREATING A NEW CROSSWORD TEST
 	
 	require_once INCLUDE_PATH . 'php_page_elements/general_testinfo_form.php'; 
 ?>
-	<header id="test_container_header">
-		"<span id="test_name_container">[NEW TEST]</span>"
-	</header>
 	<section id="test_container">
 		<div id="instructions">
 			Enter your questions and answers (one word each!) below. Click on added questions and answers to edit them.<br>
@@ -40,6 +37,7 @@ CREATING A NEW CROSSWORD TEST
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="create_crossword" id="create_crossword" value="Create Crossword" disabled>
 		</div>
+		<div id="crossword_container"></div>
 	</section>
 <?php 
 	include_once INCLUDE_PATH . 'php_page_elements/page_footer.php'; 
