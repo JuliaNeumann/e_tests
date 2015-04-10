@@ -13,12 +13,9 @@ CREATING A NEW DRAG & DROP TEST
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 
 	require_once INCLUDE_PATH . 'php_page_elements/page_header.php';
+	
+	require_once INCLUDE_PATH . 'php_page_elements/general_testinfo_form.php'; 
 ?>
-	<form name="general_info_form" id="general_info_form">
-<?php 
-		include_once INCLUDE_PATH . 'php_page_elements/general_testinfo_form.php'; 
-?>
-	</form>
 	<header id="test_container_header">
 		"<span id="test_name_container">[NEW TEST]</span>"
 	</header>
@@ -37,7 +34,6 @@ CREATING A NEW DRAG & DROP TEST
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="save_test" id="save_test" value="Save Test">
 		</div>
-		</form>
 	</section>
 <?php 
 	include_once INCLUDE_PATH . 'php_page_elements/page_footer.php'; 

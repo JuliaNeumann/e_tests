@@ -22,12 +22,9 @@ EDITING A DRAG & DROP TEST
 	$test_data = $db_con->selectEntries(true, 'tests', array("where" => "test_ID = " . $test_id))[0];
 
 	require_once INCLUDE_PATH . 'php_page_elements/page_header.php';
+	
+	require_once INCLUDE_PATH . 'php_page_elements/general_testinfo_form.php'; 
 ?>
-	<form name="general_info_form" id="general_info_form">
-<?php 
-		include_once INCLUDE_PATH . 'php_page_elements/general_testinfo_form.php'; 
-?>
-	</form>
 	<header>
 		"<span id="test_name_container"><?php echo $test_data['test_name']; ?></span>"
 	</header>
@@ -46,7 +43,6 @@ EDITING A DRAG & DROP TEST
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="save_test" id="save_test" value="Save Test">
 		</div>
-		</form>
 	</section>
 <?php 
 	include_once INCLUDE_PATH . 'php_page_elements/page_footer.php'; 

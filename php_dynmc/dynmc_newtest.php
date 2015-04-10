@@ -16,12 +16,9 @@ CREATING A NEW DYNAMIC MC TEST
 	$questions = $db_con->selectEntries(true, 'dynmc_questions', array("order" => "question_text"));
 
 	require_once INCLUDE_PATH . 'php_page_elements/page_header.php';
+	
+	require_once INCLUDE_PATH . 'php_page_elements/general_testinfo_form.php'; 
 ?>
-	<form name="general_info_form" id="general_info_form">
-<?php 
-		include_once INCLUDE_PATH . 'php_page_elements/general_testinfo_form.php'; 
-?>
-	</form>
 	<header id="test_container_header">
 		"<span id="test_name_container">[NEW TEST]</span>"
 	</header>

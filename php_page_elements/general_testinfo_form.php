@@ -14,6 +14,7 @@ GENERAL TEST INFO FORM
 		General Information
 	</header>
 	<section>
+		<form name="general_info_form" id="general_info_form">
 		<div class="css_table">
 			<div class="css_tr">
 				<div class="css_td">
@@ -54,4 +55,5 @@ GENERAL TEST INFO FORM
 				</div>
 			</div>
 		</div>
+		</form>
 	</section>
