@@ -1,0 +1,85 @@
+/*************************************************************************************************************************
+DRAG&DROP STYLE SHEET
+- contains styles used for MC tests
+*************************************************************************************************************************/
+
+.question_label, .radio_correct, .radio_incorrect {
+	display: inline;
+}
+
+.question_box {
+	background-color: white;
+	margin-top: 0px;
+	padding: 5px;
+}
+
+.question {
+	border: 3px solid #004A7F;
+	margin-bottom: 5px;
+}
+
+.intro_text {
+	margin: 0px 0px 5px 0px;
+	font-style: italic;
+}
+
+.incorrect_answer {
+	min-width: 700px;
+}
+
+.question_table {
+	width: 795px;
+}
+
+.small_cell {
+	width: 3%;
+}
+
+.medium_cell {
+	width: 12%;
+}
+
+.delete_answer_button {
+	display: none;
+	text-align: right;
+	cursor: pointer;
+	color: #004A7F;
+	font-weight: bold;
+}
+
+.delete_question_button {
+	display: none;
+	float: right;
+	cursor: pointer;
+}
+
+.label_box {
+	color: white;
+	background-color: #004A7F;
+	padding: 5px;
+	font-weight: bold;
+	margin-bottom: 0px;
+}
+
+.editable_inputfield {
+	width: 700px;
+}
+
+ul {
+    list-style-type: circle;
+    margin: 0px;
+    padding-left: 20px;
+}
+
+li {
+	margin-top: 4px;
+	margin-bottom: 4px; 
+}
+
+.show_pic, .hide_pic {
+	cursor: pointer;
+}
+
+#select_question_from_db {
+	width: 100%;
+}

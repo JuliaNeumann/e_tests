@@ -1,0 +1,67 @@
+/*************************************************************************************************************************
+INDEX PAGE STYLE SHEET
+- contains styles used by index page
+*************************************************************************************************************************/
+.test_type_button {
+	width: 170px;
+	min-height: 150px;
+	border: 3px solid #004A7F;
+	margin: 17px;
+	padding: 10px 5px;
+	text-align: center;
+	background-color: white;
+}
+
+#type_button_container {
+	display: flex;
+	align-items: flex-start; /*forces items to be aligned at top of container, otherwise line-breaks cause problems*/
+}
+
+.test_type_label {
+	font-weight: bold;
+}
+
+.test_type_description {
+	clear: both;
+	padding: 10px;
+	margin: 0px 17px 17px 17px;
+	display: none;	
+}
+
+#select_test_table {
+	float: left;
+	width: 581px;
+	margin-right: 10px;
+}
+
+#select_test_tablehead {
+	cursor: pointer;
+}
+
+#test_name_column {
+	width: 47%;
+}
+
+#test_type_column {
+	width: 30%;
+}
+
+#test_creation_column {
+	width: 23%;
+}
+
+.test_row {
+	cursor: pointer;
+}
+
+#button_container {
+	clear: both;
+}
+
+#sort_pic {
+	display: inline;
+}
+
+.selected_test {
+	background-color: #A8B7C1;
+}

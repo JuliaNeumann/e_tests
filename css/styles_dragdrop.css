@@ -1,0 +1,80 @@
+/*************************************************************************************************************************
+DRAG&DROP STYLE SHEET
+- contains styles used for Drag&Drop tests
+*************************************************************************************************************************/
+
+.test_item, .container_label {
+	/*make text break up into lines rather than overflow*/
+	word-break: break-word;
+   -webkit-hyphens: auto;
+   -moz-hyphens: auto;
+   -ms-hyphens: auto;
+   hyphens: auto;
+   -ms-word-break: break-all;
+   word-break: break-all;
+}
+
+.test_item {
+	display: inline;
+}
+
+.item_box {
+	margin: 3px;
+	border: 1px solid black;
+	padding: 3px;
+	display: inline;
+	background-color: #A8B7C1;
+	font-size: 0.8em;
+}
+
+#items_container {
+	min-height: 50px;
+}
+
+#container_table {
+	width: 800px;
+}
+
+.container_label {
+	display: inline;
+}
+
+.label_box {
+	color: white;
+	background-color: #004A7F;
+	padding: 5px;
+	font-weight: bold;
+	margin-bottom: 0px;
+}
+
+.container_box {
+	background-color: white;
+	margin-top: 0px;
+	padding: 2px 2px 30px 2px;
+}
+
+.container {
+	border: 3px solid #004A7F;
+}
+
+[draggable] {
+	cursor: move; /*fallback for IE*/
+	cursor: -webkit-grab;
+	cursor: -moz-grab;
+}
+
+#instructions {
+	margin-bottom: 5px;
+}
+
+.delete_button {
+	display: none;
+	float: right;
+	cursor: pointer;
+}
+
+.incorrect_item {
+	border-color: #AE0000;
+	color: #AE0000;
+	font-weight: bold; 
+}

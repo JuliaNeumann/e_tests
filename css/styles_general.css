@@ -1,0 +1,137 @@
+/*************************************************************************************************************************
+GENERAL STYLE SHEET
+- contains styles used by all test type sections and styles for header, footer etc.
+
+Color Scheme:
+------------------------
+- #A8B7C1: light blue (background, links etc.)
+- #004A7F: dark blue (headers, footer etc.)
+- #EAEAEA: light grey (sections etc.)
+- #AE0000: dark red (errros etc.)
+- #32CD32: green (correct answers etc.)
+*************************************************************************************************************************/
+
+body {
+	font-family: Calibri, "Trebuchet MS", sans-serif;
+	text-align: justify;
+	background-color: #A8B7C1;
+	margin: 0;
+}
+
+header, section, footer, aside, nav, main, article, figure { /*ensure HTML5 semantic elements to be displayed correctly in old browsers*/
+    display: block; 
+}
+
+#js_warning {
+	text-align: center;
+	font-weight: bold;
+}
+
+#content {
+	width: 850px;
+	margin: 0 auto;
+	background-color: white;
+	padding: 17px;
+	display: none; /*hidden initially - test for JavaScript*/
+}
+
+section {
+	clear: both;
+	margin-bottom: 17px;
+	padding: 17px;
+	background-color: #EAEAEA;
+	box-shadow: 5px 5px 5px #888888;
+}
+
+.section_without_padding {
+	padding: 0px;
+}
+
+header, footer {
+	margin: 0px;
+	background-color: #004A7F;
+	color: white;
+	padding: 5px;
+	box-shadow: 5px 5px 5px #888888;
+}
+
+footer {
+	text-align: center;
+}
+
+#title_header {
+	margin-bottom: 17px;
+	font-size: 2em;
+}
+
+table {
+    border-collapse: collapse;
+    background-color: white;
+}
+
+table, th {
+	border: 3px solid #004A7F;
+}
+
+th {
+    background-color: #004A7F;
+    color: white;
+    text-align: left;
+}
+
+th, td {
+	padding: 5px;
+}
+
+.right_aligned {
+	text-align: right;
+}
+
+.centered {
+	text-align: center;
+}
+
+label {
+	cursor: pointer;
+}
+
+a {
+	color: #A8B7C1;
+	cursor: pointer;
+}
+
+button {
+	cursor: pointer;
+}
+
+.submit_button {
+	margin-right: 10px;
+	margin-top: 10px;
+	border: 2px solid #A8B7C1;
+}
+
+.submit_button:enabled {
+	cursor: pointer;
+	border: 2px solid #004A7F;
+}
+
+.error_msg {
+	font-style: italic;
+	color: #AE0000;
+	display: inline;
+}
+
+.hidden {
+	display: none;
+}
+
+div .css_table {
+	display:table;
+}
+div .css_tr {
+	display: table-row;
+}
+div .css_td {
+	display: table-cell;
+	padding: 3px;
+}
