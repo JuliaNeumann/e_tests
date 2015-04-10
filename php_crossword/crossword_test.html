@@ -4,7 +4,14 @@
 		<meta charset="utf-8" />
         <title>Crossword Test</title>
         <script src="../js/jquery-1.11.2.min.js"></script>
-        <script src="../js/crossword.js"></script>
+        <script src="../js/crossword_generator.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+            var best_crossword = generateCrossword(['crossword', 'ratty', 'owl', 'rosa', 'position', 'find', 'possible', 'word', 'Jonas', 'blue', 'computer']);
+            console.log(best_crossword);    
+            $('#test').html(best_crossword.testPrintGrid());
+            }); 
+        </script>
         <style type="text/css">
         	.filled_field, .empty_field {
         		float: left;

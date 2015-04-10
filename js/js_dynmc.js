@@ -546,7 +546,7 @@ $(document).ready(function() {
 
 //class declarations for questions:
 function Question(my_current_id, my_question_text) {
-//represents one draggable item
+//represents one question
 	TestItem.call(this, my_current_id); //make this a 'sub-class' of TestItem (see js_general.js)
 	this.question_text = my_question_text;
 	this.answers = []; //holds all answer options (for run mode)
