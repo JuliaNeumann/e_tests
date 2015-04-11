@@ -52,3 +52,7 @@ CROSSWORD STYLE SHEET
 .cw_row {
 	display: flex;
 }
+
+sup {
+	font-size: 7pt;
+}

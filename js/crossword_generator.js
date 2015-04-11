@@ -3,7 +3,7 @@ CROSSWORD GENERATOR
 *************************************************************************************************************************/
 function Crossword(my_word_list) {
 //class declaration for a Crossword object
-//params: my_word_list = array of strings (sorted in some way)
+//params: my_word_list = array of objects with properties "word" and "question" (sorted in some way)
 	this.grid = {0 : {0 : '//'}};
 	this.x_start = 0;
 	this.x_stop = 0;
@@ -11,9 +11,10 @@ function Crossword(my_word_list) {
 	this.y_stop = 0;
 	this.unplaced_words = [];
 	for (var i = 0; i < my_word_list.length; i++) {
-		this.unplaced_words.push(new Word(my_word_list[i]));
+		this.unplaced_words.push(new Word(my_word_list[i].word, my_word_list[i].question));
 	} //for
 	this.placed_words = [];
+	this.numbers = [];
 	//place the first word & initialize grid:
 	var first_word = this.unplaced_words.shift();
 	this.orientation = Math.round(Math.random()); //randomly gets 0 or 1; orientation indiactes at which orientation the next word is to be placed
@@ -103,16 +104,45 @@ Crossword.prototype.testPrintGrid = function() {
 				grid_string += '<div class="empty_field">&nbsp;</div>';
 			} //if
 			else {
-				grid_string += '<div class="filled_field">' + this.grid[i][j] + '</div>';
+				grid_string += '<div class="filled_field">';
+				if (typeof this.numbers[i + '_' + j] !== "undefined") { //this is a start field with a number
+					grid_string += '<sup>' + this.numbers[i + '_' + j] + '</sup>';
+				}
+				grid_string += this.grid[i][j] + '</div>'
 			} //else
 		} //for
 		grid_string += '</div>';
 	} //for
+	//add the word list:
+	grid_string += '<p id="word_list">';
+	this.placed_words.sort(function(a,b) { //sort by orientation and number
+		if (a.position.orientation != b.position.orientation) {
+			return a.position.orientation - b.position.orientation;
+		} //if
+		else {
+			return a.number - b.number;
+		} //else
+	});
+	var across = false;
+	var down = false;
+	for (var i = 0; i < this.placed_words.length; i++) {
+		if (this.placed_words[i].position.orientation == 0 && !across) { //add the headline for vertical words
+			grid_string += '<h3>ACROSS</h3>';
+			across = true;
+		} //if
+		else if (this.placed_words[i].position.orientation == 1 && !down) { //add the headline for horizontal words
+			grid_string += '<h3>DOWN</h3>';
+			down = true;
+		} //else if
+		grid_string += this.placed_words[i].number + ': ' + this.placed_words[i].question + '<br>';
+	} //for
+	grid_string += '</p>';
 	return grid_string;
 } //testPrintGrid
 
 Crossword.prototype.cleanUpGrid = function() {
 //adjusts the grid and positions of placed words to start at x = 0 and y = 0 (eliminates the negative values that are created while words are added)
+//and adds numbers to the grid
 	if (this.y_start < 0) {
 		for (var i = 0; i < this.placed_words.length; i++) { //adjust all placed words
 			this.placed_words[i].position.y -= this.y_start;
@@ -146,6 +176,38 @@ Crossword.prototype.cleanUpGrid = function() {
 		this.x_stop -= this.x_start;
 		this.x_start = 0;
 	} //if
+	//number the words:
+	this.placed_words.sort(function(a,b) { //sort by position
+		if (a.position.y < b.position.y) {
+			return -1;
+		} //if
+		else if (a.position.y > b.position.y) {
+			return 1;
+		} //else if
+		else if (a.position.x < b.position.x) {
+			return -1;
+		} //if
+		else if (a.position.x > b.position.x) {
+			return 1;
+		} //else if
+		else {
+			return 0;
+		} //else
+	});
+	var counter = 1;
+	for (var i = 0; i < this.placed_words.length; i++) {
+		if (this.placed_words[i].number != null) { //number has been set already -> go on to next word
+			continue;
+		} //if
+		var current_y = this.placed_words[i].position.y;
+		var current_x = this.placed_words[i].position.x;
+		this.placed_words[i].number = counter; //store the number for this word
+		this.numbers[current_y + '_' + current_x] = counter; //store the number for the grid
+		if ((typeof this.placed_words[i + 1] !== 'undefined') && (this.placed_words[i + 1].position.y == current_y) && (this.placed_words[i + 1].position.x == current_x)) { //next word starts at same position -> same number
+			this.placed_words[i + 1].number = counter;
+		} //if
+		counter++;
+	} //for
 } //cleanUpGrid
 
 Crossword.prototype.checkFieldEmpty = function(my_field) {
@@ -247,14 +309,16 @@ Crossword.prototype.findPossiblePositions = function(my_word_obj) {
 	} //if
 } //attachWordToPlacedWords
 
-function Word(my_word) {
+function Word(my_word, my_question) {
 //class declaration for word objects
-//params: my_word = string
+//params: my_word = string, my_question = string
+	this.question = my_question;
 	this.text = my_word;
 	this.position = null;
 	this.map = [];
 	this.possible_positions = [];
 	this.orphaned = true;
+	this.number = null;
 } //function Word
 
 Word.prototype.calculateMap = function(my_position) {
@@ -295,13 +359,13 @@ function generateCrossword(my_word_list) {
 //params: my_word_list = array of strings (sorted in some way)
 	//convert all words to upper case:
 	for (var i = 0; i < my_word_list.length; i++) {
-		my_word_list[i] = my_word_list[i].toUpperCase();
+		my_word_list[i].word = my_word_list[i].word.toUpperCase();
 	} //for
 	var possible_crosswords = []; //holds created crosswords for comparison
 
 	//first try: words sorted by length (seems to be most promising, so try this every time)
 	my_word_list.sort(function(a, b) {
-		return b.length - a.length;
+		return b.word.length - a.word.length;
 	});
 	possible_crosswords.push(new Crossword(my_word_list));
 

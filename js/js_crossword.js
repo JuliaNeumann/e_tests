@@ -98,7 +98,8 @@ $(document).ready(function() {
 			var words = [];
 			for (var i = 0; i < crossword_test.questions.counter; i++) {
 				if (!crossword_test.questions.objects[i].deleted) {
-					words.push(crossword_test.questions.objects[i].correct_answer);
+					words.push( {word: crossword_test.questions.objects[i].correct_answer,
+								question: crossword_test.questions.objects[i].question_text});
 				} //if
 			} //for
 			var worker = new Worker(root_path + "js/crossword_generator.js"); //create a web worker to do the calculation
