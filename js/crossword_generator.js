@@ -14,7 +14,7 @@ function Crossword(my_word_list) {
 		this.unplaced_words.push(new Word(my_word_list[i].word, my_word_list[i].question));
 	} //for
 	this.placed_words = [];
-	this.numbers = [];
+	this.numbers = {};
 	//place the first word & initialize grid:
 	var first_word = this.unplaced_words.shift();
 	this.orientation = Math.round(Math.random()); //randomly gets 0 or 1; orientation indiactes at which orientation the next word is to be placed
@@ -95,7 +95,7 @@ Crossword.prototype.expandGrid = function(my_word) {
 } //expandGrid
 
 Crossword.prototype.testPrintGrid = function() {
-//transfers the current grid to string, for testing purposes
+//transfers the current grid to string, for testing purposes, DELETE LATER!!
 	var grid_string = '';
 	for (var i = this.y_start; i <= this.y_stop; i++) {
 		grid_string += '<div class="cw_row">';
@@ -317,7 +317,6 @@ function Word(my_word, my_question) {
 	this.position = null;
 	this.map = [];
 	this.possible_positions = [];
-	this.orphaned = true;
 	this.number = null;
 } //function Word
 
@@ -424,6 +423,5 @@ function shuffleArray(my_array) {
 //WEB WORKER CODE:
 onmessage = function (task) {
 	var best_crossword = generateCrossword(task.data);
-	var result_grid = best_crossword.testPrintGrid();
-	postMessage(result_grid);
+	postMessage(best_crossword);
 }
