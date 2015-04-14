@@ -273,7 +273,7 @@ $(document).ready(function() {
 	 
 	//inline editing of questions and answer options:
 	$(document).on('blur', '.editable_inputfield', function() {
-		var new_text = $(this).val();
+		var new_text = $.trim($(this).val());
 		if (new_text == '') {
 			alert('Please enter some text!');
 			$(this).focus();
