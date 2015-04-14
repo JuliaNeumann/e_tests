@@ -283,18 +283,26 @@ $(document).ready(function() {
 			$('<div class="error_msg">&nbsp;A test with this name already exists.</div>').insertAfter($('#test_name'));
             error = true;
 		} //if
+
+		//check that there are no unplaced words left:
+		var unplaced_words = [];
 		for (var i = 0; i < crossword_test.questions.counter; i++) {
 			if ((crossword_test.questions.objects[i].number == null) && !(crossword_test.questions.objects[i].deleted)) { //word is not placed
-				alert('One or more words are not placed in the crossword. Delete these words, or change them and generate a new crossword.');
-				error = true;
+				unplaced_words.push(crossword_test.questions.objects[i].correct_answer);
 			} //if
 		} //for
+		if (unplaced_words.length > 0) {
+			alert('The following words are not placed in the crossword: ' + unplaced_words.toString() + '. Delete these words, or generate a new crossword.');
+			error = true;
+		} //if
 
 		//submission, if check yielded no errors:
 		if (!error) {
-			$('#test_container').html('<em>Saving...</em>');
-			crossword_test.saveTestData();
-			crossword_test.saveTestAndRedirect(action);
+			if (confirm("Pressing OK will save your crossword in the state you see displayed. If you do not like the arrangement of the words, or made changes to your words and/or questions after creating the crossword, you should create a new crossword before saving.")) {
+				$('#test_container').html('<em>Saving...</em>');
+				crossword_test.saveTestData();
+				crossword_test.saveTestAndRedirect(action);
+			} //if
 		} //if
 	});
 
