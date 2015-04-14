@@ -66,7 +66,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 					} //else if
 				} //if
 				//OLD DELETED QUESTION:
-				else if ($question['db_id'] != 'null'){
+				else if (($question['newly_created'] == 'false') && is_numeric($question['db_id'])){
 					$db_con->deleteEntries(false, 'crossword_questions', array("where" => "question_ID = " . $question['db_id']));
 				} //else
 			} //for
@@ -97,6 +97,6 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 		$test_data["grid"] = $db_con->selectEntries(true, 'crossword_grid', array("where" => "grid_test_ID = " . $_GET['test_id']))[0];
 		$test_data["db_error"] .= $db_con->getErrorMessage();
 		print json_encode($test_data);
-		
+
 	} //else if
 ?>

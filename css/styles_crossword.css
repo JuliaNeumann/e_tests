@@ -83,3 +83,15 @@ h3 {
 	margin-bottom: 2px;
 	color: #004A7F;
 }
+
+.delete_question_button {
+	display: none;
+	float: right;
+	cursor: pointer;
+	color: #004A7F;
+	font-weight: bold;
+}
+
+.correct_answer {
+	display: inline;
+}

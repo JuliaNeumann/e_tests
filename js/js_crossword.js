@@ -138,10 +138,11 @@ $(document).ready(function() {
 	//adds a question to the questions table display
 	//params: my_question_id = INT (ID under which question object is found in crossword_test)
 		var question_object = crossword_test.questions.objects[my_question_id];
-		$('#new_question_row').before('<div class="css_tr" id="question_row_' + my_question_id + '"> \
-											<div class="css_td">' + question_object.question_text + '</div> \
-											<div class="css_td">' + question_object.correct_answer + '</div> \
+		$('#new_question_row').before('<div class="css_tr question_row" id="question_row_' + my_question_id + '"> \
+											<div class="css_td"><div class="editable question_text" data-obj_id="' + my_question_id + '">' + question_object.question_text + '</div></div> \
+											<div class="css_td"><div class="editable correct_answer" data-obj_id="' + my_question_id + '">' + question_object.correct_answer + '</div><div class="delete_question_button" data-obj_id="' + my_question_id + '">X</div></div> \
 										</div>');
+		crossword_test.questions.displayed++;
 	} //function addQuestionToDisplay
 
 	$('#add_question').click(function(e) {
@@ -310,6 +311,61 @@ $(document).ready(function() {
 		$(this).attr('id', 'show_solved').val('Show Solved Test');
 		crossword_test.calculateCrosswordObj(false);
 		displayCrossword(crossword_test.crossword);
+	});
+
+	/*************************************************************************************************************************/
+	
+	//change text of items/containers by clicking on them
+	$(document).on('blur', '.editable_inputfield', function() {
+		var new_text = $.trim($(this).val());
+		if (new_text == '') {
+			alert('Please enter some text!');
+			$(this).focus();
+			return;
+		} //if
+		var bool_container = false;
+		var obj_id = $(this).closest('.non_editable').data("obj_id");
+		if ($(this).closest('.non_editable').hasClass('correct_answer')) {
+			new_text = new_text.toUpperCase();
+			crossword_test.questions.objects[obj_id].correct_answer = new_text; //update test object
+			crossword_test.questions.objects[obj_id].edited = true;
+		} //if
+		else {
+			crossword_test.questions.objects[obj_id].question_text = new_text; //update test object
+			crossword_test.questions.objects[obj_id].edited = true;
+		} //else
+		$(this).closest('.non_editable').html(new_text).removeClass('non_editable').addClass('editable');
+	});
+
+	$(document).on('focus', '.editable_inputfield', function() {
+		if ($(this).closest('.non_editable').hasClass('correct_answer')) {
+			$(this).attr('maxlength', '25');
+		} //if
+	});
+
+	/*************************************************************************************************************************/
+	 
+	//delete questions:
+	$(document).on('mouseover', '.question_row', function() {
+		$(this).find('.delete_question_button').css('display', 'inline');
+		$(this).css('background-color', '#A8B7C1');
+	});
+
+	$(document).on('mouseleave', '.question_row', function() {
+		$(this).find('.delete_question_button').css('display', 'none');
+		$(this).css('background-color', 'white');
+	});
+
+	$(document).on('click', '.delete_question_button', function() {
+		var obj_id = $(this).data('obj_id');
+		if (crossword_test.questions.displayed < 3) { //don't allow delete if not at least 2 questions
+			alert("Your test must contain at least two questions!");
+		} //if
+		else if (confirm('Are you sure you want to delete this question?')){
+			crossword_test.questions.objects[obj_id].deleted = true;
+			crossword_test.questions.displayed--;
+			$('#question_row_' + obj_id).remove();
+		} //else
 	});
 
 }); //document ready function
