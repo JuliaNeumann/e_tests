@@ -39,29 +39,18 @@ CREATE TABLE IF NOT EXISTS `crossword_grid` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `crossword_lookup`
---
-
-CREATE TABLE IF NOT EXISTS `crossword_lookup` (
-  `lookup_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `lookup_question_ID` int(10) unsigned NOT NULL,
-  `lookup_test_ID` int(10) unsigned NOT NULL,
-  `lookup_position_x` int(10) unsigned NOT NULL,
-  `lookup_position_y` int(10) unsigned NOT NULL,
-  `lookup_orientation` tinyint(3) unsigned NOT NULL COMMENT '0 = vertical, 1 = horizontal',
-  PRIMARY KEY (`lookup_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `crossword_questions`
 --
 
 CREATE TABLE IF NOT EXISTS `crossword_questions` (
   `question_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `question_test_ID` int(10) unsigned NOT NULL,
   `question_text` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
   `question_correct_answer` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
+  `question_position_x` int(10) unsigned NOT NULL,
+  `question_position_y` int(10) unsigned NOT NULL,
+  `question_orientation` tinyint(3) unsigned NOT NULL COMMENT '0 = vertical, 1 = horizontal',
+  `question_number` int(10) unsigned NOT NULL,
   PRIMARY KEY (`question_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

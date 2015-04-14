@@ -30,7 +30,7 @@ CREATING A NEW CROSSWORD TEST
 				<div class="css_td" id="header_answer">Answer</div>
 			</div>
 			<div class="css_tr" id="new_question_row">
-				<div class="css_td"><input type="text" class="table_inputfield" name="new_question" id="new_question" value="New Question..." maxlength="25"></div>
+				<div class="css_td"><input type="text" class="table_inputfield" name="new_question" id="new_question" value="New Question..."></div>
 				<div class="css_td"><input type="text" class="table_inputfield" name="new_answer" id="new_answer" value="New Answer..." maxlength="25"></div>
 			</div>
 			<div class="css_tr">
@@ -41,6 +41,9 @@ CREATING A NEW CROSSWORD TEST
 			<input type="submit" class="submit_button" name="create_crossword" id="create_crossword" value="Create Crossword" disabled>
 		</div>
 		<div id="crossword_container"></div>
+		<div class="right_aligned">
+			<input type="submit" class="submit_button hidden" name="save_test" id="save_test" value="Save Test">
+		</div>
 	</section>
 <?php 
 	include_once INCLUDE_PATH . 'php_page_elements/page_footer.php'; 
