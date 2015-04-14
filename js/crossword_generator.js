@@ -12,6 +12,9 @@ function Crossword(my_word_list) {
 	this.unplaced_words = [];
 	for (var i = 0; i < my_word_list.length; i++) {
 		this.unplaced_words.push(new Word(my_word_list[i].word, my_word_list[i].question));
+		if (typeof my_word_list[i].word_id != "undefined") {
+			this.unplaced_words[i].word_id = my_word_list[i].word_id;
+		} //if
 	} //for
 	this.placed_words = [];
 	this.numbers = {};
@@ -314,6 +317,7 @@ function Word(my_word, my_question) {
 //params: my_word = string, my_question = string
 	this.question = my_question;
 	this.text = my_word;
+	this.word_id = null; //used if requesting script needs some identification of the words
 	this.position = null;
 	this.map = [];
 	this.possible_positions = [];
@@ -370,7 +374,7 @@ function generateCrossword(my_word_list) {
 
 	//more tries with random order of words:
 	var start = new Date().getTime(); //get timestamp
-	while ((new Date().getTime() - start) < 5000) { //execute this loop for five seconds
+	while ((new Date().getTime() - start) < 3000) { //execute this loop for three seconds
 		my_word_list = shuffleArray(my_word_list);
 		possible_crosswords.push(new Crossword(my_word_list));
 	} //while

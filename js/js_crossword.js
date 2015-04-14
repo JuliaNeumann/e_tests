@@ -99,7 +99,8 @@ $(document).ready(function() {
 			for (var i = 0; i < crossword_test.questions.counter; i++) {
 				if (!crossword_test.questions.objects[i].deleted) {
 					words.push( {word: crossword_test.questions.objects[i].correct_answer,
-								question: crossword_test.questions.objects[i].question_text});
+								question: crossword_test.questions.objects[i].question_text,
+								word_id: crossword_test.questions.objects[i].current_id});
 				} //if
 			} //for
 			var worker = new Worker(root_path + "js/crossword_generator.js"); //create a web worker to do the calculation
@@ -107,6 +108,7 @@ $(document).ready(function() {
 			worker.onmessage = function(event) {
 				var crossword = event.data;
 				displaySolvedCrossword(crossword);
+				//storeCrosswordToTestObj(crossword);
 			}
 		} //if
 		else {
@@ -120,7 +122,7 @@ $(document).ready(function() {
 	function displaySolvedCrossword(my_crossword_obj) {
 	//displays a solved version of the given crossword
 	//params: my_crossword_obj = object delivered by crossword_generator.js
-		var grid_string = '';
+		var grid_string = '<div id="crossword_grid">';
 		for (var i = my_crossword_obj.y_start; i <= my_crossword_obj.y_stop; i++) {
 			grid_string += '<div class="cw_row">';
 			for (var j = my_crossword_obj.x_start; j <= my_crossword_obj.x_stop; j++) {
@@ -128,17 +130,17 @@ $(document).ready(function() {
 					grid_string += '<div class="empty_field">&nbsp;</div>';
 				} //if
 				else {
-					grid_string += '<div class="filled_field">';
+					grid_string += '<div class="filled_field"><div class="number_container">';
 					if (typeof my_crossword_obj.numbers[i + '_' + j] !== "undefined") { //this is a start field with a number
-						grid_string += '<sup>' + my_crossword_obj.numbers[i + '_' + j] + '</sup>';
+						grid_string += my_crossword_obj.numbers[i + '_' + j];
 					}
-					grid_string += my_crossword_obj.grid[i][j] + '</div>'
+					grid_string += '</div><div class="letter_container">' + my_crossword_obj.grid[i][j] + '</div></div>';
 				} //else
 			} //for
 			grid_string += '</div>';
 		} //for
 		//add the word list:
-		grid_string += '<p id="word_list">';
+		grid_string += '</div><div id="question_list">';
 		my_crossword_obj.placed_words.sort(function(a,b) { //sort by orientation and number
 			if (a.position.orientation != b.position.orientation) {
 				return a.position.orientation - b.position.orientation;
@@ -160,8 +162,9 @@ $(document).ready(function() {
 			} //else if
 			grid_string += my_crossword_obj.placed_words[i].number + ': ' + my_crossword_obj.placed_words[i].question + '<br>';
 		} //for
-		grid_string += '</p>';
+		grid_string += '</div>';
 		$('#crossword_container').html(grid_string);
+		$('#crossword_grid').width(((my_crossword_obj.x_stop + 1) * 32) + 'px');
 	} //displaySolvedCrossword
 
 }); //document ready function
@@ -174,4 +177,6 @@ function Question(my_current_id, my_question_text) {
 	TestItem.call(this, my_current_id); //make this a 'sub-class' of TestItem (see js_general.js)
 	this.question_text = my_question_text;
 	this.correct_answer = null; //set only if not in run mode
+	this.position = null;
+	this.number = null;
 } //function Item

@@ -4,7 +4,7 @@ CROSSWORD STYLE SHEET
 *************************************************************************************************************************/
 
 #instructions {
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 	font-style: italic;
 }
 
@@ -36,23 +36,50 @@ CROSSWORD STYLE SHEET
 
 .filled_field, .empty_field {
 	float: left;
-	width: 20px;
-	height: 20px;
+	width: 30px;
+	height: 30px;
 	border: 1px solid black;
 }
 
 .empty_field {
-	background-color: gray;
+	background-color: #A8B7C1;
 }
 
 .filled_field {
+	position: relative;
+	background-color: white;
+}
+
+.number_container {
+	position: absolute;
+	font-size: 7pt;
+	width: 28px;
+	height: 7px;
+	top: 0px;
+	left: 0px;
+	padding-left: 2px;
+	color: #004A7F;
+}
+
+.letter_container {
+	position: absolute;
 	text-align: center;
+	width: 30px;
+	height: 20px;
+	top: 7px;
+	left: 0px;
 }
 
 .cw_row {
 	display: flex;
 }
 
-sup {
-	font-size: 7pt;
+#crossword_grid {
+	margin: 10px auto;
+	border: 1px solid black;
+}
+
+h3 {
+	margin-bottom: 2px;
+	color: #004A7F;
 }
