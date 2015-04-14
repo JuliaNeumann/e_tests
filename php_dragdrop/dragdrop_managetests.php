@@ -108,7 +108,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 		} //else 
 
 		shuffle($test_data["items"]); //items should be in random order
-		$test_data["containers"] = $db_con->selectEntries(false, 'dragdrop_containers', array("where" => "container_test_ID = " . $_GET['test_id']));
+		$test_data["containers"] = $db_con->selectEntries(true, 'dragdrop_containers', array("where" => "container_test_ID = " . $_GET['test_id']));
 		$test_data["db_error"] .= $db_con->getErrorMessage();
 
 		print json_encode($test_data);
