@@ -108,7 +108,7 @@ $(document).ready(function() {
 			worker.onmessage = function(event) {
 				var crossword = event.data;
 				displaySolvedCrossword(crossword);
-				//storeCrosswordToTestObj(crossword);
+				storeCrosswordToTestObj(crossword);
 			}
 		} //if
 		else {
@@ -166,6 +166,26 @@ $(document).ready(function() {
 		$('#crossword_container').html(grid_string);
 		$('#crossword_grid').width(((my_crossword_obj.x_stop + 1) * 32) + 'px');
 	} //displaySolvedCrossword
+
+	/*************************************************************************************************************************/
+
+	//store crossword:
+	function storeCrosswordToTestObj(my_crossword_obj) {
+	//store the relevant data of the given crossword to the test object
+	//params: my_crossword_obj = object delivered by crossword_generator.js
+		crossword_test.grid.x = my_crossword_obj.x_stop;
+		crossword_test.grid.y = my_crossword_obj.y_stop;
+		for (var i = 0; i < my_crossword_obj.placed_words.length; i++) {
+			var question_object = crossword_test.questions.objects[my_crossword_obj.placed_words[i].word_id];
+			question_object.position = my_crossword_obj.placed_words[i].position;
+			question_object.number = my_crossword_obj.placed_words[i].number;
+		} //for
+		for (var i = 0; i < my_crossword_obj.unplaced_words.length; i++) {
+			var question_object = crossword_test.questions.objects[my_crossword_obj.unplaced_words[i].word_id];
+			question_object.position = null;
+			question_object.number = null;
+		} //for
+	} //storeCrosswordToTestobj
 
 }); //document ready function
 
