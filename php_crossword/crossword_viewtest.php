@@ -42,6 +42,7 @@ VIEWING A CROSSWORD TEST
 		"<?php echo $test_data['test_name']; ?>"
 	</header>
 	<section id="test_container">
+		<div id="crossword_container"></div>
 		<div class="right_aligned">
 			<input type="submit" id="show_solved" class="submit_button" value="Show Solved Test">
 		</div>

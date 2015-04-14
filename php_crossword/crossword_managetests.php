@@ -84,4 +84,19 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 		}
 		$db_con->closeConnection();
 	} //if
+
+/*************************************************************************************************************************/
+
+//RETRIEVING EXISTING TEST DATA:
+
+	else if (isset($_GET['test_id'])) {
+
+		$db_con = new Db_Connection();
+		$test_data = array("db_error" => '');
+		$test_data["questions"] = $db_con->selectEntries(false, 'crossword_questions', array("where" => "question_test_ID = " . $_GET['test_id']));
+		$test_data["grid"] = $db_con->selectEntries(true, 'crossword_grid', array("where" => "grid_test_ID = " . $_GET['test_id']))[0];
+		$test_data["db_error"] .= $db_con->getErrorMessage();
+		print json_encode($test_data);
+		
+	} //else if
 ?>

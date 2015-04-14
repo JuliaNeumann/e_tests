@@ -10,11 +10,57 @@ $(document).ready(function() {
 	//extend the object with the necessary properties & methods for drag&drop tests:
 	crossword_test.questions = {counter: 0, objects: {}, displayed: 0}; //holds question objects
 	crossword_test.grid = {x: null, y: null, edited: false}; //holds dimenstions of grid (filled when crossword is calculated)
+	crossword_test.crossword = {};
 	crossword_test.saveTestData = function() {
 	//put all test data into one object literal for easy database submission
 		this.test_data.grid = this.grid;
 		this.test_data.questions = this.questions;
 	} //saveTestData
+	crossword_test.calculateCrosswordObj = function(my_show_words) {
+	//compute and stores object of an existing crossword
+	//params: my_show_words = bool (indicating whether solution words should be shown in the grid or not)
+		var crossword = {};
+		crossword.grid = {};
+		crossword.numbers = {};
+		crossword.placed_words = [];
+		crossword.x_stop = this.grid.x;
+		crossword.y_stop = this.grid.y;
+		//calculate empty grid:
+		for (var i = 0; i <= this.grid.y; i++) {
+		 	crossword.grid[i] = {};
+		 	for (var j = 0; j <= this.grid.x; j++) {
+		 		crossword.grid[i][j] = '//';
+		 	} //for
+		 }//for
+		 //fill with words:
+		 for (var i = 0; i < this.questions.counter; i++) {
+		 	var question = this.questions.objects[i];
+		 	if (question.position != null) {
+		 		var current_x = question.position.x;
+		 		var current_y = question.position.y;
+		 		for (var j = 0; j < question.correct_answer.length; j++) {
+		 			crossword.grid[current_y][current_x] = (my_show_words) ? question.correct_answer.charAt(j) : '&nbsp;';
+		 			(question.position.orientation == 0) ? current_x++ : current_y++;
+		 		} //for
+		 		crossword.numbers[question.position.y + '_' + question.position.x] = question.number;
+		 		crossword.placed_words.push(question);
+		 	} //if
+		 } //for
+		 this.crossword = crossword;
+	} //calculateCrosswordObj
+	crossword_test.retrieveAndDisplayTest = function(my_test_id, my_solution) {
+	//retrieves data of a test from the database, displays it in div test_container
+	//params: my_test_id = INT; my_solution = bool (determines whether solution should be retrieved or not)
+		this.db_id = my_test_id;
+		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {test_id : my_test_id, solution : my_solution}, function(feedback) {
+			if (feedback.db_error != '') {
+				alert('Test could not be retrieved correctly from database! ' + feedback.db_error);
+			} //if
+			else {
+				initCrosswordTest(feedback);
+			} //else
+		});
+	} //retrieveAndDisplayTest
 
 	//set correct test data, according to action:
 	switch (action) {
@@ -23,6 +69,7 @@ $(document).ready(function() {
 			getTestNamesFromDb(0); //load test names from database for checking
 			break;
 		case 'view':
+			crossword_test.retrieveAndDisplayTest(test_id, true, false);
 			break;
 		case 'edit':
 			getTestNamesFromDb(test_id); //load test names from database for checking
@@ -32,6 +79,20 @@ $(document).ready(function() {
 		default:
 			break;
 	} //switch
+
+	function initCrosswordTest(my_test_data) {
+	//updates test object & displays crossword/questions of the current test (in view or edit mode)
+	//params: my_test_data = questions -> array of question objects, grid -> grid x and grid y
+		crossword_test.grid.x = my_test_data['grid']['grid_x'];
+		crossword_test.grid.y = my_test_data['grid']['grid_y'];
+		for (var i = 0; i < my_test_data.questions.length; i++) {
+			addQuestionToObj(my_test_data.questions[i]);
+		} //for
+		if (action == "view") {
+			crossword_test.calculateCrosswordObj(false);
+			displayCrossword(crossword_test.crossword);
+		} //if
+	} //initCrosswordTest
 
 	/*************************************************************************************************************************/
 
@@ -43,19 +104,29 @@ $(document).ready(function() {
 		var current_id = crossword_test.questions.counter;
 		var question_object = new Question(current_id, my_question_object.question_text);
 
-		if (action == 'new' || action == "edit") {
+		if (action == 'new' || action == "edit" || action == "view") {
 			question_object.correct_answer = (my_question_object.correct_answer) ? my_question_object.correct_answer : my_question_object.question_correct_answer;
+			question_object.correct_answer = question_object.correct_answer.toUpperCase();
 		} //if
+
+		if (my_question_object.question_position_x && my_question_object.question_position_y && my_question_object.question_orientation && my_question_object.question_number) {
+			question_object.position = {};
+			question_object.position.x = my_question_object.question_position_x;
+			question_object.position.y = my_question_object.question_position_y;
+			question_object.position.orientation = my_question_object.question_orientation;
+			question_object.number = my_question_object.question_number;
+		} //if
+
+		if (my_question_object.question_ID) {
+			question_object.db_id = my_question_object.question_ID;
+		} //if
+		else {
+			question_object.newly_created = true;
+		} //else
 
 		crossword_test.questions.objects[current_id] = question_object;
 		crossword_test.questions.counter++;
 		crossword_test.questions.displayed++;
-		if (my_question_object.question_ID) {
-			crossword_test.questions.objects[current_id].db_id = my_question_object.question_ID;
-		} //if
-		else {
-			crossword_test.questions.objects[current_id].newly_created = true;
-		} //else
 
 		if (crossword_test.questions.displayed > 1) { //at least two questions -> allow crossword creation
 			$('#create_crossword').attr('disabled', false); //enable button
@@ -105,7 +176,7 @@ $(document).ready(function() {
 			for (var i = 0; i < crossword_test.questions.counter; i++) {
 				if (!crossword_test.questions.objects[i].deleted) {
 					words.push( {word: crossword_test.questions.objects[i].correct_answer,
-								question: crossword_test.questions.objects[i].question_text,
+								question_text: crossword_test.questions.objects[i].question_text,
 								word_id: crossword_test.questions.objects[i].current_id});
 				} //if
 			} //for
@@ -113,7 +184,7 @@ $(document).ready(function() {
 			worker.postMessage(words);
 			worker.onmessage = function(event) {
 				var crossword = event.data;
-				displaySolvedCrossword(crossword);
+				displayCrossword(crossword);
 				storeCrosswordToTestObj(crossword);
 				$('#save_test').show();
 			}
@@ -126,13 +197,13 @@ $(document).ready(function() {
 	/*************************************************************************************************************************/
 
 	//display crossword:
-	function displaySolvedCrossword(my_crossword_obj) {
+	function displayCrossword(my_crossword_obj) {
 	//displays a solved version of the given crossword
 	//params: my_crossword_obj = object delivered by crossword_generator.js
 		var grid_string = '<div id="crossword_grid">';
-		for (var i = my_crossword_obj.y_start; i <= my_crossword_obj.y_stop; i++) {
+		for (var i = 0; i <= my_crossword_obj.y_stop; i++) {
 			grid_string += '<div class="cw_row">';
-			for (var j = my_crossword_obj.x_start; j <= my_crossword_obj.x_stop; j++) {
+			for (var j = 0; j <= my_crossword_obj.x_stop; j++) {
 				if (my_crossword_obj.grid[i][j] == '//') {
 					grid_string += '<div class="empty_field">&nbsp;</div>';
 				} //if
@@ -167,12 +238,12 @@ $(document).ready(function() {
 				grid_string += '<h3>DOWN</h3>';
 				down = true;
 			} //else if
-			grid_string += my_crossword_obj.placed_words[i].number + ': ' + my_crossword_obj.placed_words[i].question + '<br>';
+			grid_string += my_crossword_obj.placed_words[i].number + ': ' + my_crossword_obj.placed_words[i].question_text + '<br>';
 		} //for
 		grid_string += '</div>';
 		$('#crossword_container').html(grid_string);
-		$('#crossword_grid').width(((my_crossword_obj.x_stop + 1) * 32) + 'px');
-	} //displaySolvedCrossword
+		$('#crossword_grid').width(((parseInt(my_crossword_obj.x_stop) + 1) * 32) + 'px');
+	} //displayCrossword
 
 	/*************************************************************************************************************************/
 
@@ -224,6 +295,21 @@ $(document).ready(function() {
 			crossword_test.saveTestData();
 			crossword_test.saveTestAndRedirect(action);
 		} //if
+	});
+
+	/*************************************************************************************************************************/
+	
+	//switching between solved and unsolved view:
+	$(document).on('click', '#show_solved', function() {
+		$(this).attr('id', 'show_unsolved').val('Show Unsolved Test');
+		crossword_test.calculateCrosswordObj(true);
+		displayCrossword(crossword_test.crossword);
+	});
+
+	$(document).on('click', '#show_unsolved', function() {
+		$(this).attr('id', 'show_solved').val('Show Solved Test');
+		crossword_test.calculateCrosswordObj(false);
+		displayCrossword(crossword_test.crossword);
 	});
 
 }); //document ready function

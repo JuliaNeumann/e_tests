@@ -3,7 +3,7 @@ CROSSWORD GENERATOR
 *************************************************************************************************************************/
 function Crossword(my_word_list) {
 //class declaration for a Crossword object
-//params: my_word_list = array of objects with properties "word" and "question" (sorted in some way)
+//params: my_word_list = array of objects with properties "word" and "question_text" (sorted in some way)
 	this.grid = {0 : {0 : '//'}};
 	this.x_start = 0;
 	this.x_stop = 0;
@@ -11,7 +11,7 @@ function Crossword(my_word_list) {
 	this.y_stop = 0;
 	this.unplaced_words = [];
 	for (var i = 0; i < my_word_list.length; i++) {
-		this.unplaced_words.push(new Word(my_word_list[i].word, my_word_list[i].question));
+		this.unplaced_words.push(new Word(my_word_list[i].word, my_word_list[i].question_text));
 		if (typeof my_word_list[i].word_id != "undefined") {
 			this.unplaced_words[i].word_id = my_word_list[i].word_id;
 		} //if
@@ -137,7 +137,7 @@ Crossword.prototype.testPrintGrid = function() {
 			grid_string += '<h3>DOWN</h3>';
 			down = true;
 		} //else if
-		grid_string += this.placed_words[i].number + ': ' + this.placed_words[i].question + '<br>';
+		grid_string += this.placed_words[i].number + ': ' + this.placed_words[i].question_text + '<br>';
 	} //for
 	grid_string += '</p>';
 	return grid_string;
@@ -315,7 +315,7 @@ Crossword.prototype.findPossiblePositions = function(my_word_obj) {
 function Word(my_word, my_question) {
 //class declaration for word objects
 //params: my_word = string, my_question = string
-	this.question = my_question;
+	this.question_text = my_question;
 	this.text = my_word;
 	this.word_id = null; //used if requesting script needs some identification of the words
 	this.position = null;
