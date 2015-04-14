@@ -99,4 +99,24 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 		print json_encode($test_data);
 
 	} //else if
+
+/*************************************************************************************************************************/
+
+//DELETING TEST DATA:
+
+	else if (isset($_POST['delete_test'])) {
+		$test_id = $_POST['selected_test_id'];
+		$db_con = new Db_Connection();
+		$db_con->deleteEntries(false, 'tests', array("where" => "test_ID = " . $test_id));
+		$db_con->deleteEntries(false, 'crossword_questions', array("where" => "question_test_ID = " . $test_id));
+		$db_con->deleteEntries(true, 'crossword_grid', array("where" => "grid_test_ID = " . $test_id));
+		if ($db_con->getErrorMessage() !== '') {
+			$error = true;
+			$error_msg = 'The following error has occurred while deleting the test: ' . $db_con->getErrorMessage();
+		} //if
+		else {
+			$deleted_successfully = true;
+		} //else
+		include INCLUDE_PATH . 'index.php';
+	} //else if
 ?>
