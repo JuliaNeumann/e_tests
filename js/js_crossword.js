@@ -11,6 +11,7 @@ $(document).ready(function() {
 	crossword_test.questions = {counter: 0, objects: {}, displayed: 0}; //holds question objects
 	crossword_test.grid = {x: null, y: null, edited: false}; //holds dimenstions of grid (filled when crossword is calculated)
 	crossword_test.words_edited = false;
+	crossword_test.current_word = null; //for run mode
 	crossword_test.crossword = {};
 	crossword_test.saveTestData = function() {
 	//put all test data into one object literal for easy database submission
@@ -77,6 +78,7 @@ $(document).ready(function() {
 			getTestNamesFromDb(test_id); //load test names from database for checking
 			break;
 		case 'run':
+			crossword_test.retrieveAndDisplayTest(test_id, false);
 			break;
 		default:
 			break;
@@ -93,7 +95,7 @@ $(document).ready(function() {
 				addQuestionToDisplay(question_id);
 			} //if
 		} //for
-		if (action == "view") {
+		if (action == "view" || action == "run") {
 			crossword_test.calculateCrosswordObj(false);
 		} //if
 		else if (action == "edit") {
@@ -112,10 +114,9 @@ $(document).ready(function() {
 		var current_id = crossword_test.questions.counter;
 		var question_object = new Question(current_id, my_question_object.question_text);
 
-		if (action == 'new' || action == "edit" || action == "view") {
-			question_object.correct_answer = (my_question_object.correct_answer) ? my_question_object.correct_answer : my_question_object.question_correct_answer;
-			question_object.correct_answer = question_object.correct_answer.toUpperCase();
-		} //if
+		question_object.correct_answer = (my_question_object.correct_answer) ? my_question_object.correct_answer : my_question_object.question_correct_answer;
+		question_object.correct_answer = question_object.correct_answer.toUpperCase();
+		
 
 		if (my_question_object.question_position_x && my_question_object.question_position_y && my_question_object.question_orientation && my_question_object.question_number) {
 			question_object.position = {};
@@ -217,7 +218,7 @@ $(document).ready(function() {
 					grid_string += '<div class="empty_field">&nbsp;</div>';
 				} //if
 				else {
-					grid_string += '<div class="filled_field"><div class="number_container">';
+					grid_string += '<div class="filled_field"  id="field_' + i + '_' + j + '"><div class="number_container">';
 					if (typeof my_crossword_obj.numbers[i + '_' + j] !== "undefined") { //this is a start field with a number
 						grid_string += my_crossword_obj.numbers[i + '_' + j];
 					}
@@ -247,7 +248,11 @@ $(document).ready(function() {
 				grid_string += '<h3>DOWN</h3>';
 				down = true;
 			} //else if
-			grid_string += my_crossword_obj.placed_words[i].number + ': ' + my_crossword_obj.placed_words[i].question_text + '<br>';
+			grid_string += '<span';
+			if (action == "run") {
+				grid_string += '  class="crossword_question" data-obj_id="' + my_crossword_obj.placed_words[i].current_id + '"'
+			} //if
+			grid_string += '>' + my_crossword_obj.placed_words[i].number + ': ' + my_crossword_obj.placed_words[i].question_text + '</span><br>';
 		} //for
 		grid_string += '</div>';
 		$('#crossword_container').html(grid_string);
@@ -391,6 +396,76 @@ $(document).ready(function() {
 			crossword_test.words_edited = true;
 			$('#question_row_' + obj_id).remove();
 		} //else
+	});
+
+	/*************************************************************************************************************************/
+	
+	//run crossword test:
+	$(document).on('mouseover', '.crossword_question', function() {
+		var question = crossword_test.questions.objects[$(this).data("obj_id")];
+		var current_x = question.position.x;
+ 		var current_y = question.position.y;
+ 		for (var j = 0; j < question.correct_answer.length; j++) {
+ 			$('#field_' + current_y + '_' + current_x).css('background-color', '#EAEAEA');
+ 			(question.position.orientation == 0) ? current_x++ : current_y++;
+ 		} //for
+	}); 
+
+	$(document).on('mouseleave', '.crossword_question', function() {
+		$('.filled_field').css('background-color', 'white');
+	}); 
+
+	$(document).on('click', '.crossword_question', function() {
+		clearInputFields();
+		var question = crossword_test.questions.objects[$(this).data("obj_id")];
+		crossword_test.current_word = question;
+		var current_x = question.position.x;
+ 		var current_y = question.position.y;
+ 		for (var j = 0; j < question.correct_answer.length; j++) {
+ 			var current_letter = $('#field_' + current_y + '_' + current_x + ' > .letter_container').html();
+ 			$('#field_' + current_y + '_' + current_x + ' > .letter_container').html('<input type="text" maxlength="1" class="letter_input_field" id="input_' + current_y + '_' + current_x + '" data-y="' + current_y + '" data-x="' + current_x + '" value="' + current_letter + '">');
+ 			(question.position.orientation == 0) ? current_x++ : current_y++;
+ 		} //for
+ 		$('#input_' + question.position.y + '_' + question.position.x).select(); //focus on first letter input field
+	});
+
+	$(document).on('keyup', '.letter_input_field', function(e) {
+		var x = parseInt($(this).data('x'));
+		var y = parseInt($(this).data('y'));
+		$('#field_' + y + '_' + x).css({'color': 'black', 'border-color': 'black'});
+		if (e.which != 8) { //button other than delete button is pressed
+			var letter = $(this).val().toUpperCase();
+			$(this).val(letter);
+			if ($('#input_' + (y + 1) + '_' + x).length) {
+				$('#input_' + (y + 1) + '_' + x).select();
+			} //if
+			else if ($('#input_' + y + '_' + (x + 1)).length) {
+				$('#input_' + y + '_' + (x + 1)).select();
+			} //else if
+			else { //last letter of the word
+				clearInputFields();
+			} //else
+		} //if
+	});
+
+	function clearInputFields() {
+	//replaces input fields that are currently in the crossword with their letters, updates the crossword_test grid to reflect the changes
+		$('#crossword_grid').find('.letter_input_field').each(function() {
+			var x = parseInt($(this).data('x'));
+			var y = parseInt($(this).data('y'));
+			crossword_test.crossword.grid[y][x] = $(this).val();
+		}); 
+		displayCrossword(crossword_test.crossword);
+	} //clearInputFields
+
+	$('#check_test').click(function(e) {
+		e.preventDefault();
+		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {check_test_id : crossword_test.db_id, check_test : crossword_test.crossword.grid}, function(feedback) {
+			$('#instructions').html('Your score: ' + feedback.correct + ' out of ' + crossword_test.questions.counter + ' correct!');
+			for (var i = 0; i < feedback.wrong_fields.length; i++) {
+				$('#field_' + feedback.wrong_fields[i]).css({'background-color': '#FFB2B2', 'border-color': '#AE0000'});
+			}//for
+		});
 	});
 
 }); //document ready function

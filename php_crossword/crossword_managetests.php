@@ -95,6 +95,15 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 		$test_data = array("db_error" => '');
 		$test_data["questions"] = $db_con->selectEntries(false, 'crossword_questions', array("where" => "question_test_ID = " . $_GET['test_id']));
 		$test_data["grid"] = $db_con->selectEntries(true, 'crossword_grid', array("where" => "grid_test_ID = " . $_GET['test_id']))[0];
+		if ($_GET['solution'] == 'false') { //in run mode -> replace solution words with dummies (to convey word length nevertheless)
+			for ($i = 0; $i < sizeof($test_data["questions"]); $i++) {
+				$dummy = '';
+				for ($j = 0; $j < strlen($test_data["questions"][$i]["question_correct_answer"]); $j++) { 
+					$dummy .= 'X';
+				} //for
+				$test_data["questions"][$i]["question_correct_answer"] = $dummy;
+			} //foreach
+		} //if
 		$test_data["db_error"] .= $db_con->getErrorMessage();
 		print json_encode($test_data);
 
@@ -119,4 +128,33 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 		} //else
 		include INCLUDE_PATH . 'index.php';
 	} //else if
+
+/*************************************************************************************************************************/
+
+//CHECK TEST SUBMISSION:
+	else if (isset($_GET['check_test'])) {
+		$temp_solution = $_GET['check_test'];
+		$db_con = new Db_Connection();
+
+		$questions = $db_con->selectEntries(false, 'crossword_questions', array("where" => "question_test_ID = " . $_GET['check_test_id']));
+		
+		$checked_items = array("correct" => 0, "wrong_fields" => array());
+		foreach ($questions as $question) {
+			$error = false;
+			$current_x = $question['question_position_x'];
+			$current_y = $question['question_position_y'];
+			for ($i = 0; $i < strlen($question['question_correct_answer']); $i++) { 
+				if (substr($question['question_correct_answer'], $i, 1) != $temp_solution[$current_y][$current_x]) {
+					$error = true;
+					$checked_items["wrong_fields"][] = $current_y . '_' . $current_x;
+				} //if
+				($question['question_orientation'] == "0") ? $current_x++ : $current_y++;
+			} //for
+			if (!$error) {
+				$checked_items["correct"]++;
+			} //if
+		} //foreach
+
+		print json_encode($checked_items);
+	}//else if
 ?>

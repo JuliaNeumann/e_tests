@@ -95,3 +95,11 @@ h3 {
 .correct_answer {
 	display: inline;
 }
+
+.crossword_question {
+	cursor: pointer;
+}
+
+.letter_input_field {
+	width: 15px;
+}
