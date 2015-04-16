@@ -10,6 +10,7 @@ $(document).ready(function() {
 	//extend the object with the necessary properties & methods for drag&drop tests:
 	crossword_test.questions = {counter: 0, objects: {}, displayed: 0}; //holds question objects
 	crossword_test.grid = {x: null, y: null, edited: false}; //holds dimenstions of grid (filled when crossword is calculated)
+	crossword_test.words_edited = false;
 	crossword_test.crossword = {};
 	crossword_test.saveTestData = function() {
 	//put all test data into one object literal for easy database submission
@@ -69,9 +70,10 @@ $(document).ready(function() {
 			getTestNamesFromDb(0); //load test names from database for checking
 			break;
 		case 'view':
-			crossword_test.retrieveAndDisplayTest(test_id, true, false);
+			crossword_test.retrieveAndDisplayTest(test_id, true);
 			break;
 		case 'edit':
+			crossword_test.retrieveAndDisplayTest(test_id, true);
 			getTestNamesFromDb(test_id); //load test names from database for checking
 			break;
 		case 'run':
@@ -86,12 +88,18 @@ $(document).ready(function() {
 		crossword_test.grid.x = my_test_data['grid']['grid_x'];
 		crossword_test.grid.y = my_test_data['grid']['grid_y'];
 		for (var i = 0; i < my_test_data.questions.length; i++) {
-			addQuestionToObj(my_test_data.questions[i]);
+			var question_id = addQuestionToObj(my_test_data.questions[i]);
+			if (action == "edit") {
+				addQuestionToDisplay(question_id);
+			} //if
 		} //for
 		if (action == "view") {
 			crossword_test.calculateCrosswordObj(false);
-			displayCrossword(crossword_test.crossword);
 		} //if
+		else if (action == "edit") {
+			crossword_test.calculateCrosswordObj(true);
+		} //
+		displayCrossword(crossword_test.crossword);
 	} //initCrosswordTest
 
 	/*************************************************************************************************************************/
@@ -255,6 +263,7 @@ $(document).ready(function() {
 		crossword_test.grid.x = my_crossword_obj.x_stop;
 		crossword_test.grid.y = my_crossword_obj.y_stop;
 		crossword_test.grid.edited = true;
+		crossword_test.words_edited = false;
 		for (var i = 0; i < my_crossword_obj.placed_words.length; i++) {
 			var question_object = crossword_test.questions.objects[my_crossword_obj.placed_words[i].word_id];
 			question_object.position = my_crossword_obj.placed_words[i].position;
@@ -295,10 +304,14 @@ $(document).ready(function() {
 			alert('The following words are not placed in the crossword: ' + unplaced_words.toString() + '. Delete these words, or generate a new crossword.');
 			error = true;
 		} //if
+		else if (crossword_test.words_edited) {
+			alert('You have edited one or more answers, but not generated a new grid. Please press "Create Crossword" before saving your test.');
+			error = true;
+		} //
 
 		//submission, if check yielded no errors:
 		if (!error) {
-			if (confirm("Pressing OK will save your crossword in the state you see displayed. If you do not like the arrangement of the words, or made changes to your words and/or questions after creating the crossword, you should create a new crossword before saving.")) {
+			if (confirm("Pressing OK will save your crossword in the state you see displayed. If you do not like the arrangement of the words, or made changes to your answers after creating the crossword, you should create a new crossword before saving.")) {
 				$('#test_container').html('<em>Saving...</em>');
 				crossword_test.saveTestData();
 				crossword_test.saveTestAndRedirect(action);
@@ -335,10 +348,13 @@ $(document).ready(function() {
 		var obj_id = $(this).closest('.non_editable').data("obj_id");
 		if ($(this).closest('.non_editable').hasClass('correct_answer')) {
 			new_text = new_text.toUpperCase();
-			crossword_test.questions.objects[obj_id].correct_answer = new_text; //update test object
-			crossword_test.questions.objects[obj_id].edited = true;
+			if (new_text != crossword_test.questions.objects[obj_id].correct_answer) {
+				crossword_test.questions.objects[obj_id].correct_answer = new_text; //update test object
+				crossword_test.questions.objects[obj_id].edited = true;
+				crossword_test.words_edited = true;
+			} //if
 		} //if
-		else {
+		else if (new_text != crossword_test.questions.objects[obj_id].question_text) {
 			crossword_test.questions.objects[obj_id].question_text = new_text; //update test object
 			crossword_test.questions.objects[obj_id].edited = true;
 		} //else
@@ -372,6 +388,7 @@ $(document).ready(function() {
 		else if (confirm('Are you sure you want to delete this question?')){
 			crossword_test.questions.objects[obj_id].deleted = true;
 			crossword_test.questions.displayed--;
+			crossword_test.words_edited = true;
 			$('#question_row_' + obj_id).remove();
 		} //else
 	});

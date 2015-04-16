@@ -52,7 +52,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 																								"question_orientation" => $question['position']['orientation'],
 																								"question_number" => $question['number']));
 					} //if
-					//OLD EDITED QUESTION (with only question text edited):
+					//OLD EDITED QUESTION:
 					else if ($question['edited'] == 'true') {
 						$db_con->updateEntry(false, 
 											'crossword_questions', 
