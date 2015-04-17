@@ -393,7 +393,9 @@ $(document).ready(function() {
 		else if (confirm('Are you sure you want to delete this question?')){
 			crossword_test.questions.objects[obj_id].deleted = true;
 			crossword_test.questions.displayed--;
-			crossword_test.words_edited = true;
+			if (crossword_test.questions.objects[obj_id].position != null) {
+				crossword_test.words_edited = true;
+			} //if
 			$('#question_row_' + obj_id).remove();
 		} //else
 	});
