@@ -10,7 +10,7 @@ CROSSWORD STYLE SHEET
 
 .table_header {
 	color: white;
-	background-color: #004A7F;
+	background-color: #006093;
 	padding: 5px;
 	font-weight: bold;
 	margin-bottom: 0px;
@@ -26,7 +26,7 @@ CROSSWORD STYLE SHEET
 
 #questions_table {
 	width: 800px;
-	border: 3px solid #004A7F;
+	border: 3px solid #006093;
 	background-color: white;
 }
 
@@ -42,7 +42,7 @@ CROSSWORD STYLE SHEET
 }
 
 .empty_field {
-	background-color: #A8B7C1;
+	background-color: #C3B9AE;
 }
 
 .filled_field {
@@ -58,7 +58,7 @@ CROSSWORD STYLE SHEET
 	top: 0px;
 	left: 0px;
 	padding-left: 2px;
-	color: #004A7F;
+	color: #006093;
 }
 
 .letter_container {
@@ -81,15 +81,16 @@ CROSSWORD STYLE SHEET
 
 h3 {
 	margin-bottom: 2px;
-	color: #004A7F;
+	color: #006093;
 }
 
 .delete_question_button {
 	display: none;
 	float: right;
 	cursor: pointer;
-	color: #004A7F;
+	color: #006093;
 	font-weight: bold;
+	margin-right: 2px;
 }
 
 .correct_answer {

@@ -249,7 +249,7 @@ $(document).ready(function() {
 	//delete questions:
 	$(document).on('mouseover', '.incorrect_row', function() {
 		$(this).find('.delete_answer_button').css('display', 'inline');
-		$(this).css('background-color', '#A8B7C1');
+		$(this).css('background-color', '#ECAA5B');
 	});
 
 	$(document).on('mouseleave', '.incorrect_row', function() {
@@ -502,24 +502,24 @@ $(document).ready(function() {
 		$.getJSON(root_path + 'php_dynmc/dynmc_managetests.php', {option: dynmc_test.current_option, user_answer : $("input[name='user_answer']:checked").val(), question_ID : question_object.db_id}, function(feedback) {
 			if (feedback.answer_option == '0') { //incorrect answer has been hit
 				if ($("input[name='user_answer']:checked").val() == '0') { //user was right -> show next answer option
-					$('.current_option_row').find('.radio_incorrect').css('border', '1px solid #32CD32');
+					$('.current_option_row').find('.pic_incorrect').attr('src', root_path + 'images/incorrect_green.png');
 					$('.intro_text').html('Well done!');
 					getNewAnswerOption();
 				} //if
 				else {
 					$('.intro_text').html("Sorry! You have not solved this question correctly!");
-					$('.current_option_row').find('.radio_correct').css('border', '1px solid #AE0000');
+					$('.current_option_row').find('.pic_correct').attr('src', root_path + 'images/correct_red.png');
 					endQuestion(feedback.solved_options);
 				} //else
 			} //if
 			else { //correct answer has been hit
 				if ($("input[name='user_answer']:checked").val() == '1') { //user was right
-					$('.current_option_row').find('.radio_correct').css('border', '1px solid #32CD32');
+					$('.current_option_row').find('.pic_correct').attr('src', root_path + 'images/correct_green.png');
 					$('.intro_text').html("Congrats! You have solved this question correctly!");
 					user_score++;
 				} //if
 				else {
-					$('.current_option_row').find('.radio_incorrect').css('border', '1px solid #AE0000');
+					$('.current_option_row').find('.pic_incorrect').attr('src', root_path + 'images/incorrect_red.png');
 					$('.intro_text').html("Sorry! You have not solved this question correctly!");
 				} //else
 				endQuestion(feedback.solved_options);

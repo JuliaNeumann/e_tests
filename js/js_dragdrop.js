@@ -440,7 +440,7 @@ function setDragData(e) {
 function allowDrop(e, element) {
 //allow dropping on containers (by preventing default, as elements can by default not be dropped into other elements)
 	e.preventDefault();
-	element.style.border = "3px solid #A8B7C1"; //add border to indicate that drop is allowed here
+	element.style.border = "3px solid #C3B9AE"; //add border to indicate that drop is allowed here
 } //function allowDrop()
 
 function addItemToCell(e, element) {
@@ -448,7 +448,7 @@ function addItemToCell(e, element) {
 	var container_id = element.dataset.obj_id;
 	
 	e.preventDefault();
-	element.style.border = "3px solid #004A7F";
+	element.style.border = "3px solid #006093";
 	var item = document.getElementById(e.dataTransfer.getData('text'));
 	item.style.display = 'block';
 	if (action == 'new' || action == "edit") {
@@ -464,7 +464,7 @@ function addItemToCell(e, element) {
 
 function removeDragBorder(e, element) {
 //dragged element leaves element where it can be dropped
-	element.style.border = "3px solid #004A7F";
+	element.style.border = "3px solid #006093";
 } //function removeDragBorder()
 
 function resetOpacity(e) {

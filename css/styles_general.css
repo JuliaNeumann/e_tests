@@ -4,9 +4,10 @@ GENERAL STYLE SHEET
 
 Color Scheme:
 ------------------------
-- #A8B7C1: light blue (background, links etc.)
-- #004A7F: dark blue (headers, footer etc.)
-- #EAEAEA: light grey (sections etc.)
+- #ECAA5B: ocher (buttons, links etc.) 
+- #006093: blue (headers, footer etc.)
+- #D2D7D9: light grey (sections etc.)
+- #F9E9D5, #C3B9AE: light ocher (background gradient)
 - #AE0000: dark red (errros etc.)
 - #32CD32: green (correct answers etc.)
 *************************************************************************************************************************/
@@ -14,7 +15,10 @@ Color Scheme:
 body {
 	font-family: Calibri, "Trebuchet MS", sans-serif;
 	text-align: justify;
-	background-color: #A8B7C1;
+	background: -webkit-linear-gradient(#F9E9D5, #C3B9AE); /* For Safari 5.1 to 6.0 */
+  	background: -o-linear-gradient(#F9E9D5, #C3B9AE); /* For Opera 11.1 to 12.0 */
+  	background: -moz-linear-gradient(#F9E9D5, #C3B9AE); /* For Firefox 3.6 to 15 */
+  	background: linear-gradient(#F9E9D5, #C3B9AE); /* Standard syntax */
 	margin: 0;
 }
 
@@ -31,16 +35,16 @@ header, section, footer, aside, nav, main, article, figure { /*ensure HTML5 sema
 	width: 850px;
 	margin: 0 auto;
 	background-color: white;
-	padding: 17px;
+	padding: 0px 17px;
 	display: none; /*hidden initially - test for JavaScript*/
+	min-height: 100vh;
 }
 
 section {
 	clear: both;
 	margin-bottom: 17px;
 	padding: 17px;
-	background-color: #EAEAEA;
-	box-shadow: 5px 5px 5px #888888;
+	background-color: #D2D7D9;
 }
 
 .section_without_padding {
@@ -49,10 +53,9 @@ section {
 
 header, footer {
 	margin: 0px;
-	background-color: #004A7F;
+	background-color: #006093;
 	color: white;
 	padding: 5px;
-	box-shadow: 5px 5px 5px #888888;
 }
 
 footer {
@@ -70,11 +73,11 @@ table {
 }
 
 table, th {
-	border: 3px solid #004A7F;
+	border: 3px solid #006093;
 }
 
 th {
-    background-color: #004A7F;
+    background-color: #006093;
     color: white;
     text-align: left;
 }
@@ -96,7 +99,7 @@ label {
 }
 
 a {
-	color: #A8B7C1;
+	color: #ECAA5B;
 	cursor: pointer;
 }
 
@@ -107,12 +110,18 @@ button {
 .submit_button {
 	margin-right: 10px;
 	margin-top: 10px;
-	border: 2px solid #A8B7C1;
+	border: 0px;
+	background-color: #ECAA5B;
+	/*color: white;*/
+	border: 2px solid #ECAA5B;
 }
 
 .submit_button:enabled {
 	cursor: pointer;
-	border: 2px solid #004A7F;
+}
+
+.submit_button:disabled {
+	opacity: 0.5;
 }
 
 .error_msg {

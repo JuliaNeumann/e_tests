@@ -14,12 +14,12 @@ DRAG&DROP STYLE SHEET
 }
 
 .question {
-	border: 3px solid #004A7F;
+	border: 3px solid #006093;
 	margin-bottom: 5px;
 }
 
 .intro_text {
-	margin: 0px 0px 5px 0px;
+	margin: 0px 0px 17px 0px;
 	font-style: italic;
 }
 
@@ -43,7 +43,7 @@ DRAG&DROP STYLE SHEET
 	display: none;
 	text-align: right;
 	cursor: pointer;
-	color: #004A7F;
+	color: #006093;
 	font-weight: bold;
 }
 
@@ -51,11 +51,12 @@ DRAG&DROP STYLE SHEET
 	display: none;
 	float: right;
 	cursor: pointer;
+	color: #ECAA5B;
 }
 
 .label_box {
 	color: white;
-	background-color: #004A7F;
+	background-color: #006093;
 	padding: 5px;
 	font-weight: bold;
 	margin-bottom: 0px;

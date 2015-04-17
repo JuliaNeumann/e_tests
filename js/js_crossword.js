@@ -377,7 +377,7 @@ $(document).ready(function() {
 	//delete questions:
 	$(document).on('mouseover', '.question_row', function() {
 		$(this).find('.delete_question_button').css('display', 'inline');
-		$(this).css('background-color', '#A8B7C1');
+		$(this).css('background-color', '#ECAA5B');
 	});
 
 	$(document).on('mouseleave', '.question_row', function() {
@@ -404,11 +404,12 @@ $(document).ready(function() {
 	
 	//run crossword test:
 	$(document).on('mouseover', '.crossword_question', function() {
+		$('.filled_field').css('background-color', 'white');
 		var question = crossword_test.questions.objects[$(this).data("obj_id")];
 		var current_x = question.position.x;
  		var current_y = question.position.y;
  		for (var j = 0; j < question.correct_answer.length; j++) {
- 			$('#field_' + current_y + '_' + current_x).css('background-color', '#EAEAEA');
+ 			$('#field_' + current_y + '_' + current_x).css('background-color', '#F9E9D5');
  			(question.position.orientation == 0) ? current_x++ : current_y++;
  		} //for
 	}); 
@@ -434,8 +435,8 @@ $(document).ready(function() {
 	$(document).on('keyup', '.letter_input_field', function(e) {
 		var x = parseInt($(this).data('x'));
 		var y = parseInt($(this).data('y'));
-		$('#field_' + y + '_' + x).css({'color': 'black', 'border-color': 'black'});
 		if (e.which != 8) { //button other than delete button is pressed
+			$('#field_' + y + '_' + x).css({'color': 'black', 'font-weight': 'normal'});
 			var letter = $(this).val().toUpperCase();
 			$(this).val(letter);
 			if ($('#input_' + (y + 1) + '_' + x).length) {
@@ -465,7 +466,10 @@ $(document).ready(function() {
 		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {check_test_id : crossword_test.db_id, check_test : crossword_test.crossword.grid}, function(feedback) {
 			$('#instructions').html('Your score: ' + feedback.correct + ' out of ' + crossword_test.questions.counter + ' correct!');
 			for (var i = 0; i < feedback.wrong_fields.length; i++) {
-				$('#field_' + feedback.wrong_fields[i]).css({'background-color': '#FFB2B2', 'border-color': '#AE0000'});
+				$('#field_' + feedback.wrong_fields[i]).css({'background-color': '#F9E9D5', 'color': '#AE0000', 'font-weight': 'bold'});
+				if ($('#field_' + feedback.wrong_fields[i] + '> .letter_container').html() == "&nbsp;" || $('#field_' + feedback.wrong_fields[i] + '> .letter_container').html() == '') {
+					$('#field_' + feedback.wrong_fields[i] + '> .letter_container').html('?');
+				} //if
 			}//for
 		});
 	});
