@@ -15,10 +15,10 @@ Color Scheme:
 body {
 	font-family: Calibri, "Trebuchet MS", sans-serif;
 	text-align: justify;
-	background: -webkit-linear-gradient(#F9E9D5, #C3B9AE); /* For Safari 5.1 to 6.0 */
-  	background: -o-linear-gradient(#F9E9D5, #C3B9AE); /* For Opera 11.1 to 12.0 */
-  	background: -moz-linear-gradient(#F9E9D5, #C3B9AE); /* For Firefox 3.6 to 15 */
-  	background: linear-gradient(#F9E9D5, #C3B9AE); /* Standard syntax */
+	background: -webkit-linear-gradient(#C3B9AE, #003958); /* For Safari 5.1 to 6.0 */
+  	background: -o-linear-gradient(#C3B9AE, #003958); /* For Opera 11.1 to 12.0 */
+  	background: -moz-linear-gradient(#C3B9AE, #003958); /* For Firefox 3.6 to 15 */
+  	background: linear-gradient(#C3B9AE, #003958); /* Standard syntax */
 	margin: 0;
 }
 
