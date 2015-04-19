@@ -5,7 +5,7 @@ INDEX PAGE STYLE SHEET
 .test_type_button {
 	width: 170px;
 	min-height: 150px;
-	border: 3px solid #006093;
+	border: 3px solid #4EBABA;
 	margin: 17px;
 	padding: 10px 5px;
 	text-align: center;
@@ -62,5 +62,6 @@ INDEX PAGE STYLE SHEET
 }
 
 .selected_test {
-	background-color: #ECAA5B;
+	background-color: #848484;
+	color: white;
 }

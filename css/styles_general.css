@@ -4,8 +4,8 @@ GENERAL STYLE SHEET
 
 Color Scheme:
 ------------------------
-- #ECAA5B: ocher (buttons, links etc.) 
-- #006093: blue (headers, footer etc.)
+- #666666: ocher (buttons, links etc.) 
+- #4EBABA: blue (headers, footer etc.)
 - #D2D7D9: light grey (sections etc.)
 - #F9E9D5, #C3B9AE: light ocher (background gradient)
 - #AE0000: dark red (errros etc.)
@@ -15,10 +15,11 @@ Color Scheme:
 body {
 	font-family: Calibri, "Trebuchet MS", sans-serif;
 	text-align: justify;
-	background: -webkit-linear-gradient(#C3B9AE, #003958); /* For Safari 5.1 to 6.0 */
-  	background: -o-linear-gradient(#C3B9AE, #003958); /* For Opera 11.1 to 12.0 */
-  	background: -moz-linear-gradient(#C3B9AE, #003958); /* For Firefox 3.6 to 15 */
-  	background: linear-gradient(#C3B9AE, #003958); /* Standard syntax */
+	/*background: -webkit-linear-gradient(#CED6D6, #ACEDED); /* For Safari 5.1 to 6.0 */
+  	/*background: -o-linear-gradient(#CED6D6, #ACEDED); /* For Opera 11.1 to 12.0 */
+  	/*background: -moz-linear-gradient(#CED6D6, #ACEDED); /* For Firefox 3.6 to 15 */
+  	/*background: linear-gradient(#CED6D6, #ACEDED); /* Standard syntax */
+  	background-color: #666666;
 	margin: 0;
 }
 
@@ -44,7 +45,7 @@ section {
 	clear: both;
 	margin-bottom: 17px;
 	padding: 17px;
-	background-color: #D2D7D9;
+	background-color: #E5E5E5;
 }
 
 .section_without_padding {
@@ -53,7 +54,7 @@ section {
 
 header, footer {
 	margin: 0px;
-	background-color: #006093;
+	background-color: #4EBABA;
 	color: white;
 	padding: 5px;
 }
@@ -73,11 +74,11 @@ table {
 }
 
 table, th {
-	border: 3px solid #006093;
+	border: 3px solid #4EBABA;
 }
 
 th {
-    background-color: #006093;
+    background-color: #4EBABA;
     color: white;
     text-align: left;
 }
@@ -99,7 +100,7 @@ label {
 }
 
 a {
-	color: #ECAA5B;
+	color: #666666;
 	cursor: pointer;
 }
 
@@ -111,9 +112,9 @@ button {
 	margin-right: 10px;
 	margin-top: 10px;
 	border: 0px;
-	background-color: #ECAA5B;
-	/*color: white;*/
-	border: 2px solid #ECAA5B;
+	background-color: #848484;
+	color: white;
+	border: 2px solid #848484;
 }
 
 .submit_button:enabled {
