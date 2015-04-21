@@ -14,7 +14,7 @@ PAGE HEADER
 		<![endif]--><!-- enable HTML5 in old IE browsers -->
         <link rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/styles_general.css" />
         <link rel="stylesheet" href="<?php echo ROOT_PATH; ?>css/styles_<?php echo $section; ?>.css" />
-        <link rel="icon" type="image/ico" href="<?php echo ROOT_PATH; ?>images/favicon.ico" />
+        <link rel="icon" type="image/ico" href="<?php echo ROOT_PATH; ?>images/favicon_grey.ico" />
         <script src="<?php echo ROOT_PATH; ?>js/jquery-1.11.2.min.js"></script>
         <script>
         	//global variables needed in all documents:

@@ -4,6 +4,10 @@ JS GENERAL FUNCTIONS
 *************************************************************************************************************************/
 
 $(document).ready(function() {
+	//set theme color:
+	$('header, footer, th').addClass('bg-theme-color');
+	$('table, th').addClass('border-theme-color');
+
 	//upadte test title:
 	$('#test_name').keyup(function() {
 		var test_name = $(this).val();

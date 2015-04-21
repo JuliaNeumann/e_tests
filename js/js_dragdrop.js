@@ -130,7 +130,7 @@ $(document).ready(function() {
 	//adds item to display and to test object
 	//params: my_item_object = object (must have at least one property: item_text)
 		var current_id = dragdrop_test.items.counter;
-		$('#items_container').append('<div class="item_box" data-obj_id="' + current_id + '" id="item_box_' + current_id + '"> \
+		$('#items_container').append('<div class="item_box bg-color-1 font-color-4" data-obj_id="' + current_id + '" id="item_box_' + current_id + '"> \
 										<div class="test_item" data-obj_id="' + current_id + '" id="item_' + current_id + '">' + my_item_object.item_text + '</div> \
 									</div>');
 		dragdrop_test.items.objects[current_id] = new Item(current_id, my_item_object.item_text);
@@ -160,11 +160,11 @@ $(document).ready(function() {
 	//params: my_container_object = object (must have at least one property: container_text)
 		var current_id = dragdrop_test.containers.counter;
 		$('#container_row').append('<div class="css_td container_cell" id="container_cell_' + current_id + '"> \
-										<div class="container" data-obj_id="' + current_id + '" id="container_'  + current_id + '"> \
-											<div class="label_box" data-obj_id="' + current_id + '" id="label_box_' + current_id + '"> \
+										<div class="container border-theme-color" data-obj_id="' + current_id + '" id="container_'  + current_id + '"> \
+											<div class="label_box bg-theme-color font-color-4" data-obj_id="' + current_id + '" id="label_box_' + current_id + '"> \
 												<div class="container_label" data-obj_id="' + current_id + '" id="label_'  + current_id + '">' + my_container_object.container_text + '</div> \
 											</div> \
-											<div class="container_box" data-obj_id="' + current_id + '" id="container_box_' + current_id + '"></div> \
+											<div class="container_box bg-color-4" data-obj_id="' + current_id + '" id="container_box_' + current_id + '"></div> \
 										</div> \
 									</div>');
 		dragdrop_test.containers.objects[current_id] = new Container(current_id, my_container_object.container_text);
@@ -226,7 +226,7 @@ $(document).ready(function() {
 		switch (my_type) {
 			case 'container':
 				$('#label_' + my_id).addClass('editable');
-				$('#label_box_' + my_id).append('&nbsp;<div class="delete_button">X</div>');
+				$('#label_box_' + my_id).append('&nbsp;<div class="delete_button font-color-1">X</div>');
 				break;
 			case 'item':
 				$('#item_' + my_id).addClass('editable');
@@ -401,7 +401,7 @@ $(document).ready(function() {
 		else {
 			//translate current IDs to database IDs
 			$('#items_container').html('<em>Checking ...</em>');
-			$('.item_box').removeClass('incorrect_item');
+			$('.item_box').removeClass('incorrect_item bg-color-5');
 			var temp_solution = {};
 			for (i = 0; i < dragdrop_test.items.counter; i++) {
 				var item_obj = dragdrop_test.items.objects[i];
@@ -413,7 +413,7 @@ $(document).ready(function() {
 				for (var i = 0; i < dragdrop_test.items.counter; i++) {
 					var item_obj = dragdrop_test.items.objects[i];
 					if (feedback[item_obj.db_id] == 0) { //mark incorrect items
-						$('#item_box_' + i).addClass('incorrect_item');
+						$('#item_box_' + i).addClass('incorrect_item bg-color-5');
 					} //if
 				} //for
 			});
@@ -440,7 +440,9 @@ function setDragData(e) {
 function allowDrop(e, element) {
 //allow dropping on containers (by preventing default, as elements can by default not be dropped into other elements)
 	e.preventDefault();
-	element.style.border = "3px solid #C3B9AE"; //add border to indicate that drop is allowed here
+	var new_class = "border-color-1";
+	var old_class = "border-theme-color";
+	element.className = element.className.replace(old_class, new_class);
 } //function allowDrop()
 
 function addItemToCell(e, element) {
@@ -448,7 +450,10 @@ function addItemToCell(e, element) {
 	var container_id = element.dataset.obj_id;
 	
 	e.preventDefault();
-	element.style.border = "3px solid #006093";
+	var new_class = "border-theme-color";
+	var old_class = "border-color-1";
+	element.className = element.className.replace(old_class, new_class);
+
 	var item = document.getElementById(e.dataTransfer.getData('text'));
 	item.style.display = 'block';
 	if (action == 'new' || action == "edit") {
@@ -464,7 +469,9 @@ function addItemToCell(e, element) {
 
 function removeDragBorder(e, element) {
 //dragged element leaves element where it can be dropped
-	element.style.border = "3px solid #006093";
+	var new_class = "border-theme-color";
+	var old_class = "border-color-1";
+	element.className = element.className.replace(old_class, new_class);
 } //function removeDragBorder()
 
 function resetOpacity(e) {

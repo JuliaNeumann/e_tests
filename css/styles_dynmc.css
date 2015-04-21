@@ -1,6 +1,6 @@
 /*************************************************************************************************************************
-DRAG&DROP STYLE SHEET
-- contains styles used for MC tests
+DYNAMIC MULTIPLE CHOICE STYLE SHEET
+- contains styles used for dynamic MC tests
 *************************************************************************************************************************/
 
 .question_label, .radio_correct, .radio_incorrect {
@@ -8,13 +8,13 @@ DRAG&DROP STYLE SHEET
 }
 
 .question_box {
-	background-color: white;
 	margin-top: 0px;
 	padding: 5px;
 }
 
 .question {
-	border: 3px solid #006093;
+	border-width: 3px;
+	border-style: solid;
 	margin-bottom: 5px;
 }
 
@@ -43,7 +43,6 @@ DRAG&DROP STYLE SHEET
 	display: none;
 	text-align: right;
 	cursor: pointer;
-	color: #006093;
 	font-weight: bold;
 }
 
@@ -51,12 +50,9 @@ DRAG&DROP STYLE SHEET
 	display: none;
 	float: right;
 	cursor: pointer;
-	color: #ECAA5B;
 }
 
 .label_box {
-	color: white;
-	background-color: #006093;
 	padding: 5px;
 	font-weight: bold;
 	margin-bottom: 0px;

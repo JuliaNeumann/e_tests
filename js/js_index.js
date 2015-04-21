@@ -76,8 +76,8 @@ $(document).ready(function() {
 	
 	//selection of a test:
 	$(document).on('click', '.test_row', function() {
-		$('.test_row').removeClass('selected_test'); //only one test should be selected at a time -> remove previous selections
-		$(this).addClass('selected_test');
+		$('.test_row').removeClass('selected_test').removeClass('bg-color-2').removeClass('font-color-4'); //only one test should be selected at a time -> remove previous selections
+		$(this).addClass('selected_test').addClass('bg-color-2').addClass('font-color-4');
 		$('#selected_test_id').val($(this).data('test_id')); //add values to form, so they can be submitted
 		$('#selected_type').val($(this).data('type_string'));
 		$('.submit_button').attr('disabled', false); //enable buttons

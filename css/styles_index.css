@@ -5,11 +5,12 @@ INDEX PAGE STYLE SHEET
 .test_type_button {
 	width: 170px;
 	min-height: 150px;
-	border: 3px solid #4EBABA;
+	border-width: 3px;
+	border-style: solid;
 	margin: 17px;
 	padding: 10px 5px;
 	text-align: center;
-	background-color: white;
+	font-size: 9pt;
 }
 
 #type_button_container {
@@ -59,9 +60,4 @@ INDEX PAGE STYLE SHEET
 
 #sort_pic {
 	display: inline;
-}
-
-.selected_test {
-	background-color: #848484;
-	color: white;
 }

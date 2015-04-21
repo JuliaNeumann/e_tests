@@ -20,10 +20,8 @@ DRAG&DROP STYLE SHEET
 
 .item_box {
 	margin: 3px;
-	border: 1px solid black;
 	padding: 3px;
 	display: inline;
-	background-color: #F9E9D5;
 	font-size: 0.8em;
 }
 
@@ -40,21 +38,19 @@ DRAG&DROP STYLE SHEET
 }
 
 .label_box {
-	color: white;
-	background-color: #006093;
 	padding: 5px;
 	font-weight: bold;
 	margin-bottom: 0px;
 }
 
 .container_box {
-	background-color: white;
 	margin-top: 0px;
 	padding: 2px 2px 30px 2px;
 }
 
 .container {
-	border: 3px solid #006093;
+	border-width: 3px;
+	border-style: solid;
 }
 
 [draggable] {
@@ -71,14 +67,4 @@ DRAG&DROP STYLE SHEET
 	display: none;
 	float: right;
 	cursor: pointer;
-}
-
-.label_box .delete_button {
-	color: #ECAA5B;
-}
-
-.incorrect_item {
-	border-color: #AE0000;
-	color: #AE0000;
-	font-weight: bold; 
 }

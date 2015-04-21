@@ -140,9 +140,9 @@ $(document).ready(function() {
 	//adds a solved version of a question to the display
 	//params: my_question_id = INT (ID under which question object is found in dynmc_test)
 		var question_object = dynmc_test.questions.objects[my_question_id];
-		$('#questions').append('<div class="question" id="question_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
-									<div class="label_box" id="label_box_' + my_question_id + '"><div class="question_label" data-obj_id="' + my_question_id + '" id="label_' + my_question_id + '">' + question_object.question_text + '</div></div> \
-									<div class="question_box" id="box_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
+		$('#questions').append('<div class="question border-theme-color" id="question_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
+									<div class="label_box  bg-theme-color font-color-4" id="label_box_' + my_question_id + '"><div class="question_label" data-obj_id="' + my_question_id + '" id="label_' + my_question_id + '">' + question_object.question_text + '</div></div> \
+									<div class="question_box bg-color-4" id="box_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
 										<div class="css_table question_table" id="question_table_' + my_question_id + '"> \
 											<div class="css_tr"> \
 												<div class="css_td small_cell right_aligned"> \
@@ -160,7 +160,7 @@ $(document).ready(function() {
 			addIncorrectAnswerToDisplay(my_question_id, question_object.incorrect_answers[i], i);
 		} //for
 		if (action == 'new' || action == 'edit') { //make editing possible, if necessary
-			$('#label_box_' + my_question_id).append('<div class="delete_question_button" data-obj_id="' + my_question_id + '">X</div>');
+			$('#label_box_' + my_question_id).append('<div class="delete_question_button font-color-1" data-obj_id="' + my_question_id + '">X</div>');
 			$('#box_' + my_question_id).append('<input type="submit" class="submit_button add_incorrect" id="add_incorrect_' + my_question_id + '" data-obj_id="' + my_question_id + '" value="Add Incorrect Answer">').hide();
 			$('#label_' + my_question_id + ', #correct_' + my_question_id + ', .incorrect_answer_' + my_question_id).addClass('editable');
 			$('#label_' + my_question_id).before('<img class="show_pic" data-obj_id="' + my_question_id + '" src="' + root_path + '/images/arrow_right.png">&nbsp;&nbsp;');
@@ -172,9 +172,9 @@ $(document).ready(function() {
 	//params: my_question_id = INT (ID under which question object is found in dynmc_test)
 		var question_object = dynmc_test.questions.objects[my_question_id];
 		question_object.randomizeAnswers();
-		$('#questions').append('<div class="question" id="question_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
-									<div class="label_box" id="label_box_' + my_question_id + '"><div class="question_label" data-obj_id="' + my_question_id + '" id="label_' + my_question_id + '">' + question_object.question_text + '</div></div> \
-									<div class="question_box" id="box_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
+		$('#questions').append('<div class="question border-theme-color" id="question_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
+									<div class="label_box bg-theme-color font-color-4" id="label_box_' + my_question_id + '"><div class="question_label" data-obj_id="' + my_question_id + '" id="label_' + my_question_id + '">' + question_object.question_text + '</div></div> \
+									<div class="question_box bg-color-4" id="box_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
 										<ul class="answers_unsolved" id="answers_unsolved_' + my_question_id + '"></ul> \
 									</div> \
 								</div>');
@@ -197,7 +197,7 @@ $(document).ready(function() {
 										<div class="incorrect_answer incorrect_answer_' + my_question_id + '" id="incorrect_' + my_question_id + '_' + my_answer_index + '" data-obj_id="' + my_question_id + '" data-answer_id="' + my_answer_index + '">' + my_answer + '</div> \
 									</div>';
 		if (action == 'new' || action == 'edit') { //incorrect answer options can be deleted
-			incorrect_answer += '<div class="css_td small_cell"><div class="delete_answer_button" data-obj_id="' + my_question_id + '" data-answer_id="' + my_answer_index + '">X</div>';
+			incorrect_answer += '<div class="css_td small_cell"><div class="delete_answer_button font-color-4" data-obj_id="' + my_question_id + '" data-answer_id="' + my_answer_index + '">X</div>';
 		} //if
 		else {
 			incorrect_answer += '<div class="css_td small_cell"></div>';
@@ -249,12 +249,12 @@ $(document).ready(function() {
 	//delete questions:
 	$(document).on('mouseover', '.incorrect_row', function() {
 		$(this).find('.delete_answer_button').css('display', 'inline');
-		$(this).css('background-color', '#ECAA5B');
+		$(this).removeClass('bg-color-4').addClass('bg-color-2').addClass('font-color-4');
 	});
 
 	$(document).on('mouseleave', '.incorrect_row', function() {
 		$(this).find('.delete_answer_button').css('display', 'none');
-		$(this).css('background-color', 'white');
+		$(this).removeClass('font-color-4').removeClass('bg-color-2').addClass('bg-color-4');
 	});
 
 	$(document).on('click', '.delete_question_button', function() {
@@ -428,11 +428,11 @@ $(document).ready(function() {
 		$('#questions').html('');
 		var question_object = dynmc_test.questions.objects[dynmc_test.current_question];
 		$('.intro_text').html("Decide whether this answer option is correct or incorrect.");
-		$('#questions').append('<div class="question" id="current_question"> \
-									<div class="label_box"> \
+		$('#questions').append('<div class="question border-theme-color" id="current_question"> \
+									<div class="label_box bg-theme-color font-color-4"> \
 										<div class="question_label">' + question_object.question_text + '</div> \
 									</div> \
-									<div class="question_box"> \
+									<div class="question_box bg-color-4"> \
 										<div class="css_table question_table" id="current_question_table"> \
 										</div> \
 									</div> \
