@@ -34,20 +34,40 @@ INDEX PAGE STYLE SHEET
 	margin-right: 10px;
 }
 
+#test_row_container {
+	max-height: 300px;
+	overflow-y: scroll;
+	overflow-x: hidden; /*allow scrolling inside table, when a lot of tests in table - this is the reason why widths below must be fixed*/
+	display: block;
+}
+
 #select_test_tablehead {
+	display: block;
 	cursor: pointer;
 }
 
-#test_name_column {
-	width: 45%;
+.test_name_column {
+	width: 244px;
 }
 
-#test_type_column {
-	width: 32%;
+.test_type_column {
+	width: 172px;
 }
 
-#test_creation_column {
-	width: 23%;
+.test_creation_column {
+	width: 113px;
+}
+
+#test_name_header {
+	width: 262px;
+}
+
+#test_type_header {
+	width: 186px;
+}
+
+#test_creation_header {
+	width: 133px;
 }
 
 .test_row {

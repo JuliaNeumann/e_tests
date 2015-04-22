@@ -85,9 +85,6 @@ START PAGE OF APPLICATION
 	</header>
 	<section>
 		<table id="select_test_table" size="10">
-			<col id="test_name_column">
-			<col id="test_type_column">
-			<col id="test_creation_column">
 			<thead id="select_test_tablehead"><tr>
 				<th class="header_cell sorted_up" id="test_name_header">Test Name<div id="sort_pic">&nbsp;&nbsp;<img id="arrow_up" src="<?php echo ROOT_PATH; ?>images/arrow_up.png"></div></th>
 				<th class="header_cell" id="test_type_header">Type</th>
@@ -101,9 +98,9 @@ START PAGE OF APPLICATION
 				foreach ($tests as $test) {
 ?>
 					<tr class="test_row" data-test_id="<?php echo $test['test_ID']; ?>" data-type_string="<?php echo $test['type_string']; ?>">
-						<td class="test_name"><?php echo $test['test_name']; ?></td>
-						<td class="test_type"><?php echo $test['type_label']; ?></td>
-						<td class="test_creation_date"><?php echo explode(" ", $test['test_creation_date'])[0]; ?></td>
+						<td class="test_name_column test_name"><?php echo $test['test_name']; ?></td>
+						<td class="test_type_column test_type"><?php echo $test['type_label']; ?></td>
+						<td class="test_creation_column test_creation_date"><?php echo explode(" ", $test['test_creation_date'])[0]; ?></td>
 					</tr>
 <?php
 				} //foreach

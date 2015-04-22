@@ -7,14 +7,14 @@ GENERAL STYLE SHEET
 
 /*Color Scheme - use these classes for setting any colors dynamically*/
 
-.bg-theme-color { /*color of headers etc. -> can be set by user, standard: orange*/
-	background-color: #D4711C; 
+.bg-theme-color { /*color of headers etc. -> can be set by user, standard: blue*/
+	background-color: #4E94B9; 
 }
 .border-theme-color {
-	border-color: #D4711C; 
+	border-color: #4E94B9; 
 }
 .font-theme-color {
-	color: #D4711C; 
+	color: #4E94B9; 
 }
 
 .bg-color-1 { /*color of body background etc., dark grey*/
