@@ -40,7 +40,7 @@ START PAGE OF APPLICATION
 	</header>
 	<section>
 		This application was created as a Master thesis project by Julia Neumann in January - May 2015. All content was developed by the author (including all images used). The documentation of the application is available <a href="<?php echo ROOT_PATH; ?>documentation.pdf" target="_blank">here</a>. The only third-party code used is the <a href="http://jquery.com/" target="_blank">jQuery library</a> (version 1.11.2).<br>
-		<h3 class="font-theme-color">Author:</h3>
+		<h3 class="font-theme-color">About the Author</h3>
 		<div class="css_table" id="personal_info">
 			<div class="css_tr">
 				<div class="css_td">
