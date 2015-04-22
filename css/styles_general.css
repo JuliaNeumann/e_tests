@@ -228,3 +228,7 @@ div .css_td {
 	display: table-cell;
 	padding: 3px;
 }
+
+button:focus, input[type="submit"]:focus { /*remove the default color border that browsers add when buttons are clicked*/
+	outline: 0;
+}
