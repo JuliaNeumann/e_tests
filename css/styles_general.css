@@ -141,6 +141,7 @@ footer a {
 
 #color_chooser {
 	float: right;
+	width: 44px;
 }
 
 .color_button {
@@ -251,4 +252,8 @@ div .css_td {
 
 button:focus, input[type="submit"]:focus { /*remove the default color border that browsers add when buttons are clicked*/
 	outline: 0;
+}
+
+#contact_link {
+	margin-left: 44px; /*width of #color_chooser*/
 }
