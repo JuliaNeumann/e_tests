@@ -56,6 +56,15 @@ $(document).ready(function() {
 		} //if
 	});
 
+	//warn when editing/creating a test is interrupted by click on home link:
+	$('#home_link').click(function(e) {
+		if (action == "edit" || action =="new") {
+			if(!confirm("When leaving this page, your changes will be lost and the test will not be saved. Leave anyway?")) {
+				e.preventDefault();
+			} //if
+		} //if
+	});
+
 });
 
 
