@@ -72,6 +72,21 @@ GENERAL STYLE SHEET
 
 /*************************************************************************************************************************/
 
+html, body {
+    height: 100%;
+}
+
+#wrapper { /*makes footer stay at bottom of page*/
+    min-height: 100vh;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -70px; /*negative value of the footer's & .push height */
+}
+
+.push { /*makes footer stay at bottom of page*/
+    height: 70px;
+}
+
 body {
 	font-family: Calibri, "Trebuchet MS", sans-serif;
 	text-align: justify;
@@ -117,6 +132,7 @@ header, footer {
 footer {
 	text-align: center;
 	background-color: #848484;
+	border-bottom: 17px solid white;
 }
 
 footer a {
@@ -149,6 +165,7 @@ footer a {
 
 #title_header {
 	margin-bottom: 17px;
+	border-top: 17px solid white;
 	font-size: 2em;
 }
 
@@ -158,7 +175,8 @@ table {
 }
 
 table, th {
-	border: 3px solid;
+	border-width: 3px;
+	border-style: solid;
 }
 
 th {
@@ -168,6 +186,8 @@ th {
 
 th, td {
 	padding: 5px;
+	vertical-align: top;
+	text-align: left;
 }
 
 .right_aligned {

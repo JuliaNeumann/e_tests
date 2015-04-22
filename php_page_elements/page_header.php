@@ -45,7 +45,8 @@ PAGE HEADER
 			</div>
 		</noscript>
 		<div id="content">
-			<header id="title_header">
-				<img src="<?php echo ROOT_PATH; ?>images/<?php echo $section; ?>_icon_white.png" id="page_icon" alt="Icon" width="35px" height="35px">
-				<?php echo $header_text; ?>
-			</header>
+			<div id="wrapper">
+				<header id="title_header">
+					<img src="<?php echo ROOT_PATH; ?>images/<?php echo $section; ?>_icon_white.png" id="page_icon" alt="Icon" width="35px" height="35px">
+					<?php echo $header_text; ?>
+				</header>
