@@ -173,13 +173,20 @@ $(document).ready(function() {
 		var question_object = dynmc_test.questions.objects[my_question_id];
 		question_object.randomizeAnswers();
 		$('#questions').append('<div class="question border-theme-color" id="question_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
-									<div class="label_box bg-theme-color font-color-4" id="label_box_' + my_question_id + '"><div class="question_label" data-obj_id="' + my_question_id + '" id="label_' + my_question_id + '">' + question_object.question_text + '</div></div> \
+									<div class="label_box  bg-theme-color font-color-4" id="label_box_' + my_question_id + '"><div class="question_label" data-obj_id="' + my_question_id + '" id="label_' + my_question_id + '">' + question_object.question_text + '</div></div> \
 									<div class="question_box bg-color-4" id="box_' + my_question_id + '" data-obj_id="' + my_question_id + '"> \
-										<ul class="answers_unsolved" id="answers_unsolved_' + my_question_id + '"></ul> \
+										<div class="css_table question_table" id="question_table_' + my_question_id + '"></div> \
 									</div> \
 								</div>');
 		for (var i = 0; i < question_object.answers.length; i++) {
-			$('#answers_unsolved_' + my_question_id).append('<li class="answer_option">' + question_object.answers[i] + '</li>');
+			$('#question_table_' + my_question_id).append('<div class="css_tr"> \
+																<div class="css_td small_cell right_aligned"> \
+																	<img src="' + root_path + 'images/circle.png" width="15px"> \
+																</div> \
+																<div class="answer_option"> \
+																	' + question_object.answers[i] + ' \
+																</div> \
+															</div>');
 		} //for
 	} //function addUnsolvedQuestion
 

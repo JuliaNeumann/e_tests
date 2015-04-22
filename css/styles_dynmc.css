@@ -9,7 +9,7 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 
 .question_box {
 	margin-top: 0px;
-	padding: 5px;
+	padding: 5px 0px;
 }
 
 .question {
@@ -23,7 +23,7 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 }
 
 .question_table {
-	width: 795px;
+	width: 100%;
 }
 
 .small_cell {
@@ -57,21 +57,14 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 	width: 700px;
 }
 
-ul {
-    list-style-type: circle;
-    margin: 0px;
-    padding-left: 20px;
-}
-
-li {
-	margin-top: 4px;
-	margin-bottom: 4px; 
-}
-
 .show_pic, .hide_pic {
 	cursor: pointer;
 }
 
 #select_question_from_db {
 	width: 100%;
+}
+
+.add_incorrect {
+	margin-left: 5px;
 }
