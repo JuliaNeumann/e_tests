@@ -401,7 +401,7 @@ $(document).ready(function() {
 		else {
 			//translate current IDs to database IDs
 			$('#items_container').html('<em>Checking ...</em>');
-			$('.item_box').removeClass('incorrect_item border-color-5').addClass('border-theme-color');
+			$('.item_box').removeClass('incorrect_item border-color-5 font-color-5').addClass('border-theme-color').css('font-weight', 'normal');
 			var temp_solution = {};
 			for (i = 0; i < dragdrop_test.items.counter; i++) {
 				var item_obj = dragdrop_test.items.objects[i];
@@ -413,7 +413,7 @@ $(document).ready(function() {
 				for (var i = 0; i < dragdrop_test.items.counter; i++) {
 					var item_obj = dragdrop_test.items.objects[i];
 					if (feedback[item_obj.db_id] == 0) { //mark incorrect items
-						$('#item_box_' + i).removeClass('border-theme-color').addClass('incorrect_item border-color-5');
+						$('#item_box_' + i).removeClass('border-theme-color').addClass('incorrect_item border-color-5 font-color-5').css('font-weight', 'bold');
 					} //if
 				} //for
 			});
