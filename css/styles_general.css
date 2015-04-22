@@ -141,13 +141,13 @@ footer a {
 
 #color_chooser {
 	float: right;
-	width: 44px;
+	width: 52spx;
 }
 
 .color_button {
 	width: 10px;
 	height: 10px;
-	right: 3px;
+	margin-right: 3px;
 	border: none;
 	cursor: pointer;
 }
@@ -162,6 +162,10 @@ footer a {
 
 #button_blue {
 	background-color: #4E94B9;
+}
+
+#button_lila {
+	background-color: #9E71A8;
 }
 
 #title_header {
@@ -256,7 +260,7 @@ button:focus, input[type="submit"]:focus { /*remove the default color border tha
 }
 
 #contact_link {
-	margin-left: 44px; /*width of #color_chooser*/
+	margin-left: 52px; /*width of #color_chooser*/
 }
 
 h3 {

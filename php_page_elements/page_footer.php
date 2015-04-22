@@ -14,6 +14,7 @@ PAGE FOOTER
 					<button class="color_button" id="button_orange"></button>
 					<button class="color_button" id="button_turquoise"></button>
 					<button class="color_button" id="button_blue"></button>
+					<button class="color_button" id="button_lila"></button>
 				</div>
 			</footer>
 		</div> <!-- content div -->
