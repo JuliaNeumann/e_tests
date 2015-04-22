@@ -73,10 +73,6 @@ CROSSWORD STYLE SHEET
 	border-style: solid;
 }
 
-h3 {
-	margin-bottom: 2px;
-}
-
 .delete_question_button {
 	display: none;
 	float: right;

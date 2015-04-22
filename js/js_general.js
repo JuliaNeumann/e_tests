@@ -66,7 +66,7 @@ function checkForm(my_form_id, my_fields) {
 	$(my_form_id).find('.error_msg').remove(); //remove existing error messages
 
 	//check all obligatory text input fields for value:
-	$(my_form_id).find(':text').each(function() {
+	$(my_form_id).find(':text, textarea').each(function() {
 		var field_id = $(this).attr('id');
 		$(this).val($.trim($(this).val())); //prepare for test
 		if ($(this).val() == '' && !($(this).hasClass('optional'))) { //obligatory text fields should not be empty

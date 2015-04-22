@@ -62,7 +62,7 @@ START PAGE OF APPLICATION
 	} //foreach
 ?>
 		<button type="submit" name="test_type_button" class="test_type_button border-theme-color bg-color-4" value="new_idea" id="new_idea_button">
-			<img src="<?php echo ROOT_PATH; ?>images/newidea_icon.png" alt="New Idea" width="80px" height="80px"><br>
+			<img src="<?php echo ROOT_PATH; ?>images/contact_icon.png" alt="New Idea" width="80px" height="80px"><br>
 			<div class="test_type_label">Idea for new format?</div>
 		</button>
 		</div>
