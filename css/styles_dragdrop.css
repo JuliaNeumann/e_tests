@@ -23,6 +23,8 @@ DRAG&DROP STYLE SHEET
 	padding: 3px;
 	display: inline;
 	font-size: 0.8em;
+	border-width: 3px;
+	border-style: solid;
 }
 
 #items_container {

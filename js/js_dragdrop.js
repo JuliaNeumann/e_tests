@@ -130,7 +130,7 @@ $(document).ready(function() {
 	//adds item to display and to test object
 	//params: my_item_object = object (must have at least one property: item_text)
 		var current_id = dragdrop_test.items.counter;
-		$('#items_container').append('<div class="item_box bg-color-1 font-color-4" data-obj_id="' + current_id + '" id="item_box_' + current_id + '"> \
+		$('#items_container').append('<div class="item_box bg-color-2 font-color-4 border-theme-color" data-obj_id="' + current_id + '" id="item_box_' + current_id + '"> \
 										<div class="test_item" data-obj_id="' + current_id + '" id="item_' + current_id + '">' + my_item_object.item_text + '</div> \
 									</div>');
 		dragdrop_test.items.objects[current_id] = new Item(current_id, my_item_object.item_text);
@@ -401,7 +401,7 @@ $(document).ready(function() {
 		else {
 			//translate current IDs to database IDs
 			$('#items_container').html('<em>Checking ...</em>');
-			$('.item_box').removeClass('incorrect_item bg-color-5');
+			$('.item_box').removeClass('incorrect_item border-color-5').addClass('border-theme-color');
 			var temp_solution = {};
 			for (i = 0; i < dragdrop_test.items.counter; i++) {
 				var item_obj = dragdrop_test.items.objects[i];
@@ -413,7 +413,7 @@ $(document).ready(function() {
 				for (var i = 0; i < dragdrop_test.items.counter; i++) {
 					var item_obj = dragdrop_test.items.objects[i];
 					if (feedback[item_obj.db_id] == 0) { //mark incorrect items
-						$('#item_box_' + i).addClass('incorrect_item bg-color-5');
+						$('#item_box_' + i).removeClass('border-theme-color').addClass('incorrect_item border-color-5');
 					} //if
 				} //for
 			});

@@ -5,6 +5,11 @@ JS FOR CROSSWORD TESTS
 
 $(document).ready(function() {
 	/*************************************************************************************************************************/
+	//set colors:
+	$('.table_header').addClass('bg-theme-color font-color-4');
+	$('#questions_table').addClass('border-theme-color bg-color-4');
+
+	/*************************************************************************************************************************/
 	crossword_test = new E_Test('crossword'); //test object to hold the test data produced / edited here
 
 	//extend the object with the necessary properties & methods for drag&drop tests:
@@ -149,7 +154,7 @@ $(document).ready(function() {
 		var question_object = crossword_test.questions.objects[my_question_id];
 		$('#new_question_row').before('<div class="css_tr question_row" id="question_row_' + my_question_id + '"> \
 											<div class="css_td"><div class="editable question_text" data-obj_id="' + my_question_id + '">' + question_object.question_text + '</div></div> \
-											<div class="css_td"><div class="editable correct_answer" data-obj_id="' + my_question_id + '">' + question_object.correct_answer + '</div><div class="delete_question_button" data-obj_id="' + my_question_id + '">X</div></div> \
+											<div class="css_td"><div class="editable correct_answer" data-obj_id="' + my_question_id + '">' + question_object.correct_answer + '</div><div class="delete_question_button font-color-4" data-obj_id="' + my_question_id + '">X</div></div> \
 										</div>');
 		crossword_test.questions.displayed++;
 	} //function addQuestionToDisplay
@@ -210,15 +215,15 @@ $(document).ready(function() {
 	function displayCrossword(my_crossword_obj) {
 	//displays a solved version of the given crossword
 	//params: my_crossword_obj = object delivered by crossword_generator.js
-		var grid_string = '<div id="crossword_grid">';
+		var grid_string = '<div id="crossword_grid" class="border-theme-color">';
 		for (var i = 0; i <= my_crossword_obj.y_stop; i++) {
 			grid_string += '<div class="cw_row">';
 			for (var j = 0; j <= my_crossword_obj.x_stop; j++) {
 				if (my_crossword_obj.grid[i][j] == '//') {
-					grid_string += '<div class="empty_field">&nbsp;</div>';
+					grid_string += '<div class="empty_field border-theme-color bg-color-2">&nbsp;</div>';
 				} //if
 				else {
-					grid_string += '<div class="filled_field"  id="field_' + i + '_' + j + '"><div class="number_container">';
+					grid_string += '<div class="filled_field border-theme-color bg-color-4"  id="field_' + i + '_' + j + '"><div class="number_container font-theme-color">';
 					if (typeof my_crossword_obj.numbers[i + '_' + j] !== "undefined") { //this is a start field with a number
 						grid_string += my_crossword_obj.numbers[i + '_' + j];
 					}
@@ -241,11 +246,11 @@ $(document).ready(function() {
 		var down = false;
 		for (var i = 0; i < my_crossword_obj.placed_words.length; i++) {
 			if (my_crossword_obj.placed_words[i].position.orientation == 0 && !across) { //add the headline for vertical words
-				grid_string += '<h3>ACROSS</h3>';
+				grid_string += '<h3 class="font-theme-color">ACROSS</h3>';
 				across = true;
 			} //if
 			else if (my_crossword_obj.placed_words[i].position.orientation == 1 && !down) { //add the headline for horizontal words
-				grid_string += '<h3>DOWN</h3>';
+				grid_string += '<h3 class="font-theme-color">DOWN</h3>';
 				down = true;
 			} //else if
 			grid_string += '<span';
@@ -377,12 +382,12 @@ $(document).ready(function() {
 	//delete questions:
 	$(document).on('mouseover', '.question_row', function() {
 		$(this).find('.delete_question_button').css('display', 'inline');
-		$(this).css('background-color', '#ECAA5B');
+		$(this).removeClass('bg-color-4').addClass('bg-color-2 font-color-4');
 	});
 
 	$(document).on('mouseleave', '.question_row', function() {
 		$(this).find('.delete_question_button').css('display', 'none');
-		$(this).css('background-color', 'white');
+		$(this).removeClass('bg-color-2 font-color-4').addClass('bg-color-4');
 	});
 
 	$(document).on('click', '.delete_question_button', function() {
@@ -403,23 +408,37 @@ $(document).ready(function() {
 	/*************************************************************************************************************************/
 	
 	//run crossword test:
-	$(document).on('mouseover', '.crossword_question', function() {
-		$('.filled_field').css('background-color', 'white');
-		var question = crossword_test.questions.objects[$(this).data("obj_id")];
+	var current_input = false; //indicates whether an answer input is currently taking place
+
+	function focusAnswerFields(my_question_id) {
+	//puts focus on an answer position in the crossword field by decreasing opacity of all other fields
+	//params: my_question_id = INT (current ID of question in focus)
+		$('.filled_field, .empty_field').css('opacity', '0.3');
+		var question = crossword_test.questions.objects[my_question_id];
 		var current_x = question.position.x;
  		var current_y = question.position.y;
  		for (var j = 0; j < question.correct_answer.length; j++) {
- 			$('#field_' + current_y + '_' + current_x).css('background-color', '#F9E9D5');
+ 			$('#field_' + current_y + '_' + current_x).css('opacity', '1');
  			(question.position.orientation == 0) ? current_x++ : current_y++;
  		} //for
+	} //focusAnswerFields
+
+	$(document).on('mouseover', '.crossword_question', function() {
+		if (!current_input) {
+			focusAnswerFields($(this).data("obj_id"));
+		} //if
 	}); 
 
 	$(document).on('mouseleave', '.crossword_question', function() {
-		$('.filled_field').css('background-color', 'white');
+		if (!current_input) {
+			$('.filled_field, .empty_field').css('opacity', '1');
+		} //if
 	}); 
 
 	$(document).on('click', '.crossword_question', function() {
+		current_input = true;
 		clearInputFields();
+		focusAnswerFields($(this).data("obj_id"));
 		var question = crossword_test.questions.objects[$(this).data("obj_id")];
 		crossword_test.current_word = question;
 		var current_x = question.position.x;
@@ -436,7 +455,7 @@ $(document).ready(function() {
 		var x = parseInt($(this).data('x'));
 		var y = parseInt($(this).data('y'));
 		if (e.which != 8) { //button other than delete button is pressed
-			$('#field_' + y + '_' + x).css({'color': 'black', 'font-weight': 'normal'});
+			$('#field_' + y + '_' + x).removeClass('font-color-5 bg-color-3').addClass('bg-color-4').css({'font-weight': 'normal'});
 			var letter = $(this).val().toUpperCase();
 			$(this).val(letter);
 			if ($('#input_' + (y + 1) + '_' + x).length) {
@@ -446,7 +465,9 @@ $(document).ready(function() {
 				$('#input_' + y + '_' + (x + 1)).select();
 			} //else if
 			else { //last letter of the word
+				current_input = false;
 				clearInputFields();
+				$('.filled_field, .empty_field').css('opacity', '1');
 			} //else
 		} //if
 	});
@@ -466,7 +487,7 @@ $(document).ready(function() {
 		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {check_test_id : crossword_test.db_id, check_test : crossword_test.crossword.grid}, function(feedback) {
 			$('#instructions').html('Your score: ' + feedback.correct + ' out of ' + crossword_test.questions.counter + ' correct!');
 			for (var i = 0; i < feedback.wrong_fields.length; i++) {
-				$('#field_' + feedback.wrong_fields[i]).css({'background-color': '#F9E9D5', 'color': '#AE0000', 'font-weight': 'bold'});
+				$('#field_' + feedback.wrong_fields[i]).removeClass('bg-color-4').addClass('font-color-5 bg-color-3').css({'font-weight': 'bold'});
 				if ($('#field_' + feedback.wrong_fields[i] + '> .letter_container').html() == "&nbsp;" || $('#field_' + feedback.wrong_fields[i] + '> .letter_container').html() == '') {
 					$('#field_' + feedback.wrong_fields[i] + '> .letter_container').html('?');
 				} //if

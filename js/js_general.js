@@ -5,7 +5,7 @@ JS GENERAL FUNCTIONS
 
 $(document).ready(function() {
 	//set theme color:
-	$('header, footer, th').addClass('bg-theme-color');
+	$('header, th').addClass('bg-theme-color');
 	$('table, th').addClass('border-theme-color');
 
 	//upadte test title:

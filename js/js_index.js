@@ -35,7 +35,7 @@ $(document).ready(function() {
 		else if (hover_counter == 3) {
 			$('.test_type_button').each(function() {
 				if ($(this).val() != current_hover) {
-					$(this).css('opacity', '0.4');
+					$(this).css('opacity', '0.3');
 				} //if
 			});
 		} //else if

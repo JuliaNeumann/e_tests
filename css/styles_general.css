@@ -116,6 +116,11 @@ header, footer {
 
 footer {
 	text-align: center;
+	background-color: #848484;
+}
+
+footer a {
+	color: #E5E5E5;
 }
 
 #title_header {
