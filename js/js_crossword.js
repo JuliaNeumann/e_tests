@@ -485,7 +485,7 @@ $(document).ready(function() {
 	$('#check_test').click(function(e) {
 		e.preventDefault();
 		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {check_test_id : crossword_test.db_id, check_test : crossword_test.crossword.grid}, function(feedback) {
-			$('#instructions').html('Your score: ' + feedback.correct + ' out of ' + crossword_test.questions.counter + ' correct!');
+			$('.instructions').html('Your score: ' + feedback.correct + ' out of ' + crossword_test.questions.counter + ' correct!');
 			for (var i = 0; i < feedback.wrong_fields.length; i++) {
 				$('#field_' + feedback.wrong_fields[i]).removeClass('bg-color-4').addClass('font-color-5 bg-color-3').css({'font-weight': 'bold'});
 				if ($('#field_' + feedback.wrong_fields[i] + '> .letter_container').html() == "&nbsp;" || $('#field_' + feedback.wrong_fields[i] + '> .letter_container').html() == '') {

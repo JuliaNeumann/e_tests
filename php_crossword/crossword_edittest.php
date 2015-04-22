@@ -29,7 +29,7 @@ EDITING A CROSSWORD TEST
 		"<span id="test_name_container"><?php echo $test_data['test_name']; ?></span>"
 	</header>
 	<section id="test_container">
-		<div id="instructions">
+		<div class="instructions">
 			Click on questions and answers to edit them.<br> 
 			When you have entered all questions and answers, press 'Create Crossword'.
 		</div>

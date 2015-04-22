@@ -3,11 +3,6 @@ CROSSWORD STYLE SHEET
 - contains styles used for crossword tests
 *************************************************************************************************************************/
 
-#instructions {
-	margin-bottom: 10px;
-	font-style: italic;
-}
-
 .table_header {
 	padding: 5px;
 	font-weight: bold;

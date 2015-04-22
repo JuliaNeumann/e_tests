@@ -18,11 +18,6 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 	margin-bottom: 5px;
 }
 
-.intro_text {
-	margin: 0px 0px 17px 0px;
-	font-style: italic;
-}
-
 .incorrect_answer {
 	min-width: 700px;
 }

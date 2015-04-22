@@ -20,7 +20,7 @@ CREATING A NEW CROSSWORD TEST
 		"<span id="test_name_container">[NEW TEST]</span>"
 	</header>
 	<section id="test_container">
-		<div id="instructions">
+		<div class="instructions">
 			Enter your questions and answers (one word each!) below. Click on added questions and answers to edit them.<br>
 			When you have entered all questions and answers, press 'Create Crossword'.
 		</div>

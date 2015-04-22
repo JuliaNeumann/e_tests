@@ -27,7 +27,7 @@ RUN A CROSSWORD TEST
 		"<?php echo $test_data['test_name']; ?>"
 	</header>
 	<section id="test_container">
-		<div id="instructions">
+		<div class="instructions">
 			Click on the questions below to enter their solutions into the crossword!
 		</div>
 		<p id="crossword_container"><em>Loading...</em></p>

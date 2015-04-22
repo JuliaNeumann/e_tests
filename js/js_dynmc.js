@@ -427,7 +427,7 @@ $(document).ready(function() {
 		options_counter = 0;
 		$('#questions').html('');
 		var question_object = dynmc_test.questions.objects[dynmc_test.current_question];
-		$('.intro_text').html("Decide whether this answer option is correct or incorrect.");
+		$('.instructions').html("Decide whether this answer option is correct or incorrect.");
 		$('#questions').append('<div class="question border-theme-color" id="current_question"> \
 									<div class="label_box bg-theme-color font-color-4"> \
 										<div class="question_label">' + question_object.question_text + '</div> \
@@ -503,11 +503,11 @@ $(document).ready(function() {
 			if (feedback.answer_option == '0') { //incorrect answer has been hit
 				if ($("input[name='user_answer']:checked").val() == '0') { //user was right -> show next answer option
 					$('.current_option_row').find('.pic_incorrect').attr('src', root_path + 'images/incorrect_green.png');
-					$('.intro_text').html('Well done!');
+					$('.instructions').html('Well done!');
 					getNewAnswerOption();
 				} //if
 				else {
-					$('.intro_text').html("Sorry! You have not solved this question correctly!");
+					$('.instructions').html("Sorry! You have not solved this question correctly!");
 					$('.current_option_row').find('.pic_correct').attr('src', root_path + 'images/correct_red.png');
 					endQuestion(feedback.solved_options);
 				} //else
@@ -515,12 +515,12 @@ $(document).ready(function() {
 			else { //correct answer has been hit
 				if ($("input[name='user_answer']:checked").val() == '1') { //user was right
 					$('.current_option_row').find('.pic_correct').attr('src', root_path + 'images/correct_green.png');
-					$('.intro_text').html("Congrats! You have solved this question correctly!");
+					$('.instructions').html("Congrats! You have solved this question correctly!");
 					user_score++;
 				} //if
 				else {
 					$('.current_option_row').find('.pic_incorrect').attr('src', root_path + 'images/incorrect_red.png');
-					$('.intro_text').html("Sorry! You have not solved this question correctly!");
+					$('.instructions').html("Sorry! You have not solved this question correctly!");
 				} //else
 				endQuestion(feedback.solved_options);
 			} //else

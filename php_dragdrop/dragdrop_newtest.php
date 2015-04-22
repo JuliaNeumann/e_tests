@@ -20,7 +20,7 @@ CREATING A NEW DRAG & DROP TEST
 		"<span id="test_name_container">[NEW TEST]</span>"
 	</header>
 	<section id="test_container">
-		<div id="instructions">
+		<div class="instructions">
 			<em>Click on the text inside the containers and items to edit them. Drag the items into the correct containers.</em>
 			<div class="right_aligned">
 				<input type="submit" class="submit_button" id="add_item" value="Add Item">

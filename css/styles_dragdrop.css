@@ -61,10 +61,6 @@ DRAG&DROP STYLE SHEET
 	cursor: -moz-grab;
 }
 
-#instructions {
-	margin-bottom: 5px;
-}
-
 .delete_button {
 	display: none;
 	float: right;
