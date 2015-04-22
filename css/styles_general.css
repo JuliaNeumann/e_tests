@@ -7,14 +7,14 @@ GENERAL STYLE SHEET
 
 /*Color Scheme - use these classes for setting any colors dynamically*/
 
-.bg-theme-color { /*color of headers etc. -> can be set by user, standard: turquoise*/
-	background-color: #4EBABA; 
+.bg-theme-color { /*color of headers etc. -> can be set by user, standard: orange*/
+	background-color: #D4711C; 
 }
 .border-theme-color {
-	border-color: #4EBABA; 
+	border-color: #D4711C; 
 }
 .font-theme-color {
-	color: #4EBABA; 
+	color: #D4711C; 
 }
 
 .bg-color-1 { /*color of body background etc., dark grey*/
@@ -121,6 +121,30 @@ footer {
 
 footer a {
 	color: #E5E5E5;
+}
+
+#color_chooser {
+	float: right;
+}
+
+.color_button {
+	width: 10px;
+	height: 10px;
+	right: 3px;
+	border: none;
+	cursor: pointer;
+}
+
+#button_turquoise {
+	background-color: #4EBABA;
+}
+
+#button_orange {
+	background-color: #D4711C;
+}
+
+#button_blue {
+	background-color: #4E94B9;
 }
 
 #title_header {

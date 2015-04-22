@@ -8,6 +8,30 @@ $(document).ready(function() {
 	$('header, th').addClass('bg-theme-color');
 	$('table, th').addClass('border-theme-color');
 
+	if((typeof(Storage) !== "undefined") && (typeof(localStorage.getItem("etests_color")) !== "undefined")) { //look for a stored color
+    	changeThemeColor(localStorage.getItem("etests_color"));
+	} //if
+
+	$('.color_button').click(function(e) {
+		e.preventDefault();
+		var color_code = $(this).css('background-color');
+		changeThemeColor(color_code);
+	});
+
+	function changeThemeColor(my_color_code) {
+	//sets the theme color to the specified color
+	//params: my_color_code = string (code of the required color)
+		$('head > #color_settings').remove();
+		var style = $('<style id="color_settings">.bg-theme-color { background-color: ' + my_color_code + '; } \
+							.border-theme-color { border-color: ' + my_color_code + '; } \
+							.font-theme-color { color: ' + my_color_code + '; } \
+					</style>');
+		$('html > head').append(style);
+		if(typeof(Storage) !== "undefined") {
+    		localStorage.setItem("etests_color", my_color_code); //remember this color
+		} //if
+	} //changeThemeColor
+
 	//upadte test title:
 	$('#test_name').keyup(function() {
 		var test_name = $(this).val();
