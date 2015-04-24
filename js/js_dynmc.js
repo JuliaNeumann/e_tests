@@ -81,11 +81,13 @@ var view = {
 		//PROPERTIES:
 		this.questions_displayed = 0;
 		this.questions_container = $('#questions');
+		this.instructions_container = $('.instructions');
 		this.question_template = $('script[data-template="question"]').html();
 		this.answer_solved_template = $('script[data-template="answer_solved"]').html();
 		this.answer_unsolved_template = $('script[data-template="answer_unsolved"]').html();
 		this.new_incorrect_answer_template = $('script[data-template="new_incorrect_answer"]').html();
 		this.add_question_template = $('script[data-template="add_question"]').html();
+		this.answer_run_template = $('script[data-template="answer_run"]').html();
 		var self = this;
 
 		/*************************************************************/
@@ -302,6 +304,29 @@ var view = {
 			} //if
 		});
 
+		/*************************************************************/
+		//running the test
+		$('#ready_button').click(function(e) {
+			e.preventDefault();
+			if (!$("input[name='user_answer']:checked").val()) { //no answer selected
+				alert('Please select an answer!');
+				return;
+			} //if
+			control.evaluateAnswer($("input[name='user_answer']:checked").val());
+		});
+
+		$('#next_question').click(function(e) {
+			e.preventDefault();
+			$(this).hide();
+			$('#ready_button').show();
+			control.runQuestion();
+		});
+
+		$('#show_result').click(function(e) {
+			e.preventDefault();
+			$(this).hide();
+			$('#test_container').html('Your score: ' + control.user_score + ' out of ' + control.getNoOfQuestions() + ' correct!');
+		});
 	}, //init
 
 	setHTMLContent : function(my_element_id, my_content) {
@@ -388,7 +413,65 @@ var view = {
 	//resets the section for adding questions from database
 		$('#adding_msg').remove();
 		$('#add_question_from_db').show();
-	} //cleanAfterAddingFromDb
+	}, //cleanAfterAddingFromDb
+
+	initRunQuestion : function(my_question_object) {
+	//initializes display of a question in run mode
+		this.questions_container.html('');
+		this.addQuestionToView(my_question_object);
+		$('.question_table').attr('id', 'current_question_table');
+		this.instructions_container.html("Decide whether this answer option is correct or incorrect.");
+	}, //initRunQuestion
+
+	showAnswerOption : function(my_text, my_solution) {
+	//displays a answer option of the currently displayed question
+	//params: my_text = string, my_solution = false (if no solution is shown) or 1||0
+		$('.current_option').removeClass('current_option');
+		$('.current_option_row').removeClass('current_option_row');			
+		$('.user_answer').attr('disabled', true).attr('name', 'answer_' + control.options_counter).removeClass('user_answer'); //disable previous answer options
+		control.options_counter++;
+		
+		var answer_html = this.answer_run_template.replace(/{{text}}/g, my_text);
+		$('#current_question_table').append(answer_html);
+		if (my_solution !== false) {
+			$("input[name='user_answer'][value='" + my_solution + "']").attr("checked","checked");
+		} //false
+	}, //showAnswerOption
+
+	markAnswerAsCorrect : function(my_correct, my_continue) {
+	//marks the current answer option as answered correctly & displays feedback
+	//params: my_correct = string ("correct" or "incorrect"), my_continue = bool (indicates whether to continue or question is finished)
+		$('.current_option_row').find('.pic_' + my_correct).attr('src', root_path + 'images/' + my_correct + '_green.png');
+		if (my_continue) {
+			this.instructions_container.html('Well done!');
+		} //if
+		else {
+			this.instructions_container.html('Congratulations! You have solved this question correctly!');
+		} //else
+	}, //markAnswerAsCorrect
+
+	markAnswerAsIncorrect : function(my_correct) {
+	//marks the current answer option as answered incorrectly & displays feedback
+	//params: my_correct = string ("correct" or "incorrect")
+		$('.current_option_row').find('.pic_' + my_correct).attr('src', root_path + 'images/' + my_correct + '_red.png');
+		this.instructions_container.html("Sorry! You have not solved this question correctly!");
+	}, //markAsCorrect
+
+	endQuestion : function(my_answer_options) {
+	//initializes display solved version of question
+	//params: my_answer_options = array
+		for (var i = 0; i < my_answer_options.length; i++) {
+			this.showAnswerOption(my_answer_options[i][1], my_answer_options[i][0]);
+		} //for
+		$('.user_answer').attr('disabled', true);
+		$('#ready_button').hide();
+		if (control.current_question < control.getNoOfQuestions()) { //questions left to display
+			$('#next_question').show();
+		} //if
+		else {
+			$('#show_result').show();
+		} //else
+	} //endQuestion
 } //view
 
 /*************************************************************************************************************************/
@@ -402,6 +485,8 @@ var control = {
 		dynmc_test.init();
 		this.current_question = 0; //pointer to which is the currently handled question
 		this.current_option = null; //keeps track of currently handled answer option
+		this.options_counter = 0; //needed to create unique names for options in run mode
+		this.user_score = 0;
 
 		switch (action) {
 			case 'new':
@@ -549,7 +634,60 @@ var control = {
 	//initializes saving of a test
 		dynmc_test.setTestData();
 		dynmc_test.saveTestAndRedirect(action);
-	} //saveTest
+	}, //saveTest
+
+	runQuestion : function() {
+	//displays the current question of the test in the run mode
+		this.options_counter = 0;
+		var question_object = dynmc_test.questions.objects[this.current_question];
+		view.initRunQuestion(question_object);
+		this.getNewAnswerOption(); //show first answer option	
+	}, //runQuestion
+
+	getNewAnswerOption : function() {
+	//retrieves next answer option from database, initialises displaying it
+		var question_object = dynmc_test.questions.objects[this.current_question];
+		$.get(root_path + 'php_dynmc/dynmc_managetests.php', {new_option : true, question_ID : question_object.db_id}, function(feedback) { 
+			if (feedback) {
+				view.showAnswerOption(feedback, false);
+			} //if
+		});
+	}, //getNewAnswerOption
+
+	evaluateAnswer : function(my_user_answer) {
+	//evaluates the answer a user has given for the current options, initializes display of feedback
+		var question_object = dynmc_test.questions.objects[this.current_question];
+		var self = this;
+		$.getJSON(root_path + 'php_dynmc/dynmc_managetests.php', {user_answer : my_user_answer, question_ID : question_object.db_id}, function(feedback) {
+			if (feedback.answer_option == '0') { //incorrect answer has been hit
+				if (my_user_answer == '0') { //user was right -> show next answer option
+					view.markAnswerAsCorrect("incorrect", true);
+					self.getNewAnswerOption();
+				} //if
+				else {
+					view.markAnswerAsIncorrect("correct");
+					self.current_question++;
+					view.endQuestion(feedback.solved_options);
+				} //else
+			} //if
+			else { //correct answer has been hit
+				if (my_user_answer == '1') { //user was right
+					view.markAnswerAsCorrect("correct", false);
+					self.user_score++;
+				} //if
+				else {
+					view.markAnswerAsIncorrect("incorrect");
+				} //else
+				self.current_question++;
+				view.endQuestion(feedback.solved_options);
+			} //else
+		});
+	}, //evaluateAnswer
+
+	getNoOfQuestions : function()  {
+	//returns number of questions in the current test
+		return dynmc_test.questions.counter;
+	} //getNoOfQuestions
 } //control
 
 

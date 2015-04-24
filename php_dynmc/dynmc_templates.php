@@ -53,6 +53,17 @@ TEMPLATES FOR DYNMC TESTS
 	</div>
 </script>
 
+<script type="text/template" data-template="answer_run">
+    <div class="css_tr current_option_row">
+		<div class="css_td medium_cell">
+			<div class="radio_correct"><input type="radio" value="1" name="user_answer" class="user_answer"><img src="<?php echo ROOT_PATH; ?>images/correct.png" class="pic_correct"></div>
+			<div class="radio_incorrect"><input type="radio" value="0" name="user_answer" class="user_answer radio_incorrect"><img src="<?php echo ROOT_PATH; ?>images/incorrect.png" class="pic_incorrect"></div>
+		</div> 
+		<div class="css_td small_cell">|</div>
+		<div class="css_td" class="current_option">{{text}}</div>
+	</div>
+</script>
+
 <script type="text/template" data-template="add_question">
     <div class="question border-theme-color" id="new_question">
 		<div class="label_box  bg-theme-color font-color-4">
