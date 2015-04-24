@@ -20,6 +20,7 @@ PAGE HEADER
         	//global variables needed in all documents:
         	var root_path = '<?php echo ROOT_PATH; ?>';
         	var action = '<?php echo $action; ?>';
+        	var test_names;
         	var test_id = null;
 <?php
 			if (isset($test_id)) {
@@ -28,8 +29,6 @@ PAGE HEADER
 <?php
 			} //if
 ?>
-        	var test_names;
-
         	$(document).ready(function() {
         		$('#content').show(); //content will only be visible with JS enabled
         	});

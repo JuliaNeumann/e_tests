@@ -5,6 +5,7 @@ JS FOR DRAG&DROP TESTS
 
 //MODEL:
 var dragdrop_test = { //test object to hold the test data produced / edited here
+
 	init : function() {
 		//PROPERTIES:
 		this.containers = {counter: 0, objects: {}}; //holds container objects
@@ -90,6 +91,7 @@ function Container(my_current_id, my_text) {
 //VIEW:
 
 var view = {
+
 	init : function() {
 		//PROPERTIES:
 		this.items_displayed = 0;
@@ -246,9 +248,9 @@ var view = {
 
 	addItemToView : function(my_item_object) {
 	//displays the item it is given
-		var itemHTML = this.item_template.replace(/{{id}}/g, my_item_object.current_id); //fill the template
-		itemHTML = itemHTML.replace(/{{text}}/g, my_item_object.item_text);
-		this.items_container.append(itemHTML);
+		var item_html = this.item_template.replace(/{{id}}/g, my_item_object.current_id); //fill the template
+		item_html = item_html.replace(/{{text}}/g, my_item_object.item_text);
+		this.items_container.append(item_html);
 		this.items_displayed++;
 
 		if (action == 'new' || action == 'edit' || action == 'run') { //enable dragging
@@ -270,9 +272,9 @@ var view = {
 
 	addContainerToView : function(my_container_object) {
 	//displays the container it is given
-		var containerHTML = this.container_template.replace(/{{id}}/g, my_container_object.current_id); //fill the template
-		containerHTML = containerHTML.replace(/{{text}}/g, my_container_object.container_text);
-		this.containers_container.append(containerHTML);
+		var container_html = this.container_template.replace(/{{id}}/g, my_container_object.current_id); //fill the template
+		container_html = container_html.replace(/{{text}}/g, my_container_object.container_text);
+		this.containers_container.append(container_html);
 		this.containers_displayed++;
 
 		if (action == 'new' || action == 'edit' || action == 'run') { //make this a container where items can be dropped
@@ -411,19 +413,18 @@ var control = {
 	//initialize loading of test and display, according to action
 		view.init();
 		dragdrop_test.init();
-		this.test_names = [];
 
 		switch (action) {
 			case 'new':
 				this.createDefaultTest(2,2);
-				this.test_names = getTestNamesFromDb(0); //load test names from database for checking, see js_general.js
+				getTestNamesFromDb(0); //load test names from database for checking, see js_general.js
 				break;
 			case 'view':
 				this.retrieveAndDisplayTest(my_test_id, true);
 				break;
 			case 'edit':
 				this.retrieveAndDisplayTest(my_test_id, true);
-				this.test_names = getTestNamesFromDb(my_test_id);
+				getTestNamesFromDb(my_test_id);
 				break;
 			case 'run':
 				this.retrieveAndDisplayTest(my_test_id, false);
