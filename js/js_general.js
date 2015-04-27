@@ -121,7 +121,12 @@ function getTestNamesFromDb(my_test_id) {
 function disableButtons() {
 //disable all buttons on the page (e.g. while saving)
 	$("input[type='submit'], button").attr('disabled', true);
-} //function clearForm
+} //function disableButtons
+
+function enableButtons() {
+//enable all buttons on the page
+	$("input[type='submit'], button").attr('disabled', false);
+} //function enableButtons
 
 /*************************************************************************************************************************/
 

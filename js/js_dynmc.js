@@ -1,6 +1,6 @@
 /*************************************************************************************************************************
-JS FOR DRAG&DROP TESTS
-- contains JS necessary for creating & playing drag & drop tests
+JS FOR DYNMC TESTS
+- contains JS necessary for creating & playing dynamic multiple choice tests
 *************************************************************************************************************************/
 
 //MODEL:
@@ -283,7 +283,7 @@ var view = {
 
 			//check submission for completeness & correctness:
 			var error = false;
-			if (!checkForm('#general_info_form', {})) {
+			if (!checkForm('#general_info_form')) {
 				error = true;
 			} //if
 			if ($.inArray($('#test_name').val(), test_names) !== -1) {

@@ -33,19 +33,22 @@ EDITING A CROSSWORD TEST
 			Click on questions and answers to edit them.<br> 
 			When you have entered all questions and answers, press 'Create Crossword'.
 		</div>
-		<div class="css_table" id="questions_table">
-			<div class="css_tr table_header">
-				<div class="css_td" id="header_question">Question</div>
-				<div class="css_td" id="header_answer">Answer</div>
-			</div>
-			<div class="css_tr" id="new_question_row">
-				<div class="css_td"><input type="text" class="table_inputfield" name="new_question" id="new_question" value="New Question..."></div>
-				<div class="css_td"><input type="text" class="table_inputfield" name="new_answer" id="new_answer" value="New Answer..." maxlength="25"></div>
-			</div>
-			<div class="css_tr">
-				<div class="css_td"><input type="submit" class="submit_button" name="add_question" id="add_question" value="Add Question"></div>
-			</div>
-		</div>
+		<table id="questions_table">
+			<thead>
+				<th id="header_question">Question</th>
+				<th id="header_answer">Answer</th>
+			</thead>
+			<tbody id="questions_container"></tbody>
+			<tbody id="new_question_tbody">
+				<tr id="new_question_row">
+					<td><input type="text" class="table_inputfield" name="new_question" id="new_question" value="New Question..."></td>
+					<td><input type="text" class="table_inputfield" name="new_answer" id="new_answer" value="New Answer..." maxlength="25"></td>
+				</tr>
+				<tr>
+					<td colspan="2"><input type="submit" class="submit_button" name="add_question" id="add_question" value="Add this Question"></td>
+				</tr>
+			</tbody>
+		</table>
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="create_crossword" id="create_crossword" value="Create Crossword" disabled>
 		</div>

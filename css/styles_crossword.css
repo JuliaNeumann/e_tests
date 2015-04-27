@@ -18,7 +18,7 @@ CROSSWORD STYLE SHEET
 }
 
 #questions_table {
-	width: 800px;
+	width: 100%;
 	border-width: 3px;
 	border-style: solid;
 }
@@ -86,4 +86,8 @@ CROSSWORD STYLE SHEET
 
 .letter_input_field {
 	width: 15px;
+}
+
+#create_crossword, #save_test {
+	margin-right: 0px;
 }
