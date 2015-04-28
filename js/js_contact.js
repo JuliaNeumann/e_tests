@@ -5,7 +5,7 @@ JS FOR CONTACT_PAGE.PHP
 $(document).ready(function() {
 
 	$('#submit_contact_form').click(function(e) {
-		if (!(checkForm('#contact_form', {}))) {
+		if (!(checkForm('#contact_form'))) {
 			e.preventDefault();
 		} //if
 	});

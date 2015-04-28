@@ -65,8 +65,8 @@ var crossword_test = { //test object to hold the test data produced / edited her
 		 		this.grid[i][j] = '//';
 		 	} //for
 		 }//for
-		 for (var i = 0; i < this.questions.counter; i++) { //fill with words:
-		 	var question = this.questions.objects[i];
+		 for (var i = 0; i < this.placed_words.length; i++) { //fill with words:
+		 	var question = this.placed_words[i];
 		 	if (question.position != null) {
 		 		var current_x = question.position.x;
 		 		var current_y = question.position.y;
@@ -248,7 +248,50 @@ var view = {
 				} //if
 			} //if
 		});
-
+		
+		/*************************************************************/
+		//enabling user input in run mode
+		$(document).on('mouseover', '.crossword_question', function() {
+			if (!control.current_input) {
+				var question_object = control.getQuestion($(this).data("obj_id"));
+				self.focusAnswerFields(question_object, false);
+			} //if
+		}); 
+		$(document).on('mouseleave', '.crossword_question', function() {
+			if (!control.current_input) {
+				$('.filled_field, .empty_field').css('opacity', '1');
+			} //if
+		}); 
+		$(document).on('click', '.crossword_question', function() {
+			control.current_input = true;
+			var question_object = control.getQuestion($(this).data("obj_id"));
+			control.processInput();
+			self.focusAnswerFields(question_object, true);
+		});
+		$(document).on('keyup', '.letter_input_field', function(e) {
+			var x = parseInt($(this).data('x'));
+			var y = parseInt($(this).data('y'));
+			if (e.which != 8) { //button other than delete button is pressed
+				var letter = $(this).val().toUpperCase();
+				$(this).val(letter);
+				if ($('#input_' + (y + 1) + '_' + x).length) {
+					$('#input_' + (y + 1) + '_' + x).select();
+				} //if
+				else if ($('#input_' + y + '_' + (x + 1)).length) {
+					$('#input_' + y + '_' + (x + 1)).select();
+				} //else if
+				else { //last letter of the word
+					control.current_input = false;
+					control.processInput();
+					$('.filled_field, .empty_field').css('opacity', '1');
+				} //else
+			} //if
+		});
+		$('#check_test').click(function(e) {
+			e.preventDefault();
+			$(this).attr('disabled', true);
+			control.checkRunTest();
+		});
 	}, //init
 
 	addQuestionToView : function(my_question_object) {
@@ -319,7 +362,41 @@ var view = {
 			$('#save_test').show();
 			enableButtons();
 		} //if
-	} //displayCrossword
+	}, //displayCrossword
+
+	focusAnswerFields : function(my_question_object, my_input_fields) {
+	//puts focus on an answer position in the crossword field by decreasing opacity of all other fields
+	//params: my_question_object = object (current question in focus), my_input_fields = bool (indicating whether focussed fields should be filled with input fields)
+		$('.filled_field, .empty_field').css('opacity', '0.3');
+		var current_x = my_question_object.position.x;
+ 		var current_y = my_question_object.position.y;
+ 		for (var j = 0; j < my_question_object.correct_answer.length; j++) {
+ 			$('#field_' + current_y + '_' + current_x).css('opacity', '1');
+ 			if (my_input_fields) {
+ 				var current_letter = $('#field_' + current_y + '_' + current_x + ' > .letter_container').html();
+	 			$('#field_' + current_y + '_' + current_x + ' > .letter_container').html('<input type="text" maxlength="1" class="letter_input_field" id="input_' + current_y + '_' + current_x + '" data-y="' + current_y + '" data-x="' + current_x + '" value="' + current_letter + '">');
+ 			} //if
+ 			(my_question_object.position.orientation == 0) ? current_x++ : current_y++;
+ 		} //for
+ 		if (my_input_fields) {
+ 			$('#input_' + my_question_object.position.y + '_' + my_question_object.position.x).select(); //focus on first letter input field
+ 		} //if
+	}, //focusAnswerFields
+
+	displayScore : function(my_correct, my_all) {
+	//display score of the user on page in run mode
+		$('.instructions').html('Your score: ' + my_correct + ' out of ' + my_all + ' correct!');
+		$('#check_test').attr('disabled', false); //change this to reset button??
+	}, //displayScore
+
+	markFieldAsIncorrect : function(my_field_id) {
+	//mark the field with the given ID attribute as incorrect
+		$('#' + my_field_id).removeClass('bg-color-4').addClass('font-color-5 bg-color-3').css({'font-weight': 'bold'});
+		if ($('#' + my_field_id + '> .letter_container').html() == "&nbsp;" || $('#' + my_field_id + '> .letter_container').html() == '') {
+			$('#' + my_field_id + '> .letter_container').html('?');
+		} //if
+	} //markFieldAsIncorrect
+
 } //view
 
 /*************************************************************************************************************************/
@@ -330,6 +407,7 @@ var control = {
 	init: function(my_test_id) {
 	//initialize loading of test and display, according to action
 		this.words_edited = false; //keeps track of whether answers have been edited since last grid generation
+		this.current_input = false; //indicates whether an answer input is currently taking place (in run mode)
 		view.init();
 		crossword_test.init();
 
@@ -470,7 +548,32 @@ var control = {
 	//initializes saving of a test
 		crossword_test.saveTestData();
 		crossword_test.saveTestAndRedirect(action);
-	} //saveTest
+	}, //saveTest
+
+	getQuestion : function(my_question_id) {
+	//returns the question with the given ID from the model
+		return crossword_test.questions.objects[my_question_id];
+	}, //getQuestion
+
+	processInput : function() {
+	//replaces input fields that are currently in the crossword with their letters, updates the crossword_test grid to reflect the changes
+		$('#crossword_grid').find('.letter_input_field').each(function() {
+			var x = parseInt($(this).data('x'));
+			var y = parseInt($(this).data('y'));
+			crossword_test.grid[y][x] = $(this).val();
+		}); 
+		view.displayCrossword(crossword_test.grid_data.x, crossword_test.grid_data.y, crossword_test.grid, crossword_test.numbers, crossword_test.placed_words);
+	}, //processInput
+
+	checkRunTest : function() {
+	//submits current solution of the user via AJAX, initializes display of feedback
+		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {check_test_id : crossword_test.db_id, check_test : crossword_test.grid}, function(feedback) {
+			view.displayScore(feedback.correct, crossword_test.questions.counter);
+			for (var i = 0; i < feedback.wrong_fields.length; i++) {
+				view.markFieldAsIncorrect('field_' + feedback.wrong_fields[i]);
+			}//for
+		});
+	} //checkRunTest
 
 } //control
 
