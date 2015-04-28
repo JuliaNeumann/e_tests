@@ -352,6 +352,9 @@ var view = {
 			$('#item_box_' + my_item_id + ' > .delete_button').css('float', 'right');
 		} //if
 		$('#container_box_' + my_container_id).append($('#item_box_' + my_item_id));
+		if ((action == "run") && ($('#items_container > .item_box').length == 0)) { //all items in containers -> allow checking
+			$('#check_test').attr('disabled', false);
+		} //if
 	},
 
 	toggleDragBorder : function(e, my_element, my_remove) {

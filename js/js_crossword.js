@@ -395,7 +395,20 @@ var view = {
 		if ($('#' + my_field_id + '> .letter_container').html() == "&nbsp;" || $('#' + my_field_id + '> .letter_container').html() == '') {
 			$('#' + my_field_id + '> .letter_container').html('?');
 		} //if
-	} //markFieldAsIncorrect
+	}, //markFieldAsIncorrect
+
+	checkCompleted : function() {
+	//checks whether all fields are filled with letters, if so: enables Check button
+		var incomplete = false;
+		$('.letter_container').each(function() {
+			if ($(this).html() == "&nbsp;" || $(this).html() == '' || $(this).html() == ' ') {
+				incomplete = true;
+			} //if
+		});
+		if (!incomplete) {
+			$('#check_test').attr('disabled', false);
+		} //if
+	} //checkCompleted
 
 } //view
 
@@ -563,6 +576,7 @@ var control = {
 			crossword_test.grid[y][x] = $(this).val();
 		}); 
 		view.displayCrossword(crossword_test.grid_data.x, crossword_test.grid_data.y, crossword_test.grid, crossword_test.numbers, crossword_test.placed_words);
+		view.checkCompleted();
 	}, //processInput
 
 	checkRunTest : function() {

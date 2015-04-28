@@ -306,6 +306,9 @@ var view = {
 
 		/*************************************************************/
 		//running the test
+		$(document).on('click', 'input[name="user_answer"]', function() {
+			$('#ready_button').attr('disabled', false);
+		});
 		$('#ready_button').click(function(e) {
 			e.preventDefault();
 			if (!$("input[name='user_answer']:checked").val()) { //no answer selected
@@ -313,15 +316,14 @@ var view = {
 				return;
 			} //if
 			control.evaluateAnswer($("input[name='user_answer']:checked").val());
+			$(this).attr('disabled', true);
 		});
-
 		$('#next_question').click(function(e) {
 			e.preventDefault();
 			$(this).hide();
 			$('#ready_button').show();
 			control.runQuestion();
 		});
-
 		$('#show_result').click(function(e) {
 			e.preventDefault();
 			$(this).hide();
@@ -420,7 +422,8 @@ var view = {
 		this.questions_container.html('');
 		this.addQuestionToView(my_question_object);
 		$('.question_table').attr('id', 'current_question_table');
-		this.instructions_container.html("Decide whether this answer option is correct or incorrect.");
+		this.instructions_container.html("Decide whether this answer option is correct or incorrect. Click \"Check\" when you have made your choice.");
+		$('#ready_button').attr('disabled', true);
 	}, //initRunQuestion
 
 	showAnswerOption : function(my_text, my_solution) {
@@ -443,7 +446,7 @@ var view = {
 	//params: my_correct = string ("correct" or "incorrect"), my_continue = bool (indicates whether to continue or question is finished)
 		$('.current_option_row').find('.pic_' + my_correct).attr('src', root_path + 'images/' + my_correct + '_green.png');
 		if (my_continue) {
-			this.instructions_container.html('Well done!');
+			this.instructions_container.html('Well done! How about this answer option?');
 		} //if
 		else {
 			this.instructions_container.html('Congratulations! You have solved this question correctly!');
