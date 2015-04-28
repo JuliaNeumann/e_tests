@@ -240,7 +240,7 @@ var view = {
 			} //if
 			else {
 				//translate current IDs to database IDs
-				self.items_container.html('<em>Checking ...</em>');
+				$('.instructions').html('<em>Checking ...</em>');
 				self.disableButtons(); //see js_general.js
 				$('.item_box').removeClass('incorrect_item border-color-5 font-color-5').addClass('border-theme-color').css('font-weight', 'normal');
 				control.checkRunTest();

@@ -103,6 +103,12 @@ function View() {
 				} //if
 			} //if
 		});
+
+		/*************************************************************/
+		//reset (in run mode -> start test again after a previous submission):
+		$('#reset').click(function(e) {
+			location.reload();
+		});
 	} //initGeneralView
 
 	/*************************************************************/
@@ -173,8 +179,9 @@ function View() {
 	this.displayScore = function(my_correct, my_all) {
 	//display score of the user on page in run mode
 		$('.instructions').html('Your score: ' + my_correct + ' out of ' + my_all + ' correct!');
-		$('#check_test').attr('disabled', false); //change this to reset button??
-	}, //displayScore
+		$('#check_test').hide();
+		$('#reset').show().attr('disabled', false);
+	} //displayScore
 
 
 

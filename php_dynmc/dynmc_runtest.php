@@ -36,6 +36,7 @@ RUNNING A DYNAMIC MULTIPLE-CHOICE TEST
 			<input type="submit" id="ready_button" class="submit_button" value="Check" disabled>
 			<input type="submit" id="next_question" class="submit_button hidden" value="Next Question">
 			<input type="submit" id="show_result" class="submit_button hidden" value="Show Result">
+			<input type="submit" id="reset" class="submit_button hidden" value="Reset">
 		</div>
 	</section>
 <?php 

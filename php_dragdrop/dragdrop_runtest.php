@@ -38,6 +38,7 @@ RUN A DRAG & DROP TEST
 		</div>
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="check_test" id="check_test" value="Check" disabled>
+			<input type="submit" id="reset" class="submit_button hidden" value="Reset">
 		</div>
 	</section>
 <?php 
