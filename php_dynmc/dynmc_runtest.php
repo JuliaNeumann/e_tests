@@ -27,15 +27,16 @@ RUNNING A DYNAMIC MULTIPLE-CHOICE TEST
 	<header>
 		"<?php echo $test_data['test_name']; ?>"
 	</header>
-	<section id="test_container">
+	<section>
 		<p class="instructions"></p>
 		<div id="questions">
 			<em>Loading...</em>
 		</div>
 		<div class="right_aligned">
-			<input type="submit" id="ready_button" class="submit_button" value="Ready">
+			<input type="submit" id="ready_button" class="submit_button" value="Check" disabled>
 			<input type="submit" id="next_question" class="submit_button hidden" value="Next Question">
 			<input type="submit" id="show_result" class="submit_button hidden" value="Show Result">
+			<input type="submit" id="reset" class="submit_button hidden" value="Reset">
 		</div>
 	</section>
 <?php 

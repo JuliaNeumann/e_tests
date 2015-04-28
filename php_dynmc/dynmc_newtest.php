@@ -25,7 +25,6 @@ CREATING A NEW DYNAMIC MC TEST
 	<section id="test_container">
 		<p class="instructions">If you want to change questions, just click on the text to you want to edit. You can delete questions and incorrect answers by clicking on the 'X' signs that appear when you hover over them.</p>
 		<div id="questions"></div>
-		<input type="submit" class="submit_button" name="add_question" id="add_question" value="Add a New Question">
 		<input type="submit" class="submit_button" name="questions_from_db" id="show_questions_from_db" value="Add Questions from Database...">
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="save_test" id="save_test" value="Save Test">

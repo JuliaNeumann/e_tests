@@ -27,12 +27,18 @@ RUN A DRAG & DROP TEST
 		"<?php echo $test_data['test_name']; ?>"
 	</header>
 	<section id="test_container">
-		<p id="items_container"><em>Loading...</em></p>
+		<div class="instructions">
+			Drag the items into the containers below and then click "Check" to see if you were right.
+		</div><br>
+		<p id="items_container">
+			<em>Loading...</em>
+		</p>
 		<div class="css_table" id="container_table">
 			<div class="css_tr" id="container_row"></div>
 		</div>
 		<div class="right_aligned">
-			<input type="submit" class="submit_button" name="check_test" id="check_test" value="Check">
+			<input type="submit" class="submit_button" name="check_test" id="check_test" value="Check" disabled>
+			<input type="submit" id="reset" class="submit_button hidden" value="Reset">
 		</div>
 	</section>
 <?php 

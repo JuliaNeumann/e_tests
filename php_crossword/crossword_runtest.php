@@ -28,11 +28,12 @@ RUN A CROSSWORD TEST
 	</header>
 	<section id="test_container">
 		<div class="instructions">
-			Click on the questions below to enter their solutions into the crossword!
+			Click on the questions below to enter their solutions into the crossword! After filling in all the words, click "Check" to see if you were right.
 		</div>
 		<p id="crossword_container"><em>Loading...</em></p>
 		<div class="right_aligned">
-			<input type="submit" class="submit_button" name="check_test" id="check_test" value="Check">
+			<input type="submit" class="submit_button" name="check_test" id="check_test" value="Check" disabled>
+			<input type="submit" id="reset" class="submit_button hidden" value="Reset">
 		</div>
 	</section>
 <?php 

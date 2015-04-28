@@ -15,7 +15,7 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 .question {
 	border-width: 3px;
 	border-style: solid;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 }
 
 .incorrect_answer {
@@ -34,11 +34,15 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 	width: 12%;
 }
 
-.delete_answer_button {
-	display: none;
+.delete_answer_button, .delete_new_answer_button {
 	text-align: right;
 	cursor: pointer;
 	font-weight: bold;
+	margin-right: 5px;
+}
+
+.delete_answer_button {
+	display: none;
 }
 
 .delete_question_button {
@@ -48,12 +52,14 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 }
 
 .label_box {
-	padding: 5px;
+	padding: 3px;
 	font-weight: bold;
 	margin-bottom: 0px;
+	border-width: 0px;
+	border-style: solid;
 }
 
-.editable_inputfield {
+.editable_inputfield, .new_inputfield {
 	width: 700px;
 }
 
@@ -66,5 +72,13 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 }
 
 .add_incorrect {
+	margin-left: 5px;
+}
+
+.circle_img {
+	margin-right: 5px;
+}
+
+#add_question {
 	margin-left: 5px;
 }

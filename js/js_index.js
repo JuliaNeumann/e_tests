@@ -3,114 +3,130 @@ JS FOR INDEX.PHP
 - JavaScript code for handling the dynamic interface of index.php
 *************************************************************************************************************************/
 
-var hover_counter = 0;
-var hover_interval;
-var current_hover;
+var view = {
 
-$(document).ready(function() {
+	init : function() {
 
-	/*************************************************************************************************************************/
-	
-	//show test type descriptions, when long hover over button is detected:
-	$(document).on('mouseenter', '.test_type_button', function() {
-		hover_counter = 0;
-		current_hover = $(this).val();
-		hover_interval = setInterval(hoverUpdate,500); 
-	});
-	$(document).on('mouseleave', '.test_type_button', function() {
-		hover_counter = 0;
-		clearInterval(hover_interval); 
-		$('.test_type_description').slideUp("slow");
-		$('.test_type_button').css('opacity', '1');
-	});
-	$(document).on('click', '.test_type_button', function() {
-		clearInterval(hover_interval); //prevent sliding down when click has happened already
-	});
+		//PROPERTIES:
+		this.hover_counter = 0;
+		this.hover_interval;
+		this.current_hover;
 
-	function hoverUpdate () {
-		hover_counter += 1;
-		if (hover_counter == 2) {
-			$('#description_' + current_hover).slideDown("slow");
+		View.call(this); //make this inherit from View (see js_general.js)
+
+		var self = this;
+
+		/*************************************************************/
+		//EVENT HANDLERS:
+		
+		//show test type descriptions, when long hover over button is detected:
+		$(document).on('mouseenter', '.test_type_button', function() {
+			self.hover_counter = 0;
+			self.current_hover = $(this).val();
+			self.hover_interval = setInterval(self.hoverUpdate, 500); 
+		});
+		$(document).on('mouseleave', '.test_type_button', function() {
+			self.hover_counter = 0;
+			clearInterval(self.hover_interval); 
+			$('.test_type_description').slideUp("slow");
+			$('.test_type_button').css('opacity', '1');
+		});
+		$(document).on('click', '.test_type_button', function() {
+			clearInterval(self.hover_interval); //prevent sliding down when click has happened already
+		});
+
+		/*************************************************************/
+		//show tests of selected test type(s):
+		$(document).on('change', '.test_type_checkbox', function() {
+			var type_string = $(this).val();
+			$('#no_test_tr').remove();
+			if ($(this).is(':checked')) {
+				$('.test_row').each(function() {
+					if ($(this).data('type_string') == type_string) {
+						$(this).show();
+						if ($(this).hasClass('selected_test')) {
+							$('.submit_button').attr('disabled', false); //enable buttons
+						} //if
+					} //if
+				});
+			} //if
+			else {
+				$('.test_row').each(function() {
+					if ($(this).data('type_string') == type_string) {
+						$(this).hide();
+						if ($(this).hasClass('selected_test')) {
+							$('.submit_button').attr('disabled', true); //disable buttons
+						} //if
+					} //if
+				});
+				if ($('.test_row:visible').length == 0) { //no tests are shown anymore
+					$('#select_test_table').append('<tr id="no_test_tr"><td colspan="3"><em>There are no tests matching your selection.</em></td></tr>');
+				}
+			}
+		});
+
+		/*************************************************************/
+		//selection of a test:
+		$(document).on('click', '.test_row', function() {
+			$('.test_row').removeClass('selected_test').removeClass('bg-color-2').removeClass('font-color-4'); //only one test should be selected at a time -> remove previous selections
+			$(this).addClass('selected_test').addClass('bg-color-2').addClass('font-color-4');
+			$('#selected_test_id').val($(this).data('test_id')); //add values to form, so they can be submitted
+			$('#selected_type').val($(this).data('type_string'));
+			$('.submit_button').attr('disabled', false); //enable buttons
+		});
+
+		/*************************************************************/
+		//sorting of test list:
+		$(document).on('click', '.header_cell', function() {
+			if ($(this).hasClass('sorted_up')) {
+				$('#sort_pic').remove();
+				$(this).removeClass('sorted_up').addClass('sorted_down').append('<div id="sort_pic">&nbsp;&nbsp;<img id="arrow_down" src="' + root_path + 'images/arrow_down.png"></div>');
+				self.sortTable('down', $(this).attr('id'));
+			} //if
+			else if ($(this).hasClass('sorted_down')) {
+				$('#sort_pic').remove();
+				$(this).removeClass('sorted_down').addClass('sorted_up').append('<div id="sort_pic">&nbsp;&nbsp;<img id="arrow_up" src="' + root_path + 'images/arrow_up.png"></div>');
+				self.sortTable('up', $(this).attr('id'));
+			} //else if
+			else { //sorted by other criterion before -> set to default sorting (up for name & type, down for creation date)
+				$('#sort_pic').remove();
+				if ($(this).attr('id') == 'test_creation_header') {
+					$(this).addClass('sorted_down').append('<div id="sort_pic">&nbsp;&nbsp;<img id="arrow_down" src="' + root_path + 'images/arrow_down.png"></div>');
+					self.sortTable('down', $(this).attr('id'));
+				} //if
+				else {
+					$(this).addClass('sorted_up').append('<div id="sort_pic">&nbsp;&nbsp;<img id="arrow_up" src="' + root_path + 'images/arrow_up.png"></div>');
+					self.sortTable('up', $(this).attr('id'));
+				} //else
+			} //else
+		});
+		
+		/*************************************************************/
+		//confirm deletion
+		$('#delete_test').click(function(e) {
+			if (!confirm('Are you sure you want to delete this test? This will remove the test and all its content permanently from the database!')) {
+				e.preventDefault();
+			} //if
+		});
+
+	}, //init
+
+	hoverUpdate : function() {
+		var self = view; //this won't work here, because of calling in interval
+		self.hover_counter += 1;
+		if (self.hover_counter == 2) {
+			$('#description_' + self.current_hover).slideDown("slow");
 		} //if
-		else if (hover_counter == 3) {
+		else if (self.hover_counter == 3) {
 			$('.test_type_button').each(function() {
-				if ($(this).val() != current_hover) {
+				if ($(this).val() != self.current_hover) {
 					$(this).css('opacity', '0.3');
 				} //if
 			});
 		} //else if
-	} //function hoverUpdate
+	}, //hoverUpdate
 
-	/*************************************************************************************************************************/
-	
-	//show tests of selected test type(s):
-	$(document).on('change', '.test_type_checkbox', function() {
-		var type_string = $(this).val();
-		$('#no_test_tr').remove();
-		if ($(this).is(':checked')) {
-			$('.test_row').each(function() {
-				if ($(this).data('type_string') == type_string) {
-					$(this).show();
-					if ($(this).hasClass('selected_test')) {
-						$('.submit_button').attr('disabled', false); //enable buttons
-					} //if
-				} //if
-			});
-		} //if
-		else {
-			$('.test_row').each(function() {
-				if ($(this).data('type_string') == type_string) {
-					$(this).hide();
-					if ($(this).hasClass('selected_test')) {
-						$('.submit_button').attr('disabled', true); //disable buttons
-					} //if
-				} //if
-			});
-			if ($('.test_row:visible').length == 0) { //no tests are shown anymore
-				$('#select_test_table').append('<tr id="no_test_tr"><td colspan="3"><em>There are no tests matching your selection.</em></td></tr>');
-			}
-		}
-	});
-
-	/*************************************************************************************************************************/
-	
-	//selection of a test:
-	$(document).on('click', '.test_row', function() {
-		$('.test_row').removeClass('selected_test').removeClass('bg-color-2').removeClass('font-color-4'); //only one test should be selected at a time -> remove previous selections
-		$(this).addClass('selected_test').addClass('bg-color-2').addClass('font-color-4');
-		$('#selected_test_id').val($(this).data('test_id')); //add values to form, so they can be submitted
-		$('#selected_type').val($(this).data('type_string'));
-		$('.submit_button').attr('disabled', false); //enable buttons
-	});
-
-	/*************************************************************************************************************************/
-
-	//sorting of test list:
-	$(document).on('click', '.header_cell', function() {
-		if ($(this).hasClass('sorted_up')) {
-			$('#sort_pic').remove();
-			$(this).removeClass('sorted_up').addClass('sorted_down').append('<div id="sort_pic">&nbsp;&nbsp;<img id="arrow_down" src="' + root_path + 'images/arrow_down.png"></div>');
-			sortTable('down', $(this).attr('id'));
-		} //if
-		else if ($(this).hasClass('sorted_down')) {
-			$('#sort_pic').remove();
-			$(this).removeClass('sorted_down').addClass('sorted_up').append('<div id="sort_pic">&nbsp;&nbsp;<img id="arrow_up" src="' + root_path + 'images/arrow_up.png"></div>');
-			sortTable('up', $(this).attr('id'));
-		} //else if
-		else { //sorted by other criterion before -> set to default sorting (up for name & type, down for creation date)
-			$('#sort_pic').remove();
-			if ($(this).attr('id') == 'test_creation_header') {
-				$(this).addClass('sorted_down').append('<div id="sort_pic">&nbsp;&nbsp;<img id="arrow_down" src="' + root_path + 'images/arrow_down.png"></div>');
-				sortTable('down', $(this).attr('id'));
-			} //if
-			else {
-				$(this).addClass('sorted_up').append('<div id="sort_pic">&nbsp;&nbsp;<img id="arrow_up" src="' + root_path + 'images/arrow_up.png"></div>');
-				sortTable('up', $(this).attr('id'));
-			} //else
-		} //else
-	});
-
-	function sortTable(my_order, my_element_id) {
+	sortTable : function(my_order, my_element_id) {
 	//sorts the tests table according to selected criterion
 	//params: my_order = 'up'|'down', my_element_id = 'string' (name of order criterion)
 		if ($('.test_row').length > 0) { //only try sorting if there is something to sort
@@ -143,14 +159,11 @@ $(document).ready(function() {
 				$('#test_row_container').append(my_row); 
 			});
 		} //if
-	} //function sortTable
+	} //sortTable
 
-	/*************************************************************************************************************************/
-	
-	//confirm deletion
-	$('#delete_test').click(function(e) {
-		if (!confirm('Are you sure you want to delete this test? This will remove the test and all its content permanently from the database!')) {
-			e.preventDefault();
-		} //if
-	});
+} //view
+
+
+$(document).ready(function() {
+	view.init();
 });

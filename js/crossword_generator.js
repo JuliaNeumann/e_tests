@@ -301,7 +301,17 @@ Crossword.prototype.findPossiblePositions = function(my_word_obj) {
 										continue letter_loop;
 									} //if
 								} //else if
-								//could add count of how much grid is expanded here!
+								for (var n = 0; n < this.placed_words.length; n++) { //check that no placed word with same orientation takes up the space (to avoid that words containing each other can be placed on top of each other)
+									if (this.placed_words[n].position.orientation == this.orientation) {
+										for (var o = 0; o < this.placed_words[n].map.length; o++) {
+											if ((this.placed_words[n].map[o].letter == new_map[m].letter) 
+											&& (this.placed_words[n].map[o].x == new_map[m].x)
+											&& (this.placed_words[n].map[o].y == new_map[m].y)) {
+												continue letter_loop;
+											} //if
+										} //for
+									} //if
+								}//for
 							}//for
 							my_word_obj.possible_positions.push(new_position);
 						} //if

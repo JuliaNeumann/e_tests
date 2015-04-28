@@ -17,6 +17,11 @@ PAGE FOOTER
 					<button class="color_button" id="button_lila"></button>
 				</div>
 			</footer>
+<?php 
+			if ($section !== 'index' && $section !== 'contact') {
+				@include_once(INCLUDE_PATH . 'php_' . $section . '/' . $section . '_templates.php');
+			} //if
+?>
 		</div> <!-- content div -->
 	</body>
 </html>
