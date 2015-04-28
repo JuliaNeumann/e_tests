@@ -101,6 +101,9 @@ var view = {
 		this.containers_container = $('#container_row');
 		this.item_template = $('script[data-template="item"]').html();
 		this.container_template = $('script[data-template="container"]').html();
+
+		View.call(this); //make this inherit from View (see js_general.js)
+
 		var self = this;
 
 		/*************************************************************/
@@ -210,12 +213,11 @@ var view = {
 
 			//check submission for completeness & correctness:
 			var error = false;
-			if (!checkForm('#general_info_form')) { //see js_general.js
+			if (!self.checkForm('#general_info_form')) { //see js_general.js
 				error = true;
 			} //if
-			if ($.inArray($('#test_name').val(), control.test_names) !== -1) {
-				$('<div class="error_msg">&nbsp;A test with this name already exists.</div>').insertAfter($('#test_name'));
-	            error = true;
+			if (!control.checkTestName()) {
+				error = true;
 			} //if
 			if ($('#items_container > .item_box').length > 0) { //all test items must be inside a container
 				alert('Every item must be assigned to a container before you can save your test! Please drag all items into the containers first.');
@@ -224,7 +226,7 @@ var view = {
 
 			//submission, if check yielded no errors:
 			if (!error) {
-				disableButtons(); //see js_general.js
+				self.disableButtons(); //see js_general.js
 				self.items_container.html('<em>Saving...</em>');
 				control.saveTest();
 			} //if
@@ -239,7 +241,7 @@ var view = {
 			else {
 				//translate current IDs to database IDs
 				self.items_container.html('<em>Checking ...</em>');
-				disableButtons(); //see js_general.js
+				self.disableButtons(); //see js_general.js
 				$('.item_box').removeClass('incorrect_item border-color-5 font-color-5').addClass('border-theme-color').css('font-weight', 'normal');
 				control.checkRunTest();
 			} //else
@@ -389,21 +391,11 @@ var view = {
 		$('#' + my_element_id).css('opacity', '1');
 	}, //decreaseOpacity
 
-	displayScore : function(my_correct, my_all) {
-	//display score of the user on page in run mode
-		this.items_container.html('Your score: ' + my_correct + ' out of ' + my_all + ' correct!');
-		$('#check_test').attr('disabled', false); //change this to reset button??
-	}, //displayScore
-
 	displayIncorrectItem : function(my_item_id) {
 	//marks the given item as incorrect
 		$('#item_box_' + my_item_id).removeClass('border-theme-color').addClass('incorrect_item border-color-5 font-color-5').css('font-weight', 'bold');	
-	}, //displayIncorrectItem
+	} //displayIncorrectItem
 
-	setHTMLContent : function(my_element_id, my_content) {
-	//sets HTML content of the element with the given HTML ID attribute to the given content
-		$('#' + my_element_id).html(my_content);
-	} //setHTMLContent
 } //view
 
 
@@ -414,20 +406,22 @@ var control = {
 
 	init: function(my_test_id) {
 	//initialize loading of test and display, according to action
+		Control.call(this); //make this inherit from Control (see js_general.js)
+
 		view.init();
 		dragdrop_test.init();
 
 		switch (action) {
 			case 'new':
 				this.createDefaultTest(2,2);
-				getTestNamesFromDb(0); //load test names from database for checking, see js_general.js
+				this.getTestNamesFromDb(0); //load test names from database for checking, see js_general.js
 				break;
 			case 'view':
 				this.retrieveAndDisplayTest(my_test_id, true);
 				break;
 			case 'edit':
 				this.retrieveAndDisplayTest(my_test_id, true);
-				getTestNamesFromDb(my_test_id);
+				this.getTestNamesFromDb(my_test_id);
 				break;
 			case 'run':
 				this.retrieveAndDisplayTest(my_test_id, false);

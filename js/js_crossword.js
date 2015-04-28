@@ -110,6 +110,8 @@ var view = {
 		this.question_template = $('script[data-template="question"]').html();
 		var self = this;
 
+		View.call(this); //make this inherit from View (see js_general.js)
+
 		/*************************************************************/
 
 		//COLORS:
@@ -159,7 +161,7 @@ var view = {
 				alert("Please add more words to your crossword test!");
 				return;
 			} //if
-			disableButtons();
+			self.disableButtons();
 			self.crossword_container.html('<em>Generating your crossword...</em>');
 			control.generateCrossword();
 		});
@@ -220,12 +222,11 @@ var view = {
 
 			//check submission for completeness & correctness:
 			error = false;
-			if (!checkForm('#general_info_form')) {
+			if (!self.checkForm('#general_info_form')) {
 				error = true;
 			} //if
-			if ($.inArray($('#test_name').val(), test_names) !== -1) {
-				$('<div class="error_msg">&nbsp;A test with this name already exists.</div>').insertAfter($('#test_name'));
-	            error = true;
+			if (!control.checkTestName()) {
+				error = true;
 			} //if
 
 			//check that there are no unplaced words left:
@@ -242,7 +243,7 @@ var view = {
 			//submission, if check yielded no errors:
 			if (!error) {
 				if (confirm("Pressing OK will save your crossword in the state you see displayed. If you do not like the arrangement of the words, or made changes to your answers after creating the crossword, you should create a new crossword before saving.")) {
-					disableButtons(); //see js_general.js
+					self.disableButtons(); //see js_general.js
 					$('#test_container').html('<em>Saving...</em>');
 					control.saveTest();
 				} //if
@@ -360,7 +361,7 @@ var view = {
 
 		if (action == 'new' || action == 'edit') {
 			$('#save_test').show();
-			enableButtons();
+			this.enableButtons();
 		} //if
 	}, //displayCrossword
 
@@ -382,12 +383,6 @@ var view = {
  			$('#input_' + my_question_object.position.y + '_' + my_question_object.position.x).select(); //focus on first letter input field
  		} //if
 	}, //focusAnswerFields
-
-	displayScore : function(my_correct, my_all) {
-	//display score of the user on page in run mode
-		$('.instructions').html('Your score: ' + my_correct + ' out of ' + my_all + ' correct!');
-		$('#check_test').attr('disabled', false); //change this to reset button??
-	}, //displayScore
 
 	markFieldAsIncorrect : function(my_field_id) {
 	//mark the field with the given ID attribute as incorrect
@@ -419,22 +414,26 @@ var control = {
 
 	init: function(my_test_id) {
 	//initialize loading of test and display, according to action
+		//PROPERTIES:
 		this.words_edited = false; //keeps track of whether answers have been edited since last grid generation
 		this.current_input = false; //indicates whether an answer input is currently taking place (in run mode)
+		
+		Control.call(this); //make this inherit from Control (see js_general.js)
+
 		view.init();
 		crossword_test.init();
 
 		switch (action) {
 			case 'new':
 				$.getScript(root_path + "js/crossword_generator.js"); //load the crossword generator code
-				getTestNamesFromDb(0); //load test names from database for checking, see js_general.js
+				this.getTestNamesFromDb(0); //load test names from database for checking, see js_general.js
 				break;
 			case 'view':
 				this.retrieveAndDisplayTest(my_test_id, true);
 				break;
 			case 'edit':
 				this.retrieveAndDisplayTest(my_test_id, true);
-				getTestNamesFromDb(my_test_id);
+				this.getTestNamesFromDb(my_test_id);
 				break;
 			case 'run':
 				this.retrieveAndDisplayTest(my_test_id, false);

@@ -88,6 +88,9 @@ var view = {
 		this.new_incorrect_answer_template = $('script[data-template="new_incorrect_answer"]').html();
 		this.add_question_template = $('script[data-template="add_question"]').html();
 		this.answer_run_template = $('script[data-template="answer_run"]').html();
+
+		View.call(this); //make this inherit from View (see js_general.js)
+
 		var self = this;
 
 		/*************************************************************/
@@ -283,12 +286,11 @@ var view = {
 
 			//check submission for completeness & correctness:
 			var error = false;
-			if (!checkForm('#general_info_form')) {
+			if (!self.checkForm('#general_info_form')) {
 				error = true;
 			} //if
-			if ($.inArray($('#test_name').val(), test_names) !== -1) {
-				$('<div class="error_msg">&nbsp;A test with this name already exists.</div>').insertAfter($('#test_name'));
-	            error = true;
+			if (!control.checkTestName()) {
+				error = true;
 			} //if
 			if (self.questions_displayed < 1) { //just to make sure
 				alert('Your test must contain at least one question!');
@@ -297,7 +299,7 @@ var view = {
 
 			//submission, if check yielded no errors:
 			if (!error) {
-				disableButtons(); //see js_general.js
+				self.disableButtons(); //see js_general.js
 				self.setHTMLContent('test_container', '<em>Saving...</em>');
 				$('.db_questions').hide();
 				control.saveTest();
@@ -327,14 +329,10 @@ var view = {
 		$('#show_result').click(function(e) {
 			e.preventDefault();
 			$(this).hide();
-			$('#test_container').html('Your score: ' + control.user_score + ' out of ' + control.getNoOfQuestions() + ' correct!');
+			self.displayScore(control.user_score, control.getNoOfQuestions());
+			self.questions_container.html('');
 		});
 	}, //init
-
-	setHTMLContent : function(my_element_id, my_content) {
-	//sets HTML content of the element with the given HTML ID attribute to the given content
-		$('#' + my_element_id).html(my_content);
-	}, //setHTMLContent
 
 	addQuestionToView : function(my_question_object, my_solved) {
 	//displays the given question
@@ -484,17 +482,21 @@ var control = {
 
 	init: function(my_test_id) {
 	//initialize loading of test and display, according to action
-		view.init();
-		dynmc_test.init();
+		//PROPERTIES:
 		this.current_question = 0; //pointer to which is the currently handled question
 		this.current_option = null; //keeps track of currently handled answer option
 		this.options_counter = 0; //needed to create unique names for options in run mode
 		this.user_score = 0;
 
+		Control.call(this); //make this inherit from Control (see js_general.js)
+
+		view.init();
+		dynmc_test.init();
+
 		switch (action) {
 			case 'new':
 				view.addQuestionForm();
-				getTestNamesFromDb(0); //load test names from database for checking, see js_general.js
+				this.getTestNamesFromDb(0); //load test names from database for checking, see js_general.js
 				break;
 			case 'view':
 				this.retrieveAndDisplayTest(test_id, true);
@@ -502,7 +504,7 @@ var control = {
 			case 'edit':
 				this.retrieveAndDisplayTest(test_id, true);
 				view.addQuestionForm();
-				getTestNamesFromDb(my_test_id);
+				this.getTestNamesFromDb(my_test_id);
 				break;
 			case 'run':
 				this.retrieveAndDisplayTest(test_id, false);

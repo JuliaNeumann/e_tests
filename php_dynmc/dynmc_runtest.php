@@ -27,7 +27,7 @@ RUNNING A DYNAMIC MULTIPLE-CHOICE TEST
 	<header>
 		"<?php echo $test_data['test_name']; ?>"
 	</header>
-	<section id="test_container">
+	<section>
 		<p class="instructions"></p>
 		<div id="questions">
 			<em>Loading...</em>
