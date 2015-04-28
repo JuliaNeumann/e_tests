@@ -42,6 +42,10 @@ VIEWING A CROSSWORD TEST
 		"<?php echo $test_data['test_name']; ?>"
 	</header>
 	<section id="test_container">
+		<div class="instructions">
+			Use the button below to change between the unsolved and the solved view of the test. 
+			To try a fully functional version, choose the "Run Test" option on the start page.
+		</div>
 		<div id="crossword_container"></div>
 		<div class="right_aligned">
 			<input type="submit" id="show_solved" class="submit_button" value="Show Solved Test">

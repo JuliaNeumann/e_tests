@@ -42,7 +42,13 @@ VIEWING A DRAG & DROP TEST
 		"<?php echo $test_data['test_name']; ?>"
 	</header>
 	<section id="test_container">
-		<p id="items_container"><em>Loading...</em></p>
+		<div class="instructions">
+			Use the button below to change between the unsolved and the solved view of the test. 
+			To try a fully functional version, choose the "Run Test" option on the start page.
+		</div><br>
+		<p id="items_container">
+			<em>Loading...</em>
+		</p>
 		<div class="css_table" id="container_table">
 			<div class="css_tr" id="container_row"></div>
 		</div>
