@@ -351,7 +351,7 @@ function generateCrossword(my_word_list) {
 		possible_crosswords.push(new Crossword(my_word_list));
 	} //while
 
-	console.log(possible_crosswords.length);
+	console.log('number of generated crosswords: ' + possible_crosswords.length);
 
 	possible_crosswords.sort(function(a, b) { //find the best crossword, according to several criteria
 		//1st priority: as little unplaced words as possible
