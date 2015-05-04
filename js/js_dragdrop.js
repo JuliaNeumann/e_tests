@@ -199,10 +199,9 @@ var view = {
 			else {
 				control.changeItem(obj_id, new_text);
 			} //else
-			var current_height = $(this).closest('.non_editable').removeClass('non_editable').addClass('editable').height();
-			if (bool_container && (current_height > self.current_container_height)) {
-				self.current_container_height = current_height;
-				$('.container_label').height(current_height); //set all container labels to have same height
+			$(this).closest('.non_editable').html(new_text).removeClass('non_editable').addClass('editable');
+			if (bool_container) {
+				self.fixContainerLabelHeight(); //set all container labels to have same height
 			} //if
 		});
 
@@ -344,6 +343,18 @@ var view = {
 		} //switch
 	}, //enableInlineEditing
 
+	fixContainerLabelHeight: function() {
+	//fixes height of all container labels to height of the biggest, so they all have same height (even some might have linebreaks and others not) 
+		$('.label_box').css('min-height', '1px');
+		var current_height = 0;
+		$('.label_box').each(function() {
+			if ($(this).height() > current_height) {
+				current_height = $(this).height();
+			} //if
+		});
+		$('.label_box').css('min-height', current_height);
+	}, //fixContainerLabelHeight
+
 	fixContainerTable: function() {
 	//fixes width of table cells, so they do not 'jump' when their content is modified
 		var cell_width = 100 / parseInt(this.containers_displayed);
@@ -455,14 +466,12 @@ var control = {
 	//sets text of a container in the model
 		dragdrop_test.containers.objects[my_container_id].container_text = my_new_text; //update test object
 		dragdrop_test.containers.objects[my_container_id].edited = true;
-		view.setHTMLContent('label_' + my_container_id, my_new_text);
 	}, //changeContainer
 
 	changeItem : function(my_item_id, my_new_text) {
 	//sets text of an item in the model
 		dragdrop_test.items.objects[my_item_id].item_text = my_new_text; //update test object
 		dragdrop_test.items.objects[my_item_id].edited = true;
-		view.setHTMLContent('item_box_' + my_item_id, my_new_text);
 	}, //changeItem
 
 	checkContainerName : function(my_name, my_obj_id) {
@@ -581,6 +590,7 @@ var control = {
 		for (var i = 0; i < my_containers.length; i++) {
 			this.addContainer(my_containers[i]);
 		} //for
+		view.fixContainerLabelHeight();
 	}, //setAndDisplayDragDropTest
 
 	saveTest : function() {
