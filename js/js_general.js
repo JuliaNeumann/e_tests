@@ -114,6 +114,18 @@ function View() {
 			var url = root_path + 'php_' + section + '/' + section + '_' + action + 'test.php';
 			window.location.assign(url + '?selected_test_id=' + test_id);
 		});
+
+		/*************************************************************/
+		//delete notifications by button click:
+		$(document).on('mouseenter', '.notification', function() {
+			$(this).find('.delete_notification_button').show();
+		}); 
+		$(document).on('mouseleave', '.notification', function() {
+			$(this).find('.delete_notification_button').hide();
+		}); 
+		$(document).on('click', '.delete_notification_button', function() {
+			$(this).closest('.notification').remove();
+		}); 
 	} //initGeneralView
 
 	/*************************************************************/

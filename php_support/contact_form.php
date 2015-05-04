@@ -26,12 +26,15 @@ START PAGE OF APPLICATION
 
 	if ($form_submitted) {
 ?>
-	<header>
-		Sending completed
-	</header>
-	<section>
-		<?php echo $msg; ?>
-	</section>
+	<div class="notification">
+		<header>
+			Sending completed
+			<div class="delete_notification_button font-color-4">X</div>
+		</header>
+		<section>
+			<?php echo $msg; ?>
+		</section>
+	</div>
 <?php
 	} //if
 ?>

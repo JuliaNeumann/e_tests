@@ -29,12 +29,15 @@ VIEWING A DRAG & DROP TEST
 
 	if (isset($_GET['test_id'])) {
 ?>
-		<header>
-			Test Saved Successfully!
-		</header>
-		<section>
-			Your test has been saved to the database. You see it displayed below.
-		</section>
+		<div class="notification">
+			<header>
+				Test Saved Successfully!
+				<div class="delete_notification_button font-color-4">X</div>
+			</header>
+			<section>
+				Your test has been saved to the database. You see it displayed below.
+			</section>
+		</div>
 <?php
 	} //if
 ?>

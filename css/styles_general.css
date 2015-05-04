@@ -156,6 +156,14 @@ button:focus, input[type="submit"]:focus { /*remove the default color border tha
 	margin-left: 52px; /*width of #color_chooser*/
 }
 
+.delete_notification_button {
+	display: none;
+	float: right;
+	cursor: pointer;
+	font-weight: bold;
+	margin-right: 2px;
+}
+
 .error_msg {
 	font-style: italic;
 	color: #AE0000;

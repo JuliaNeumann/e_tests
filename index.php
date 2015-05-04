@@ -23,26 +23,32 @@ START PAGE OF APPLICATION
 <?php
 	if (isset($error) && $error) {
 ?>
-	<header>
-		Error
-	</header>
-	<section>
-		<div class="error_msg">
-			<?php echo $error_msg; ?>
-		</div>
-	</section>
+	<div class="notification">
+		<header>
+			Error
+			<div class="delete_notification_button font-color-4">X</div>
+		</header>
+		<section>
+			<div class="error_msg">
+				<?php echo $error_msg; ?>
+			</div>
+		</section>
+	</div>
 <?php
 	} //if
 	else if (isset($deleted_successfully) && $deleted_successfully) {
 ?>
-	<header>
-		Success
-	</header>
-	<section>
-		<div>
-			The test has been deleted from the database.
-		</div>
-	</section>
+	<div class="notification">
+		<header>
+			Success
+			<div class="delete_notification_button font-color-4">X</div>
+		</header>
+		<section>
+			<div>
+				The test has been deleted from the database.
+			</div>
+		</section>
+	</div>
 <?php
 	} //if
 ?>	
