@@ -3,28 +3,38 @@ CROSSWORD STYLE SHEET
 - contains styles used for crossword tests
 *************************************************************************************************************************/
 
-.table_header {
-	padding: 5px;
-	font-weight: bold;
-	margin-bottom: 0px;
+.correct_answer {
+	display: inline;
 }
 
-#header_question {
-	width: 60%;
+#create_crossword, #save_test {
+	margin-right: 0px;
 }
 
-#header_answer {
-	width: 60%;
-}
-
-#questions_table {
-	width: 100%;
-	border-width: 3px;
+#crossword_grid {
+	margin: 10px auto;
+	border-width: 1px;
 	border-style: solid;
 }
 
-.table_inputfield {
-	width: 97%;
+.crossword_question {
+	cursor: pointer;
+}
+
+.cw_row {
+	display: flex;
+}
+
+.delete_question_button {
+	display: none;
+	float: right;
+	cursor: pointer;
+	font-weight: bold;
+	margin-right: 2px;
+}
+
+.filled_field {
+	position: relative;
 }
 
 .filled_field, .empty_field {
@@ -35,8 +45,25 @@ CROSSWORD STYLE SHEET
 	border-style: solid;
 }
 
-.filled_field {
-	position: relative;
+#header_answer {
+	width: 60%;
+}
+
+#header_question {
+	width: 60%;
+}
+
+.letter_container {
+	position: absolute;
+	text-align: center;
+	width: 30px;
+	height: 20px;
+	top: 7px;
+	left: 0px;
+}
+
+.letter_input_field {
+	width: 15px;
 }
 
 .number_container {
@@ -49,45 +76,18 @@ CROSSWORD STYLE SHEET
 	padding-left: 2px;
 }
 
-.letter_container {
-	position: absolute;
-	text-align: center;
-	width: 30px;
-	height: 20px;
-	top: 7px;
-	left: 0px;
-}
-
-.cw_row {
-	display: flex;
-}
-
-#crossword_grid {
-	margin: 10px auto;
-	border-width: 1px;
+#questions_table {
+	width: 100%;
+	border-width: 3px;
 	border-style: solid;
 }
 
-.delete_question_button {
-	display: none;
-	float: right;
-	cursor: pointer;
+.table_header {
+	padding: 5px;
 	font-weight: bold;
-	margin-right: 2px;
+	margin-bottom: 0px;
 }
 
-.correct_answer {
-	display: inline;
-}
-
-.crossword_question {
-	cursor: pointer;
-}
-
-.letter_input_field {
-	width: 15px;
-}
-
-#create_crossword, #save_test {
-	margin-right: 0px;
+.table_inputfield {
+	width: 97%;
 }

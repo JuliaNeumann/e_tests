@@ -3,35 +3,20 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 - contains styles used for dynamic MC tests
 *************************************************************************************************************************/
 
-.question_label, .radio_correct, .radio_incorrect {
-	display: inline;
+.add_incorrect {
+	margin-left: 5px;
 }
 
-.question_box {
-	margin-top: 0px;
-	padding: 5px 0px;
+#add_question {
+	margin-left: 5px;
 }
 
-.question {
-	border-width: 3px;
-	border-style: solid;
-	margin-bottom: 10px;
+.circle_img {
+	margin-right: 5px;
 }
 
-.incorrect_answer {
-	min-width: 700px;
-}
-
-.question_table {
-	width: 100%;
-}
-
-.small_cell {
-	width: 3%;
-}
-
-.medium_cell {
-	width: 12%;
+.delete_answer_button {
+	display: none;
 }
 
 .delete_answer_button, .delete_new_answer_button {
@@ -41,14 +26,18 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 	margin-right: 5px;
 }
 
-.delete_answer_button {
-	display: none;
-}
-
 .delete_question_button {
 	display: none;
 	float: right;
 	cursor: pointer;
+}
+
+.editable_inputfield, .new_inputfield {
+	width: 700px;
+}
+
+.incorrect_answer {
+	min-width: 700px;
 }
 
 .label_box {
@@ -59,26 +48,37 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 	border-style: solid;
 }
 
-.editable_inputfield, .new_inputfield {
-	width: 700px;
+.medium_cell {
+	width: 12%;
 }
 
-.show_pic, .hide_pic {
-	cursor: pointer;
+.question {
+	border-width: 3px;
+	border-style: solid;
+	margin-bottom: 10px;
+} 
+
+.question_box {
+	margin-top: 0px;
+	padding: 5px 0px;
+}
+
+.question_label, .radio_correct, .radio_incorrect {
+	display: inline;
+}
+
+.question_table {
+	width: 100%;
 }
 
 #select_question_from_db {
 	width: 100%;
 }
 
-.add_incorrect {
-	margin-left: 5px;
+.show_pic, .hide_pic {
+	cursor: pointer;
 }
 
-.circle_img {
-	margin-right: 5px;
-}
-
-#add_question {
-	margin-left: 5px;
+.small_cell {
+	width: 3%;
 }

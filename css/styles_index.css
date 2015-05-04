@@ -2,6 +2,53 @@
 INDEX PAGE STYLE SHEET
 - contains styles used by index page
 *************************************************************************************************************************/
+
+#button_container {
+	clear: both;
+}
+
+#select_test_table {
+	float: left;
+	width: 581px;
+	margin-right: 10px;
+}
+
+#select_test_tablehead {
+	display: block;
+	cursor: pointer;
+}
+
+#sort_pic {
+	display: inline;
+}
+
+.test_creation_column {
+	width: 113px;
+}
+
+#test_creation_header {
+	width: 133px;
+}
+
+.test_name_column {
+	width: 244px;
+}
+
+#test_name_header {
+	width: 262px;
+}
+
+.test_row {
+	cursor: pointer;
+}
+
+#test_row_container {
+	max-height: 300px;
+	overflow-y: scroll;
+	overflow-x: hidden; /*allow scrolling inside table, when a lot of tests in table - this is the reason why widths below must be fixed*/
+	display: block;
+}
+
 .test_type_button {
 	width: 170px;
 	min-height: 150px;
@@ -13,13 +60,8 @@ INDEX PAGE STYLE SHEET
 	font-size: 9pt;
 }
 
-#type_button_container {
-	display: flex;
-	align-items: flex-start; /*forces items to be aligned at top of container, otherwise line-breaks cause problems*/
-}
-
-.test_type_label {
-	font-weight: bold;
+.test_type_column {
+	width: 172px;
 }
 
 .test_type_description {
@@ -28,56 +70,15 @@ INDEX PAGE STYLE SHEET
 	display: none;	
 }
 
-#select_test_table {
-	float: left;
-	width: 581px;
-	margin-right: 10px;
-}
-
-#test_row_container {
-	max-height: 300px;
-	overflow-y: scroll;
-	overflow-x: hidden; /*allow scrolling inside table, when a lot of tests in table - this is the reason why widths below must be fixed*/
-	display: block;
-}
-
-#select_test_tablehead {
-	display: block;
-	cursor: pointer;
-}
-
-.test_name_column {
-	width: 244px;
-}
-
-.test_type_column {
-	width: 172px;
-}
-
-.test_creation_column {
-	width: 113px;
-}
-
-#test_name_header {
-	width: 262px;
-}
-
 #test_type_header {
 	width: 186px;
 }
 
-#test_creation_header {
-	width: 133px;
+.test_type_label {
+	font-weight: bold;
 }
 
-.test_row {
-	cursor: pointer;
-}
-
-#button_container {
-	clear: both;
-}
-
-#sort_pic {
-	display: inline;
+#type_button_container {
+	display: flex;
+	align-items: flex-start; /*forces items to be aligned at top of container, otherwise line-breaks cause problems*/
 }
