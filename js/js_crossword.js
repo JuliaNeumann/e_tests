@@ -19,11 +19,6 @@ var crossword_test = { //test object to hold the test data produced / edited her
 		E_Test.call(this, 'crossword'); //make this inherit from E_Test (see js_general.js)
 	}, //init
 
-	saveTestData : function() {
-	//put all test data into one object literal for easy database submission
-		this.test_data = {grid: this.grid_data, questions : this.questions};
-	}, //saveTestData
-
 	addQuestionToModel : function(my_question_object) {
 	//adds a question to the test object, returns the created object
 	//params: my_question_object = obj (with at least properties: question_text, correct_answer)
@@ -83,7 +78,12 @@ var crossword_test = { //test object to hold the test data produced / edited her
 		this.grid = {};
 		this.placed_words = [];
 		this.numbers = {};
-	} //resetGrid
+	}, //resetGrid
+
+	saveTestData : function() {
+	//put all test data into one object literal for easy database submission
+		this.test_data = {grid: this.grid_data, questions : this.questions};
+	} //saveTestData
 
 } //crossword_test
 
@@ -95,7 +95,7 @@ function Question(my_current_id, my_question_text) {
 	this.correct_answer = null; //set only if not in run mode
 	this.position = null;
 	this.number = null;
-} //function Item
+} //function Question
 
 /*************************************************************************************************************************/
 //VIEW:
@@ -310,6 +310,19 @@ var view = {
 		} //if
 	}, //addQuestionToView
 
+	checkCompleted : function() {
+	//checks whether all fields are filled with letters, if so: enables Check button
+		var incomplete = false;
+		$('.letter_container').each(function() {
+			if ($(this).html() == "&nbsp;" || $(this).html() == '' || $(this).html() == ' ') {
+				incomplete = true;
+			} //if
+		});
+		if (!incomplete) {
+			$('#check_test').attr('disabled', false);
+		} //if
+	}, //checkCompleted
+
 	displayCrossword : function(my_x, my_y, my_grid, my_numbers, my_words) {
 	//displays a solved version of the given crossword
 	//params: my_x, my_y = INT, my_grid = object (fields and their content), my_numbers = object (numbered fields), my_words = array (placed words)
@@ -392,20 +405,7 @@ var view = {
 		if ($('#' + my_field_id + '> .letter_container').html() == "&nbsp;" || $('#' + my_field_id + '> .letter_container').html() == '') {
 			$('#' + my_field_id + '> .letter_container').html('?');
 		} //if
-	}, //markFieldAsIncorrect
-
-	checkCompleted : function() {
-	//checks whether all fields are filled with letters, if so: enables Check button
-		var incomplete = false;
-		$('.letter_container').each(function() {
-			if ($(this).html() == "&nbsp;" || $(this).html() == '' || $(this).html() == ' ') {
-				incomplete = true;
-			} //if
-		});
-		if (!incomplete) {
-			$('#check_test').attr('disabled', false);
-		} //if
-	} //checkCompleted
+	} //markFieldAsIncorrect
 
 } //view
 
@@ -445,31 +445,6 @@ var control = {
 		} //switch
 	}, //init
 
-	retrieveAndDisplayTest : function(my_test_id, my_solution) {
-	//retrieves data of a test from the database, displays it in div test_container
-	//params: my_test_id = INT; my_solution = bool (determines whether solution should be retrieved or not)
-		crossword_test.db_id = my_test_id;
-		var self = this;
-		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {test_id : my_test_id, solution : my_solution}, function(feedback) {
-			if (feedback.db_error != '') {
-				alert('Test could not be retrieved correctly from database! ' + feedback.db_error);
-			} //if
-			else {
-				crossword_test.grid_data.x = feedback['grid']['grid_x'];
-				crossword_test.grid_data.y = feedback['grid']['grid_y'];
-				for (var i = 0; i < feedback.questions.length; i++) {
-					self.addQuestion(feedback.questions[i]);
-				} //for
-				if (action == "view" || action == "run") {
-					self.initGrid(false);
-				} //if
-				else {
-					self.initGrid(true);
-				} //
-			} //else
-		});
-	}, //retrieveAndDisplayTest
-
 	addQuestion : function(my_question_object) {
 	//adds a question to the model and (if appropriate) the view
 	//params: my_question_object = obj (with at least properties: question_text, correct_answer)
@@ -496,6 +471,27 @@ var control = {
 		} //if
 	}, //changeCorrectAnswer
 
+	checkRunTest : function() {
+	//submits current solution of the user via AJAX, initializes display of feedback
+		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {check_test_id : crossword_test.db_id, check_test : crossword_test.grid}, function(feedback) {
+			view.displayScore(feedback.correct, crossword_test.questions.counter);
+			for (var i = 0; i < feedback.wrong_fields.length; i++) {
+				view.markFieldAsIncorrect('field_' + feedback.wrong_fields[i]);
+			}//for
+		});
+	}, //checkRunTest
+
+	checkUnplacedWords : function() {
+	//checks whether the model contains words that are not placed in the current grid, returns array of unplaced words
+		var unplaced_words = [];
+		for (var i = 0; i < crossword_test.questions.counter; i++) {
+			if ((crossword_test.questions.objects[i].number == null) && !(crossword_test.questions.objects[i].deleted)) { //word is not placed
+				unplaced_words.push(crossword_test.questions.objects[i].correct_answer);
+			} //if
+		} //for
+		return unplaced_words;
+	}, //checkUnplacedWords
+
 	deleteQuestion : function(my_question_id) {
 	//sets question with the given ID to deleted
 		crossword_test.questions.objects[my_question_id].deleted = true;
@@ -503,12 +499,6 @@ var control = {
 			this.words_edited = true;
 		} //if
 	}, //deleteQuestion
-
-	initGrid : function(my_show_solution) {
-	//initializes the calculation and display of the crossword grid
-		crossword_test.calculateGrid(my_show_solution);
-		view.displayCrossword(crossword_test.grid_data.x, crossword_test.grid_data.y, crossword_test.grid, crossword_test.numbers, crossword_test.placed_words);
-	}, //initGrid
 
 	generateCrossword : function() {
 	//initializes generation of crossword, storing and displaying result
@@ -547,27 +537,16 @@ var control = {
 		} //worker.onmessage
 	}, //generateCrossword
 
-	checkUnplacedWords : function() {
-	//checks whether the model contains words that are not placed in the current grid, returns array of unplaced words
-		var unplaced_words = [];
-		for (var i = 0; i < crossword_test.questions.counter; i++) {
-			if ((crossword_test.questions.objects[i].number == null) && !(crossword_test.questions.objects[i].deleted)) { //word is not placed
-				unplaced_words.push(crossword_test.questions.objects[i].correct_answer);
-			} //if
-		} //for
-		return unplaced_words;
-	}, //checkUnplacedWords
-
-	saveTest : function() {
-	//initializes saving of a test
-		crossword_test.saveTestData();
-		crossword_test.saveTestAndRedirect(action);
-	}, //saveTest
-
 	getQuestion : function(my_question_id) {
 	//returns the question with the given ID from the model
 		return crossword_test.questions.objects[my_question_id];
 	}, //getQuestion
+
+	initGrid : function(my_show_solution) {
+	//initializes the calculation and display of the crossword grid
+		crossword_test.calculateGrid(my_show_solution);
+		view.displayCrossword(crossword_test.grid_data.x, crossword_test.grid_data.y, crossword_test.grid, crossword_test.numbers, crossword_test.placed_words);
+	}, //initGrid
 
 	processInput : function() {
 	//replaces input fields that are currently in the crossword with their letters, updates the crossword_test grid to reflect the changes
@@ -580,15 +559,36 @@ var control = {
 		view.checkCompleted();
 	}, //processInput
 
-	checkRunTest : function() {
-	//submits current solution of the user via AJAX, initializes display of feedback
-		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {check_test_id : crossword_test.db_id, check_test : crossword_test.grid}, function(feedback) {
-			view.displayScore(feedback.correct, crossword_test.questions.counter);
-			for (var i = 0; i < feedback.wrong_fields.length; i++) {
-				view.markFieldAsIncorrect('field_' + feedback.wrong_fields[i]);
-			}//for
+	retrieveAndDisplayTest : function(my_test_id, my_solution) {
+	//retrieves data of a test from the database, displays it in div test_container
+	//params: my_test_id = INT; my_solution = bool (determines whether solution should be retrieved or not)
+		crossword_test.db_id = my_test_id;
+		var self = this;
+		$.getJSON(root_path + 'php_crossword/crossword_managetests.php', {test_id : my_test_id, solution : my_solution}, function(feedback) {
+			if (feedback.db_error != '') {
+				alert('Test could not be retrieved correctly from database! ' + feedback.db_error);
+			} //if
+			else {
+				crossword_test.grid_data.x = feedback['grid']['grid_x'];
+				crossword_test.grid_data.y = feedback['grid']['grid_y'];
+				for (var i = 0; i < feedback.questions.length; i++) {
+					self.addQuestion(feedback.questions[i]);
+				} //for
+				if (action == "view" || action == "run") {
+					self.initGrid(false);
+				} //if
+				else {
+					self.initGrid(true);
+				} //
+			} //else
 		});
-	} //checkRunTest
+	}, //retrieveAndDisplayTest
+
+	saveTest : function() {
+	//initializes saving of a test
+		crossword_test.saveTestData();
+		crossword_test.saveTestAndRedirect(action);
+	} //saveTest
 
 } //control
 

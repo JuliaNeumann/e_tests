@@ -1,6 +1,8 @@
 /*************************************************************************************************************************
 CROSSWORD GENERATOR
+- provides functions for calculating a crossword grid given a list of words, can be called as a Web Worker
 *************************************************************************************************************************/
+
 function Crossword(my_word_list) {
 //class declaration for a Crossword object
 //params: my_word_list = array of objects with properties "word" and "question_text" (sorted in some way)
@@ -39,109 +41,14 @@ function Crossword(my_word_list) {
 	} //else 
 } //function Crossword
 
-Crossword.prototype.reverseOrientation = function() {
-//sets the orientation property of a crossword to its opposite
-	this.orientation = (this.orientation == 0) ? 1 : 0;
-} //reverseOrientation
-
-Crossword.prototype.expandGrid = function(my_word) {
-//modifies the grid to accomodate a new word
-//params: my_word = Word object, with a valid map property
-	if ((my_word instanceof Word) && (my_word.map.length > 0)) {
-		for (var i = 0; i < my_word.map.length; i++) {
-			var current_y = my_word.map[i].y;
-			var current_x = my_word.map[i].x;
-			if (current_y < this.y_start) { //row the word wants to use before existing first row -> create as many empty rows as needed
-				for (var j = current_y; j < this.y_start; j++) {
-					this.grid[j] = {};
-					for (var k = this.x_start; k <= this.x_stop; k++) {
-						this.grid[j][k] = '//';
-					}//for
-				} //for
-				this.y_start = current_y;
-			} //if
-			else if (current_y > this.y_stop) {
-				for (var j = (this.y_stop + 1); j <= current_y; j++) { //row the word wants to use after existing last row -> create as many empty rows as needed
-					this.grid[j] = {};
-					for (var k = this.x_start; k <= this.x_stop; k++) {
-						this.grid[j][k] = '//';
-					}//for
-				} //for
-				this.y_stop = current_y;
-			} //else if
-			if (current_x < this.x_start) { //column the word wants to use before existing first column -> create as many empty columns as needed
-				for (var j = current_x; j < this.x_start; j++) {
-					for (var k = this.y_start; k <= this.y_stop; k++) {
-						this.grid[k][j] = '//';
-					}//for
-				} //for
-				this.x_start = current_x;
-			} //if
-			else if (current_x > this.x_stop) {
-				for (var j = (this.x_stop + 1); j <= current_x; j++) { //column the word wants to use after existing last column -> create as many empty columns as needed
-					for (var k = this.y_start; k <= this.y_stop; k++) {
-						this.grid[k][j] = '//';
-					}//for
-				} //for
-				this.x_stop = current_x;
-			} //else if
-			if (this.grid[current_y][current_x] == '//' || this.grid[current_y][current_x] == my_word.map[i].letter) { //letter is to be added to an empty space in grid, or same letter already occupies this space -> everything good
-				this.grid[current_y][current_x] = my_word.map[i].letter;
-			} //if
-			else {
-				console.log('Error during grid building!!');
-				return false;
-			} //else
-		} //for
-	} //if
+Crossword.prototype.checkFieldEmpty = function(my_field) {
+//checks whether field with the given x and y coordinates is empty in the current grid, if so returns true, else false	
+//params: my_field = object with properties x and y
+	if ((typeof this.grid[my_field.y] !== "undefined") && (typeof this.grid[my_field.y][my_field.x] !== 'undefined') && (this.grid[my_field.y][my_field.x] !== '//')) { //field exists and is not empty
+		return false;
+	}//if
 	return true;
-} //expandGrid
-
-Crossword.prototype.testPrintGrid = function() {
-//transfers the current grid to string, for testing purposes, DELETE LATER!!
-	var grid_string = '';
-	for (var i = this.y_start; i <= this.y_stop; i++) {
-		grid_string += '<div class="cw_row">';
-		for (var j = this.x_start; j <= this.x_stop; j++) {
-			if (this.grid[i][j] == '//') {
-				grid_string += '<div class="empty_field">&nbsp;</div>';
-			} //if
-			else {
-				grid_string += '<div class="filled_field">';
-				if (typeof this.numbers[i + '_' + j] !== "undefined") { //this is a start field with a number
-					grid_string += '<sup>' + this.numbers[i + '_' + j] + '</sup>';
-				}
-				grid_string += this.grid[i][j] + '</div>'
-			} //else
-		} //for
-		grid_string += '</div>';
-	} //for
-	//add the word list:
-	grid_string += '<p id="word_list">';
-	this.placed_words.sort(function(a,b) { //sort by orientation and number
-		if (a.position.orientation != b.position.orientation) {
-			return a.position.orientation - b.position.orientation;
-		} //if
-		else {
-			return a.number - b.number;
-		} //else
-	});
-	var across = false;
-	var down = false;
-	for (var i = 0; i < this.placed_words.length; i++) {
-		if (this.placed_words[i].position.orientation == 0 && !across) { //add the headline for vertical words
-			grid_string += '<h3>ACROSS</h3>';
-			across = true;
-		} //if
-		else if (this.placed_words[i].position.orientation == 1 && !down) { //add the headline for horizontal words
-			grid_string += '<h3>DOWN</h3>';
-			down = true;
-		} //else if
-		grid_string += this.placed_words[i].number + ': ' + this.placed_words[i].question_text + '<br>';
-	} //for
-	grid_string += '</p>';
-	return grid_string;
-} //testPrintGrid
+} //Crossword.checkFieldEmpty
 
 Crossword.prototype.cleanUpGrid = function() {
 //adjusts the grid and positions of placed words to start at x = 0 and y = 0 (eliminates the negative values that are created while words are added)
@@ -211,45 +118,60 @@ Crossword.prototype.cleanUpGrid = function() {
 		} //if
 		counter++;
 	} //for
-} //cleanUpGrid
+} //Crossword.cleanUpGrid
 
-Crossword.prototype.checkFieldEmpty = function(my_field) {
-//checks whether field with the given x and y coordinates is empty in the current grid, if so returns true, else false	
-//params: my_field = object with properties x and y
-	if ((typeof this.grid[my_field.y] !== "undefined") && (typeof this.grid[my_field.y][my_field.x] !== 'undefined') && (this.grid[my_field.y][my_field.x] !== '//')) { //field exists and is not empty
-		return false;
-	}//if
-	return true;
-} //checkFieldEmpty
-
-Crossword.prototype.placeWords = function() {
-//tries to place remaining unplaced words in the crossword, returns number of how many words it was able to place
-	var counter_placed_words = 0;
-	var counter = this.unplaced_words.length;
-	for (var i = 0; i < counter; i++) {
-		var current_word = this.unplaced_words.shift();
-		this.reverseOrientation();
-		this.findPossiblePositions(current_word);
-		
-		if (current_word.possible_positions.length == 0) { //no possible position -> try other orientation
-			this.reverseOrientation();
-			this.findPossiblePositions(current_word);
-			if (current_word.possible_positions.length == 0) { //still no possible position -> back to unplaced words
-				this.unplaced_words.push(current_word); 
-				continue;
+Crossword.prototype.expandGrid = function(my_word) {
+//modifies the grid to accomodate a new word
+//params: my_word = Word object, with a valid map property
+	if ((my_word instanceof Word) && (my_word.map.length > 0)) {
+		for (var i = 0; i < my_word.map.length; i++) {
+			var current_y = my_word.map[i].y;
+			var current_x = my_word.map[i].x;
+			if (current_y < this.y_start) { //row the word wants to use before existing first row -> create as many empty rows as needed
+				for (var j = current_y; j < this.y_start; j++) {
+					this.grid[j] = {};
+					for (var k = this.x_start; k <= this.x_stop; k++) {
+						this.grid[j][k] = '//';
+					}//for
+				} //for
+				this.y_start = current_y;
 			} //if
-		} //if
-		current_word.possible_positions.sort(function(a, b) { //sort by number of intersections
-			return b.intersections - a.intersections;
-		});
-		var best_position = current_word.possible_positions[0];
-		current_word.placeThisWord(best_position);
-		this.expandGrid(current_word);
-		this.placed_words.push(current_word);
-		counter_placed_words++;
-	} //for
-	return counter_placed_words;
-} //placeWords
+			else if (current_y > this.y_stop) {
+				for (var j = (this.y_stop + 1); j <= current_y; j++) { //row the word wants to use after existing last row -> create as many empty rows as needed
+					this.grid[j] = {};
+					for (var k = this.x_start; k <= this.x_stop; k++) {
+						this.grid[j][k] = '//';
+					}//for
+				} //for
+				this.y_stop = current_y;
+			} //else if
+			if (current_x < this.x_start) { //column the word wants to use before existing first column -> create as many empty columns as needed
+				for (var j = current_x; j < this.x_start; j++) {
+					for (var k = this.y_start; k <= this.y_stop; k++) {
+						this.grid[k][j] = '//';
+					}//for
+				} //for
+				this.x_start = current_x;
+			} //if
+			else if (current_x > this.x_stop) {
+				for (var j = (this.x_stop + 1); j <= current_x; j++) { //column the word wants to use after existing last column -> create as many empty columns as needed
+					for (var k = this.y_start; k <= this.y_stop; k++) {
+						this.grid[k][j] = '//';
+					}//for
+				} //for
+				this.x_stop = current_x;
+			} //else if
+			if (this.grid[current_y][current_x] == '//' || this.grid[current_y][current_x] == my_word.map[i].letter) { //letter is to be added to an empty space in grid, or same letter already occupies this space -> everything good
+				this.grid[current_y][current_x] = my_word.map[i].letter;
+			} //if
+			else {
+				console.log('Error during grid building!!');
+				return false;
+			} //else
+		} //for
+	} //if
+	return true;
+} //Crossword.expandGrid
 
 Crossword.prototype.findPossiblePositions = function(my_word_obj) {
 //goes through the array of placed words and tries to find possible positions for the given word (applying the current orientation)
@@ -320,7 +242,43 @@ Crossword.prototype.findPossiblePositions = function(my_word_obj) {
 			} //if
 		} //for
 	} //if
-} //attachWordToPlacedWords
+} //Crossword.findPossiblePositions
+
+Crossword.prototype.placeWords = function() {
+//tries to place remaining unplaced words in the crossword, returns number of how many words it was able to place
+	var counter_placed_words = 0;
+	var counter = this.unplaced_words.length;
+	for (var i = 0; i < counter; i++) {
+		var current_word = this.unplaced_words.shift();
+		this.reverseOrientation();
+		this.findPossiblePositions(current_word);
+		
+		if (current_word.possible_positions.length == 0) { //no possible position -> try other orientation
+			this.reverseOrientation();
+			this.findPossiblePositions(current_word);
+			if (current_word.possible_positions.length == 0) { //still no possible position -> back to unplaced words
+				this.unplaced_words.push(current_word); 
+				continue;
+			} //if
+		} //if
+		current_word.possible_positions.sort(function(a, b) { //sort by number of intersections
+			return b.intersections - a.intersections;
+		});
+		var best_position = current_word.possible_positions[0];
+		current_word.placeThisWord(best_position);
+		this.expandGrid(current_word);
+		this.placed_words.push(current_word);
+		counter_placed_words++;
+	} //for
+	return counter_placed_words;
+} //Crossword.placeWords
+
+Crossword.prototype.reverseOrientation = function() {
+//sets the orientation property of a crossword to its opposite
+	this.orientation = (this.orientation == 0) ? 1 : 0;
+} //Crossword.reverseOrientation
+
+/*************************************************************************************************************************/
 
 function Word(my_word, my_question) {
 //class declaration for word objects
@@ -347,7 +305,7 @@ Word.prototype.calculateMap = function(my_position) {
 		} //for
 		return new_map;
 	} //if
-} //calculateMap
+} //Word.calculateMap
 
 Word.prototype.placeThisWord = function(my_position) {
 //sets the position and map properties of the word
@@ -356,7 +314,9 @@ Word.prototype.placeThisWord = function(my_position) {
 		this.position = my_position;
 		this.map = this.calculateMap(my_position);
 	} //if
-} //placeThisWord
+} //Word.placeThisWord
+
+/*************************************************************************************************************************/
 
 function Position(my_x, my_y, my_orientation, my_intersections) {
 //class declaration for a position of a word
@@ -366,6 +326,8 @@ function Position(my_x, my_y, my_orientation, my_intersections) {
 	this.orientation = my_orientation;
 	this.intersections = my_intersections;
 } //function Position
+
+/*************************************************************************************************************************/
 
 function generateCrossword(my_word_list) {
 //main function: initializes generation of possible crossword arrangements, returns the best one
@@ -418,7 +380,7 @@ function generateCrossword(my_word_list) {
 		} //else
 	});
 
-	console.log(possible_crosswords);
+	console.log(possible_crosswords[0]);
 	return possible_crosswords[0]; //return the best crossword
 } //function generateCrossword
 
@@ -434,8 +396,10 @@ function shuffleArray(my_array) {
 	return shuffled_array;
 } //function shuffleArray
 
+/*************************************************************************************************************************/
+
 //WEB WORKER CODE:
 onmessage = function (task) {
 	var best_crossword = generateCrossword(task.data);
 	postMessage(best_crossword);
-}
+} //onmessage

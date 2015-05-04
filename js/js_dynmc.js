@@ -14,12 +14,6 @@ var dynmc_test = {
 		E_Test.call(this, 'dynmc'); //make this inherit from E_Test (see js_general.js)
 	}, //init
 
-	setTestData : function() {
-	//puts all test data into one object literal for easy database submission
-		delete Question.prototype.randomizeAnswers; //delete method, for database submission
-		this.test_data.questions = this.questions;
-	}, //setTestData
-
 	addQuestionToModel : function(my_question_object) {
 	//adds a question to the test object, returns created question object
 	//params: my_question_object = object (must have at least property: question_text)
@@ -42,7 +36,13 @@ var dynmc_test = {
 		this.questions.counter++;
 		
 		return question_object;
-	} //function addQuestionToObj
+	}, //addQuestionToModel
+
+	setTestData : function() {
+	//puts all test data into one object literal for easy database submission
+		delete Question.prototype.randomizeAnswers; //delete method, for database submission
+		this.test_data.questions = this.questions;
+	} //setTestData
 
 } //dynmc_test
 
@@ -55,7 +55,7 @@ function Question(my_current_id, my_question_text) {
 	this.correct_answer = null; //set only if not in run mode
 	this.incorrect_answers = []; //set only if not in run mode
 	this.added_from_db = false; //to be set for questions from DB that are added as new question to test
-} //function Item
+} //function Question
 
 Question.prototype.randomizeAnswers = function() {
 //stores a randomized array of all answer options in the property
@@ -70,7 +70,7 @@ Question.prototype.randomizeAnswers = function() {
 		var my_index = Math.round(my_random * (i - 1)); 
 		this.answers.push(all_answers.splice(my_index, 1)[0]); 
 	} //for
-} //randomizeAnswers()
+} //Question.randomizeAnswers
 
 /*************************************************************************************************************************/
 //VIEW:
@@ -334,6 +334,23 @@ var view = {
 		});
 	}, //init
 
+	addIncorrectAnswerToView : function(my_question_id, my_answer, my_answer_index) {
+	//adds incorrect answer option to a question display
+	//params: my_question_id = INT, my_answer = 'string', my_answer_index = INT (position of answer in object's array)
+		var map = {"{{id}}" : my_question_id, "{{correct}}": "incorrect", "{{text}}": my_answer, "{{answer_index}}" : my_answer_index};
+		var answer_html = this.answer_solved_template.replace(/{{id}}|{{correct}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
+		$('#question_table_' + my_question_id).append(answer_html);
+		if (action == 'new' || action == 'edit') { //incorrect answer options can be deleted
+			$('#delete_cell_' + my_question_id + '_' + my_answer_index).append('<div class="delete_answer_button font-color-4" data-obj_id="' + my_question_id + '" data-answer_id="' + my_answer_index + '">X</div>');
+			$('#incorrect_' + my_question_id + '_' + my_answer_index).addClass('editable');
+		} //if
+	}, //addIncorrectAnswerToView
+
+	addQuestionForm : function() {
+	//adds the form to add new questions to the display
+		this.questions_container.after(this.add_question_template);
+	}, //addQuestionForm
+
 	addQuestionToView : function(my_question_object, my_solved) {
 	//displays the given question
 	//params: my_question_object = object, my_solved = bool (indicating whether display question as solved or not)
@@ -366,17 +383,11 @@ var view = {
 		} //if
 	}, //addQuestionToView
 
-	addIncorrectAnswerToView : function(my_question_id, my_answer, my_answer_index) {
-	//adds incorrect answer option to a question display
-	//params: my_question_id = INT, my_answer = 'string', my_answer_index = INT (position of answer in object's array)
-		var map = {"{{id}}" : my_question_id, "{{correct}}": "incorrect", "{{text}}": my_answer, "{{answer_index}}" : my_answer_index};
-		var answer_html = this.answer_solved_template.replace(/{{id}}|{{correct}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
-		$('#question_table_' + my_question_id).append(answer_html);
-		if (action == 'new' || action == 'edit') { //incorrect answer options can be deleted
-			$('#delete_cell_' + my_question_id + '_' + my_answer_index).append('<div class="delete_answer_button font-color-4" data-obj_id="' + my_question_id + '" data-answer_id="' + my_answer_index + '">X</div>');
-			$('#incorrect_' + my_question_id + '_' + my_answer_index).addClass('editable');
-		} //if
-	}, //addIncorrectAnswerToView
+	cleanAfterAddingFromDb : function() {
+	//resets the section for adding questions from database
+		$('#adding_msg').remove();
+		$('#add_question_from_db').show();
+	}, //cleanAfterAddingFromDb
 
 	deleteQuestionFromView : function(my_question_id) {
 	//deletes the given question from the display
@@ -384,36 +395,21 @@ var view = {
 		$('#question_' + my_question_id).remove();
 	}, //deleteQuestionFromView
 
-	refreshIncorrectAnswers : function(my_question_object) {
-	//refreshes display of incorrect answers of given question
-		$('#question_table_' + my_question_object.current_id + ' > .incorrect_row').remove(); //refresh display of incorrect answers
-		for (var i = 0; i < my_question_object.incorrect_answers.length; i++) {
-			this.addIncorrectAnswerToView(my_question_object.current_id, my_question_object.incorrect_answers[i], i);
+	endQuestion : function(my_answer_options) {
+	//initializes display solved version of question
+	//params: my_answer_options = array
+		for (var i = 0; i < my_answer_options.length; i++) {
+			this.showAnswerOption(my_answer_options[i][1], my_answer_options[i][0]);
 		} //for
-	}, //refreshIncorrectAnswers
-
-	toggleSolution : function(my_solved) {
-	//changes display between solved (my_solved == true) and unsolved display
-		this.setHTMLContent(this.questions_container.attr('id'), '');
-		control.current_question = 0;
-		var counter = this.questions_displayed;
-		this.questions_displayed = 0;
-		for (var i = 0; i < counter; i++) {
-			this.addQuestionToView(control.getCurrentQuestion(), my_solved);
-			control.current_question++;
-		} //for
-	}, //toggleSolution
-
-	addQuestionForm : function() {
-	//adds the form to add new questions to the display
-		this.questions_container.after(this.add_question_template);
-	}, //addQuestionForm
-
-	cleanAfterAddingFromDb : function() {
-	//resets the section for adding questions from database
-		$('#adding_msg').remove();
-		$('#add_question_from_db').show();
-	}, //cleanAfterAddingFromDb
+		$('.user_answer').attr('disabled', true);
+		$('#ready_button').hide();
+		if (control.current_question < control.getNoOfQuestions()) { //questions left to display
+			$('#next_question').show();
+		} //if
+		else {
+			$('#show_result').show();
+		} //else
+	}, //endQuestion
 
 	initRunQuestion : function(my_question_object) {
 	//initializes display of a question in run mode
@@ -423,21 +419,6 @@ var view = {
 		this.instructions_container.html("Decide whether this answer option is correct or incorrect. Click \"Check\" when you have made your choice.");
 		$('#ready_button').attr('disabled', true);
 	}, //initRunQuestion
-
-	showAnswerOption : function(my_text, my_solution) {
-	//displays a answer option of the currently displayed question
-	//params: my_text = string, my_solution = false (if no solution is shown) or 1||0
-		$('.current_option').removeClass('current_option');
-		$('.current_option_row').removeClass('current_option_row');			
-		$('.user_answer').attr('disabled', true).attr('name', 'answer_' + control.options_counter).removeClass('user_answer'); //disable previous answer options
-		control.options_counter++;
-		
-		var answer_html = this.answer_run_template.replace(/{{text}}/g, my_text);
-		$('#current_question_table').append(answer_html);
-		if (my_solution !== false) {
-			$("input[name='user_answer'][value='" + my_solution + "']").attr("checked","checked");
-		} //false
-	}, //showAnswerOption
 
 	markAnswerAsCorrect : function(my_correct, my_continue) {
 	//marks the current answer option as answered correctly & displays feedback
@@ -458,21 +439,41 @@ var view = {
 		this.instructions_container.html("Sorry! You have not solved this question correctly!");
 	}, //markAsCorrect
 
-	endQuestion : function(my_answer_options) {
-	//initializes display solved version of question
-	//params: my_answer_options = array
-		for (var i = 0; i < my_answer_options.length; i++) {
-			this.showAnswerOption(my_answer_options[i][1], my_answer_options[i][0]);
+	refreshIncorrectAnswers : function(my_question_object) {
+	//refreshes display of incorrect answers of given question
+		$('#question_table_' + my_question_object.current_id + ' > .incorrect_row').remove(); //refresh display of incorrect answers
+		for (var i = 0; i < my_question_object.incorrect_answers.length; i++) {
+			this.addIncorrectAnswerToView(my_question_object.current_id, my_question_object.incorrect_answers[i], i);
 		} //for
-		$('.user_answer').attr('disabled', true);
-		$('#ready_button').hide();
-		if (control.current_question < control.getNoOfQuestions()) { //questions left to display
-			$('#next_question').show();
-		} //if
-		else {
-			$('#show_result').show();
-		} //else
-	} //endQuestion
+	}, //refreshIncorrectAnswers
+
+	showAnswerOption : function(my_text, my_solution) {
+	//displays a answer option of the currently displayed question
+	//params: my_text = string, my_solution = false (if no solution is shown) or 1||0
+		$('.current_option').removeClass('current_option');
+		$('.current_option_row').removeClass('current_option_row');			
+		$('.user_answer').attr('disabled', true).attr('name', 'answer_' + control.options_counter).removeClass('user_answer'); //disable previous answer options
+		control.options_counter++;
+		
+		var answer_html = this.answer_run_template.replace(/{{text}}/g, my_text);
+		$('#current_question_table').append(answer_html);
+		if (my_solution !== false) {
+			$("input[name='user_answer'][value='" + my_solution + "']").attr("checked","checked");
+		} //false
+	}, //showAnswerOption
+
+	toggleSolution : function(my_solved) {
+	//changes display between solved (my_solved == true) and unsolved display
+		this.setHTMLContent(this.questions_container.attr('id'), '');
+		control.current_question = 0;
+		var counter = this.questions_displayed;
+		this.questions_displayed = 0;
+		for (var i = 0; i < counter; i++) {
+			this.addQuestionToView(control.getCurrentQuestion(), my_solved);
+			control.current_question++;
+		} //for
+	} //toggleSolution
+
 } //view
 
 /*************************************************************************************************************************/
@@ -514,26 +515,12 @@ var control = {
 		} //switch
 	}, //init
 
-	retrieveAndDisplayTest : function(my_test_id, my_solution) {
-	//retrieves data of a test from the database, initializes its display and stores it in model
-	//params: my_test_id = INT; my_solution = bool (determines whether solution should be retrieved or not)
-		dynmc_test.db_id = my_test_id;
-		var self = this;
-		$.getJSON(root_path + 'php_dynmc/dynmc_managetests.php', {test_id : my_test_id, solution : my_solution}, function(feedback) {
-			if (feedback.db_error != '') {
-				alert('Test could not be retrieved correctly from database! ' + feedback.db_error);
-			} //if
-			else {
-				view.setHTMLContent(view.questions_container.attr('id'), '');
-				for (i = 0; i < feedback.questions.length; i++) {
-					self.addQuestion(feedback.questions[i]);	
-				} //for
-				if (!my_solution) { //in run mode -> start with first question
-					self.runQuestion();
-				} //if
-			} //else
-		});
-	}, //retrieveAndDisplayTest
+	addDefaultIncorrectAnswer : function(my_question_id) {
+	//adds a default incorrect answer to the given question, returns index of that incorrect answer
+		var new_index = dynmc_test.questions.objects[my_question_id].incorrect_answers.length;
+		dynmc_test.questions.objects[my_question_id].incorrect_answers.push('New Incorrect Answer...');
+		return new_index;
+	}, //addDefaultIncorrectAnswer
 
 	addQuestion : function(my_question_obj) {
 	//adds question to the display and the model, return ID under which object is found
@@ -564,32 +551,6 @@ var control = {
 		});
 	}, //addQuestionFromDb
 
-	deleteQuestion : function(my_question_id) {
-	//delete Question from model and view
-		dynmc_test.questions.objects[my_question_id].deleted = true;
-		view.deleteQuestionFromView(my_question_id);
-	}, //deleteQuestion
-
-	addDefaultIncorrectAnswer : function(my_question_id) {
-	//adds a default incorrect answer to the given question, returns index of that incorrect answer
-		var new_index = dynmc_test.questions.objects[my_question_id].incorrect_answers.length;
-		dynmc_test.questions.objects[my_question_id].incorrect_answers.push('New Incorrect Answer...');
-		return new_index;
-	}, //addDefaultIncorrectAnswer
-
-	deleteIncorrectAnswer : function(my_question_id, my_index) {
-	//deletes incorrect answer (at position my_index) from the model and view from the given question
-		dynmc_test.questions.objects[my_question_id].incorrect_answers.splice(my_index, 1); //remove from object
-		dynmc_test.questions.objects[my_question_id].edited = true;
-		view.refreshIncorrectAnswers(dynmc_test.questions.objects[my_question_id]);
-	}, //deleteIncorrectAnswer
-
-	changeQuestionText : function(my_question_id, my_new_text) {
-	//sets question text of given question to my_new_text
-		dynmc_test.questions.objects[my_question_id].question_text = my_new_text; 
-		dynmc_test.questions.objects[my_question_id].edited = true;
-	}, //changeQuestionText
-
 	changeCorrectAnswer : function(my_question_id, my_new_text) {
 	//sets correct answer of given question to my_new_text
 		dynmc_test.questions.objects[my_question_id].correct_answer = my_new_text;
@@ -602,9 +563,11 @@ var control = {
 		dynmc_test.questions.objects[my_question_id].edited = true;
 	}, //changeIncorrectAnswer
 
-	getCurrentQuestion : function() {
-		return dynmc_test.questions.objects[this.current_question];
-	}, //getQuestion
+	changeQuestionText : function(my_question_id, my_new_text) {
+	//sets question text of given question to my_new_text
+		dynmc_test.questions.objects[my_question_id].question_text = my_new_text; 
+		dynmc_test.questions.objects[my_question_id].edited = true;
+	}, //changeQuestionText
 
 	checkIncorrectAnswers : function(my_question_id) {
 	//checks whether question has more than 1 incorrect answer
@@ -635,29 +598,18 @@ var control = {
 		return true;
 	}, //checkNewIncorrectAnswer
 
-	saveTest : function() {
-	//initializes saving of a test
-		dynmc_test.setTestData();
-		dynmc_test.saveTestAndRedirect(action);
-	}, //saveTest
+	deleteIncorrectAnswer : function(my_question_id, my_index) {
+	//deletes incorrect answer (at position my_index) from the model and view from the given question
+		dynmc_test.questions.objects[my_question_id].incorrect_answers.splice(my_index, 1); //remove from object
+		dynmc_test.questions.objects[my_question_id].edited = true;
+		view.refreshIncorrectAnswers(dynmc_test.questions.objects[my_question_id]);
+	}, //deleteIncorrectAnswer
 
-	runQuestion : function() {
-	//displays the current question of the test in the run mode
-		this.options_counter = 0;
-		var question_object = dynmc_test.questions.objects[this.current_question];
-		view.initRunQuestion(question_object);
-		this.getNewAnswerOption(); //show first answer option	
-	}, //runQuestion
-
-	getNewAnswerOption : function() {
-	//retrieves next answer option from database, initialises displaying it
-		var question_object = dynmc_test.questions.objects[this.current_question];
-		$.get(root_path + 'php_dynmc/dynmc_managetests.php', {new_option : true, question_ID : question_object.db_id}, function(feedback) { 
-			if (feedback) {
-				view.showAnswerOption(feedback, false);
-			} //if
-		});
-	}, //getNewAnswerOption
+	deleteQuestion : function(my_question_id) {
+	//delete Question from model and view
+		dynmc_test.questions.objects[my_question_id].deleted = true;
+		view.deleteQuestionFromView(my_question_id);
+	}, //deleteQuestion
 
 	evaluateAnswer : function(my_user_answer) {
 	//evaluates the answer a user has given for the current options, initializes display of feedback
@@ -689,10 +641,60 @@ var control = {
 		});
 	}, //evaluateAnswer
 
+	getCurrentQuestion : function() {
+		return dynmc_test.questions.objects[this.current_question];
+	}, //getQuestion
+
+	getNewAnswerOption : function() {
+	//retrieves next answer option from database, initialises displaying it
+		var question_object = dynmc_test.questions.objects[this.current_question];
+		$.get(root_path + 'php_dynmc/dynmc_managetests.php', {new_option : true, question_ID : question_object.db_id}, function(feedback) { 
+			if (feedback) {
+				view.showAnswerOption(feedback, false);
+			} //if
+		});
+	}, //getNewAnswerOption
+
 	getNoOfQuestions : function()  {
 	//returns number of questions in the current test
 		return dynmc_test.questions.counter;
-	} //getNoOfQuestions
+	}, //getNoOfQuestions
+
+	retrieveAndDisplayTest : function(my_test_id, my_solution) {
+	//retrieves data of a test from the database, initializes its display and stores it in model
+	//params: my_test_id = INT; my_solution = bool (determines whether solution should be retrieved or not)
+		dynmc_test.db_id = my_test_id;
+		var self = this;
+		$.getJSON(root_path + 'php_dynmc/dynmc_managetests.php', {test_id : my_test_id, solution : my_solution}, function(feedback) {
+			if (feedback.db_error != '') {
+				alert('Test could not be retrieved correctly from database! ' + feedback.db_error);
+			} //if
+			else {
+				view.setHTMLContent(view.questions_container.attr('id'), '');
+				for (i = 0; i < feedback.questions.length; i++) {
+					self.addQuestion(feedback.questions[i]);	
+				} //for
+				if (!my_solution) { //in run mode -> start with first question
+					self.runQuestion();
+				} //if
+			} //else
+		});
+	}, //retrieveAndDisplayTest
+
+	runQuestion : function() {
+	//displays the current question of the test in the run mode
+		this.options_counter = 0;
+		var question_object = dynmc_test.questions.objects[this.current_question];
+		view.initRunQuestion(question_object);
+		this.getNewAnswerOption(); //show first answer option	
+	}, //runQuestion
+
+	saveTest : function() {
+	//initializes saving of a test
+		dynmc_test.setTestData();
+		dynmc_test.saveTestAndRedirect(action);
+	} //saveTest
+
 } //control
 
 

@@ -5,13 +5,21 @@ JS GENERAL FUNCTIONS
 
 //MODEL:
 function E_Test(my_type_string) {
-//class declaration for general Test objects
+//class declaration for E_Test objects
+
 	this.test_type = my_type_string;
 	this.test_data = {};
 	this.test_name = '';
 	this.test_level = null;
 	this.db_id = null;
 	this.db_error = '';
+
+	this.loadGeneralInfoFromForm = function() {
+	//gets name and level of test from form for general test info (see general_testinfo_form.php)
+		this.test_name = $('#test_name').val();
+		this.test_level = $('#test_level').val();
+	} //loadDataFromForm
+
 	this.saveTestAndRedirect = function(my_action) {
 	//saves test as new entry in database table 'tests'
 	//params: my_action = 'string' (possible values: 'edit' or 'new')
@@ -28,15 +36,11 @@ function E_Test(my_type_string) {
 			} //else
 		});
 	} //saveTestAndRedirect
-	this.loadGeneralInfoFromForm = function() {
-	//gets name and level of test from form for general test info (see general_testinfo_form.php)
-		this.test_name = $('#test_name').val();
-		this.test_level = $('#test_level').val();
-	} //loadDataFromForm
+
 } //function E_Test
 
 function TestItem(my_current_id) {
-//class declaration for general Test item objects (parts of a test that can be deleted, edited etc. separately)
+//class declaration for test item objects (parts of a test that can be deleted, edited etc. separately)
 	this.current_id = my_current_id; //ID under which item is identified in current display of test
 	this.db_id = null; //ID under which item is stored in DB
 	this.newly_created = false; //to indicate whether the item has been newly created
@@ -177,14 +181,13 @@ function View() {
 	//sets HTML content of the element with the given HTML ID attribute to the given content
 		$('#' + my_element_id).html(my_content);
 	} //setHTMLContent
+
 	this.displayScore = function(my_correct, my_all) {
 	//display score of the user on page in run mode
 		$('.instructions').html('Your score: ' + my_correct + ' out of ' + my_all + ' correct!');
 		$('#check_test').hide();
 		$('#reset').show().attr('disabled', false);
 	} //displayScore
-
-
 
 	/*************************************************************/
 	this.initGeneralView();
@@ -197,16 +200,8 @@ function View() {
 //CONTROL:
 function Control() {
 //class declaration Control (holds control functionality common to all pages)
+	
 	this.test_names = [];
-
-	this.getTestNamesFromDb = function(my_test_id) {
-	//gets all test names that exist in the database via an AJAX request, returns them as indexed array, root_path must exist as global variable!
-	//params: my_test_id = INT (Database ID of the current test, which should be excluded, 0 for new test)
-		var self_control = this;
-		$.getJSON(root_path + 'php_support/manage_tests.php', {get_test_names : true, test_ID : my_test_id}, function(feedback) {
-			self_control.test_names = feedback;
-		});
-	} //getTestNamesFromDb
 
 	this.checkTestName = function() {
 	//checks whether the current test name is not already taken, returns ok if it is, else displays error message
@@ -216,5 +211,14 @@ function Control() {
 		} //if
 		return true;
 	} //checkTestName
+
+	this.getTestNamesFromDb = function(my_test_id) {
+	//gets all test names that exist in the database via an AJAX request, returns them as indexed array, root_path must exist as global variable!
+	//params: my_test_id = INT (Database ID of the current test, which should be excluded, 0 for new test)
+		var self_control = this;
+		$.getJSON(root_path + 'php_support/manage_tests.php', {get_test_names : true, test_ID : my_test_id}, function(feedback) {
+			self_control.test_names = feedback;
+		});
+	} //getTestNamesFromDb
 
 } //function Control

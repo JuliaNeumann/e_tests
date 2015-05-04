@@ -15,10 +15,21 @@ var dragdrop_test = { //test object to hold the test data produced / edited here
 		E_Test.call(this, 'dragdrop'); //make this inherit from E_Test (see js_general.js)
 	}, //init
 
-	setTestData : function() {
-	//put all test data into one object literal for easy database submission
-		this.test_data = {items : this.items, containers : this.containers, solutions : this.solutions};
-	}, //setTestData
+	addContainerToModel : function(my_container_object) {
+	//adds container to the model and returns it
+		var container = new Container(this.containers.counter, my_container_object.container_text);
+		
+		if (my_container_object.container_ID) {
+			container.db_id = my_container_object.container_ID;
+		} //if
+		else {
+			container.newly_created = true;
+		} //else
+
+		this.containers.objects[this.containers.counter] = container;
+		this.containers.counter++;
+		return container;
+	}, //addContainerToModel
 
 	addItemToModel : function(my_item_object) {
 	//adds item to the model and returns it
@@ -37,21 +48,10 @@ var dragdrop_test = { //test object to hold the test data produced / edited here
 		return item;
 	}, //addItemToModel
 
-	addContainerToModel : function(my_container_object) {
-	//adds container to the model and returns it
-		var container = new Container(this.containers.counter, my_container_object.container_text);
-		
-		if (my_container_object.container_ID) {
-			container.db_id = my_container_object.container_ID;
-		} //if
-		else {
-			container.newly_created = true;
-		} //else
-
-		this.containers.objects[this.containers.counter] = container;
-		this.containers.counter++;
-		return container;
-	}, //addContainerToModel
+	setTestData : function() {
+	//put all test data into one object literal for easy database submission
+		this.test_data = {items : this.items, containers : this.containers, solutions : this.solutions};
+	}, //setTestData
 
 	setTestSolution : function() {
 	//sets the solution property to reflect the correct or submitted solution
@@ -74,18 +74,18 @@ var dragdrop_test = { //test object to hold the test data produced / edited here
 } //dragdrop_test
 
 //class declarations for items and containers:
+function Container(my_current_id, my_text) {
+//represents one container in which items can be dropped
+	TestItem.call(this, my_current_id); //make this a 'sub-class' of TestItem (see js_general.js)
+	this.container_text = my_text;
+} //function Container
+
 function Item(my_current_id, my_text) {
 //represents one draggable item
 	TestItem.call(this, my_current_id); //make this a 'sub-class' of TestItem (see js_general.js)
 	this.item_text = my_text;
 	this.item_container_ID = null;
 } //function Item
-
-function Container(my_current_id, my_text) {
-//represents one container in which items can be dropped
-	TestItem.call(this, my_current_id); //make this a 'sub-class' of TestItem (see js_general.js)
-	this.container_text = my_text;
-} //function Container
 
 /*************************************************************************************************************************/
 //VIEW:
@@ -248,30 +248,6 @@ var view = {
 		});
 	}, //init
 
-	addItemToView : function(my_item_object) {
-	//displays the item it is given
-		var item_html = this.item_template.replace(/{{id}}/g, my_item_object.current_id); //fill the template
-		item_html = item_html.replace(/{{text}}/g, my_item_object.item_text);
-		this.items_container.append(item_html);
-		this.items_displayed++;
-
-		if (action == 'new' || action == 'edit' || action == 'run') { //enable dragging
-			$('#item_box_' + my_item_object.current_id).attr('draggable', 'true');
-			var element = document.getElementById('item_box_' + my_item_object.current_id);
-			element.addEventListener('dragstart', control.initDrag); //needs to be done with plain JS, as jQuery does not pass necessary event data!
-			element.addEventListener('dragend', function(e) { view.resetOpacity(e.target.id) });
-		} //if
-		if (action == 'new' || action == 'edit') {
-			this.enableInlineEditing('item', my_item_object.current_id);
-		} //else if
-	}, //addItemToView
-
-	deleteItemFromView : function(my_item_id) {
-	//removes the item with the ID from the view
-		$('#item_box_' + my_item_id).remove();
-		this.items_displayed--;
-	}, //deleteContainerFromView
-
 	addContainerToView : function(my_container_object) {
 	//displays the container it is given
 		var container_html = this.container_template.replace(/{{id}}/g, my_container_object.current_id); //fill the template
@@ -293,7 +269,42 @@ var view = {
 			} //if
 		} //else if
 		this.fixContainerTable();
+	}, //addContainerToView
+
+	addItemToContainer : function(my_item_id, my_container_id) {
+	//appends an item to a container
+		$('#item_box_' + my_item_id).css('display', 'block');
+		if (action == 'new' || action == "edit") {
+			$('#item_box_' + my_item_id + ' > .delete_button').css('float', 'right');
+		} //if
+		$('#container_box_' + my_container_id).append($('#item_box_' + my_item_id));
+		if ((action == "run") && ($('#items_container > .item_box').length == 0)) { //all items in containers -> allow checking
+			$('#check_test').attr('disabled', false);
+		} //if
+	}, //addItemToContainer
+
+	addItemToView : function(my_item_object) {
+	//displays the item it is given
+		var item_html = this.item_template.replace(/{{id}}/g, my_item_object.current_id); //fill the template
+		item_html = item_html.replace(/{{text}}/g, my_item_object.item_text);
+		this.items_container.append(item_html);
+		this.items_displayed++;
+
+		if (action == 'new' || action == 'edit' || action == 'run') { //enable dragging
+			$('#item_box_' + my_item_object.current_id).attr('draggable', 'true');
+			var element = document.getElementById('item_box_' + my_item_object.current_id);
+			element.addEventListener('dragstart', control.initDrag); //needs to be done with plain JS, as jQuery does not pass necessary event data!
+			element.addEventListener('dragend', function(e) { view.resetOpacity(e.target.id) });
+		} //if
+		if (action == 'new' || action == 'edit') {
+			this.enableInlineEditing('item', my_item_object.current_id);
+		} //else if
 	}, //addItemToView
+
+	decreaseOpacity : function(my_element_id) {
+	//decreases the opacity of the item with the HTML ID attribute given
+		$('#' + my_element_id).css('opacity', '0.5');
+	}, //decreaseOpacity
 
 	deleteContainerFromView : function(my_container_id) {
 	//removes the container with the ID from the view
@@ -304,6 +315,17 @@ var view = {
 			$('#add_container').prop('disabled', false);
 		} //if
 	}, //deleteContainerFromView
+
+	deleteItemFromView : function(my_item_id) {
+	//removes the item with the ID from the view
+		$('#item_box_' + my_item_id).remove();
+		this.items_displayed--;
+	}, //deleteContainerFromView
+
+	displayIncorrectItem : function(my_item_id) {
+	//marks the given item as incorrect
+		$('#item_box_' + my_item_id).removeClass('border-theme-color').addClass('incorrect_item border-color-5 font-color-5').css('font-weight', 'bold');	
+	}, //displayIncorrectItem
 
 	enableInlineEditing: function(my_type, my_id) {
 	//adds classes to items & containers that enable editing of their text
@@ -328,16 +350,18 @@ var view = {
 		$('.container_cell').css('width', cell_width + '%');
 	}, //fixContainerTable
 
-	unifyContainerHeights : function() {
-	//set all containers to the height of the biggest
-		var max_height = 0;	
-		$('.container_box').each(function() {
-			if ($(this).height() > max_height) {
-				max_height = $(this).height();
-			} //if
-		});
-		$('.container_box').height(max_height).css('padding-bottom', '2px');
-	}, //unifyContainerHeights
+	resetOpacity : function(my_element_id) {
+	//sets the opacity of the item with the HTML ID attribute given to normal
+		$('#' + my_element_id).css('opacity', '1');
+	}, //resetOpacity
+
+	setDragImage : function(e, my_element_id) {
+	//set the identified element as the drag image
+		var img = document.getElementById(my_element_id);
+		if (e.dataTransfer.setDragImage) { //check for support (not supported in IE, but IE displays drag image fine by default)
+			e.dataTransfer.setDragImage(img, 0, 0); //set ghost image that is dragged along to be the item itself & to appear at mouse pointer
+		} //if
+	}, //setDragImage
 
 	showSolution : function() {
 	//changes display to solved version of the test
@@ -346,18 +370,6 @@ var view = {
 			view.addItemToContainer(item_id, control.getCorrectContainer(item_id));
 		});	
 	}, //showSolution
-
-	addItemToContainer : function(my_item_id, my_container_id) {
-	//appends an item to a container
-		$('#item_box_' + my_item_id).css('display', 'block');
-		if (action == 'new' || action == "edit") {
-			$('#item_box_' + my_item_id + ' > .delete_button').css('float', 'right');
-		} //if
-		$('#container_box_' + my_container_id).append($('#item_box_' + my_item_id));
-		if ((action == "run") && ($('#items_container > .item_box').length == 0)) { //all items in containers -> allow checking
-			$('#check_test').attr('disabled', false);
-		} //if
-	},
 
 	toggleDragBorder : function(e, my_element, my_remove) {
 	//handles changing of border color when item is dragged over element
@@ -373,28 +385,16 @@ var view = {
 		my_element.className = my_element.className.replace(old_class, new_class); //done with plain JS, as event listener passes element
 	}, //toggleDragBorder
 
-	setDragImage : function(e, my_element_id) {
-	//set the identified element as the drag image
-		var img = document.getElementById(my_element_id);
-		if (e.dataTransfer.setDragImage) { //check for support (not supported in IE, but IE displays drag image fine by default)
-			e.dataTransfer.setDragImage(img, 0, 0); //set ghost image that is dragged along to be the item itself & to appear at mouse pointer
-		} //if
-	}, //setDragImage
-
-	decreaseOpacity : function(my_element_id) {
-	//decreases the opacity of the item with the HTML ID attribute given
-		$('#' + my_element_id).css('opacity', '0.5');
-	}, //decreaseOpacity
-
-	resetOpacity : function(my_element_id) {
-	//sets the opacity of the item with the HTML ID attribute given to normal
-		$('#' + my_element_id).css('opacity', '1');
-	}, //decreaseOpacity
-
-	displayIncorrectItem : function(my_item_id) {
-	//marks the given item as incorrect
-		$('#item_box_' + my_item_id).removeClass('border-theme-color').addClass('incorrect_item border-color-5 font-color-5').css('font-weight', 'bold');	
-	} //displayIncorrectItem
+	unifyContainerHeights : function() {
+	//set all containers to the height of the biggest
+		var max_height = 0;	
+		$('.container_box').each(function() {
+			if ($(this).height() > max_height) {
+				max_height = $(this).height();
+			} //if
+		});
+		$('.container_box').height(max_height).css('padding-bottom', '2px');
+	} //unifyContainerHeights
 
 } //view
 
@@ -430,6 +430,121 @@ var control = {
 				break;
 		} //switch
 	}, //init
+
+	addContainer : function(my_container_object) {
+	//adds container to display and to test object
+	//params: my_container_object = object (must have at least one property: container_text)
+		var current_container = dragdrop_test.addContainerToModel(my_container_object);
+		view.addContainerToView(current_container);
+	}, //addContainer
+
+	addItem : function(my_item_object) {
+	//adds item to display and to test object
+	//params: my_item_object = object (must have at least one property: item_text)
+		var current_item = dragdrop_test.addItemToModel(my_item_object);
+		view.addItemToView(current_item);
+	}, //addItem
+
+	allowDrop : function(e, my_element) {
+	//allow dropping on containers (by preventing default, as elements can by default not be dropped into other elements)
+		e.preventDefault();
+		view.toggleDragBorder(e, my_element, false);
+	}, //allowDrop
+
+	changeContainer : function(my_container_id, my_new_text) {
+	//sets text of a container in the model
+		dragdrop_test.containers.objects[my_container_id].container_text = my_new_text; //update test object
+		dragdrop_test.containers.objects[my_container_id].edited = true;
+		view.setHTMLContent('label_' + my_container_id, my_new_text);
+	}, //changeContainer
+
+	changeItem : function(my_item_id, my_new_text) {
+	//sets text of an item in the model
+		dragdrop_test.items.objects[my_item_id].item_text = my_new_text; //update test object
+		dragdrop_test.items.objects[my_item_id].edited = true;
+		view.setHTMLContent('item_box_' + my_item_id, my_new_text);
+	}, //changeItem
+
+	checkContainerName : function(my_name, my_obj_id) {
+	//checks whether a container with the given name (and not the given ID) exists, returns true if not
+		for (var i = 0; i < dragdrop_test.containers.counter; i++) {
+			if (i != my_obj_id) {
+				var container = dragdrop_test.containers.objects[i];
+				if ((container.container_text == my_name) && !container.deleted) { //another container with this text exists
+					return false;
+				} //if
+			} //if
+		} //for
+		return true;
+	}, //checkContainerName
+
+	checkRunTest : function() {
+	//checks a test submission made in run mode
+		var temp_solution = {};
+		for (i = 0; i < dragdrop_test.items.counter; i++) {
+			var item_obj = dragdrop_test.items.objects[i];
+			var container_obj = dragdrop_test.containers.objects[dragdrop_test.solutions[i]];
+			temp_solution[item_obj.db_id] = container_obj.db_id;
+		} //for
+		$.getJSON(root_path + 'php_dragdrop/dragdrop_managetests.php', {check_test : temp_solution, check_test_id : dragdrop_test.db_id}, function(feedback) {
+			view.displayScore(feedback.correct, dragdrop_test.items.counter);
+			for (var i = 0; i < dragdrop_test.items.counter; i++) {
+				var item_obj = dragdrop_test.items.objects[i];
+				if (feedback[item_obj.db_id] == 0) { //mark incorrect items
+					view.displayIncorrectItem(i);
+				} //if
+			} //for
+		});
+	}, //checkRunTest
+
+	createDefaultTest : function(my_containers_number, my_items_number) {
+	//prepare default items and containers for displaying empty drag&drop test, using the given numbers, then initialize storing and display
+		var empty_items = {length: my_items_number};
+		for (var i = 0; i < my_items_number; i++) {
+			empty_items[i] = {item_text: '[ITEM ' + (i + 1) + ']'};
+		} //for
+		var empty_containers = {length: my_containers_number};
+		for (var i = 0; i < my_containers_number; i++) {
+			empty_containers[i] = {container_text: '[CONTAINER ' + (i + 1) + ']'};
+		} //for
+
+		this.setAndDisplayDragDropTest(empty_items, empty_containers);
+	}, //createDefaultTest
+
+	deleteContainer : function(my_container_id) {
+	//deletes container from view and sets it to deleted in model
+		view.deleteContainerFromView(my_container_id);
+		dragdrop_test.containers.objects[my_container_id].deleted = true;
+	}, //deleteContainer
+
+	deleteItem : function(my_item_id) {
+	//deletes item from view and sets it to deleted in model
+		view.deleteItemFromView(my_item_id);
+		dragdrop_test.items.objects[my_item_id].deleted = true;
+	}, //deleteItem
+
+	dropItemIntoContainer : function(e, my_element) {
+	//specifies what happens when my_element is dropped on a container -> attach my_element to that container
+		e.preventDefault();
+		view.toggleDragBorder(e, my_element, true);
+
+		var container_id = my_element.dataset.obj_id;
+		var item = document.getElementById(e.dataTransfer.getData('text'));
+		view.addItemToContainer(item.dataset.obj_id, container_id);
+		dragdrop_test.storeSolvedItem(item.dataset.obj_id, container_id);
+	}, //dropItemIntoContainer
+
+	getCorrectContainer : function(my_item_id) {
+	//returns the ID of the container into which the item belongs
+		return dragdrop_test.solutions[my_item_id];
+	}, //getCorrectContainer
+
+	initDrag : function(e) {
+	//specifies what happens when an element is dragged -> ID of that element as dragged data
+		e.dataTransfer.setData('text', e.target.id); 
+		view.decreaseOpacity(e.target.id);
+		view.setDragImage(e, e.target.id);
+	}, //initDrag
 
 	retrieveAndDisplayTest : function(my_test_id, my_solution) {
 	//retrieves data of a test from the database, displays it in div test_container
@@ -468,126 +583,11 @@ var control = {
 		} //for
 	}, //setAndDisplayDragDropTest
 
-	addItem : function(my_item_object) {
-	//adds item to display and to test object
-	//params: my_item_object = object (must have at least one property: item_text)
-		var current_item = dragdrop_test.addItemToModel(my_item_object);
-		view.addItemToView(current_item);
-	}, //addItem
-
-	changeItem : function(my_item_id, my_new_text) {
-	//sets text of an item in the model
-		dragdrop_test.items.objects[my_item_id].item_text = my_new_text; //update test object
-		dragdrop_test.items.objects[my_item_id].edited = true;
-		view.setHTMLContent('item_box_' + my_item_id, my_new_text);
-	}, //changeContainer
-
-	deleteItem : function(my_item_id) {
-	//deletes item from view and sets it to deleted in model
-		view.deleteItemFromView(my_item_id);
-		dragdrop_test.items.objects[my_item_id].deleted = true;
-	}, //deleteContainer
-
-	addContainer : function(my_container_object) {
-	//adds container to display and to test object
-	//params: my_container_object = object (must have at least one property: container_text)
-		var current_container = dragdrop_test.addContainerToModel(my_container_object);
-		view.addContainerToView(current_container);
-	}, //addContainer
-
-	changeContainer : function(my_container_id, my_new_text) {
-	//sets text of a container in the model
-		dragdrop_test.containers.objects[my_container_id].container_text = my_new_text; //update test object
-		dragdrop_test.containers.objects[my_container_id].edited = true;
-		view.setHTMLContent('label_' + my_container_id, my_new_text);
-	}, //changeContainer
-
-	deleteContainer : function(my_container_id) {
-	//deletes container from view and sets it to deleted in model
-		view.deleteContainerFromView(my_container_id);
-		dragdrop_test.containers.objects[my_container_id].deleted = true;
-	}, //deleteContainer
-
-	getCorrectContainer : function(my_item_id) {
-	//returns the ID of the container into which the item belongs
-		return dragdrop_test.solutions[my_item_id];
-	}, //getCorrectContainer
-
-	createDefaultTest : function(my_containers_number, my_items_number) {
-	//prepare default items and containers for displaying empty drag&drop test, using the given numbers, then initialize storing and display
-		var empty_items = {length: my_items_number};
-		for (var i = 0; i < my_items_number; i++) {
-			empty_items[i] = {item_text: '[ITEM ' + (i + 1) + ']'};
-		} //for
-		var empty_containers = {length: my_containers_number};
-		for (var i = 0; i < my_containers_number; i++) {
-			empty_containers[i] = {container_text: '[CONTAINER ' + (i + 1) + ']'};
-		} //for
-
-		this.setAndDisplayDragDropTest(empty_items, empty_containers);
-	}, //createDefaultTest
-
-	initDrag : function(e) {
-	//specifies what happens when an element is dragged -> ID of that element as dragged data
-		e.dataTransfer.setData('text', e.target.id); 
-		view.decreaseOpacity(e.target.id);
-		view.setDragImage(e, e.target.id);
-	}, //initDrag
-
-	allowDrop : function(e, my_element) {
-	//allow dropping on containers (by preventing default, as elements can by default not be dropped into other elements)
-		e.preventDefault();
-		view.toggleDragBorder(e, my_element, false);
-	}, //allowDrop
-
-	dropItemIntoContainer : function(e, my_element) {
-	//specifies what happens when my_element is dropped on a container -> attach my_element to that container
-		e.preventDefault();
-		view.toggleDragBorder(e, my_element, true);
-
-		var container_id = my_element.dataset.obj_id;
-		var item = document.getElementById(e.dataTransfer.getData('text'));
-		view.addItemToContainer(item.dataset.obj_id, container_id);
-		dragdrop_test.storeSolvedItem(item.dataset.obj_id, container_id);
-	}, //dropItemIntoContainer
-
-	checkContainerName : function(my_name, my_obj_id) {
-	//checks whether a container with the given name (and not the given ID) exists, returns true if not
-		for (var i = 0; i < dragdrop_test.containers.counter; i++) {
-			if (i != my_obj_id) {
-				var container = dragdrop_test.containers.objects[i];
-				if ((container.container_text == my_name) && !container.deleted) { //another container with this text exists
-					return false;
-				} //if
-			} //if
-		} //for
-		return true;
-	}, //checkContainerName
-
 	saveTest : function() {
 	//initializes saving of a test
 		dragdrop_test.setTestData();
 		dragdrop_test.saveTestAndRedirect(action);	
-	}, //saveTest
-
-	checkRunTest : function() {
-	//checks a test submission made in run mode
-		var temp_solution = {};
-		for (i = 0; i < dragdrop_test.items.counter; i++) {
-			var item_obj = dragdrop_test.items.objects[i];
-			var container_obj = dragdrop_test.containers.objects[dragdrop_test.solutions[i]];
-			temp_solution[item_obj.db_id] = container_obj.db_id;
-		} //for
-		$.getJSON(root_path + 'php_dragdrop/dragdrop_managetests.php', {check_test : temp_solution, check_test_id : dragdrop_test.db_id}, function(feedback) {
-			view.displayScore(feedback.correct, dragdrop_test.items.counter);
-			for (var i = 0; i < dragdrop_test.items.counter; i++) {
-				var item_obj = dragdrop_test.items.objects[i];
-				if (feedback[item_obj.db_id] == 0) { //mark incorrect items
-					view.displayIncorrectItem(i);
-				} //if
-			} //for
-		});
-	} //checkRunTest
+	} //saveTest
 
 } //control
 
