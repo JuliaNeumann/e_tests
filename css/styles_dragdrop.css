@@ -55,7 +55,7 @@ DRAG&DROP STYLE SHEET
 	border-style: solid;
 }
 
-[draggable] {
+[draggable=true] {
 	cursor: move; /*fallback for IE*/
 	cursor: -webkit-grab;
 	cursor: -moz-grab;

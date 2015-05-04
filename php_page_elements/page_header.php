@@ -20,6 +20,7 @@ PAGE HEADER
         	//global variables needed in all documents:
         	var root_path = '<?php echo ROOT_PATH; ?>';
         	var action = '<?php echo $action; ?>';
+        	var section = '<?php echo $section; ?>';
         	var test_names;
         	var test_id = null;
 <?php

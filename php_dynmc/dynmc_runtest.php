@@ -12,6 +12,9 @@ RUNNING A DYNAMIC MULTIPLE-CHOICE TEST
 
 	if (isset($_POST['selected_test_id'])) {
 		$test_id = $_POST['selected_test_id'];
+	} //if
+	else if (isset($_GET['selected_test_id'])) {
+		$test_id = $_GET['selected_test_id'];
 	} //else if
 	else {
 		die('This page has not been accessed in the correct way!');

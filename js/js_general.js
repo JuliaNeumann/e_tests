@@ -107,7 +107,8 @@ function View() {
 		/*************************************************************/
 		//reset (in run mode -> start test again after a previous submission):
 		$('#reset').click(function(e) {
-			location.reload();
+			var url = root_path + 'php_' + section + '/' + section + '_' + action + 'test.php';
+			window.location.assign(url + '?selected_test_id=' + test_id);
 		});
 	} //initGeneralView
 

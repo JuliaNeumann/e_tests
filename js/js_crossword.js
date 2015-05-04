@@ -290,7 +290,9 @@ var view = {
 		});
 		$('#check_test').click(function(e) {
 			e.preventDefault();
+			$('.instructions').html('<em>Checking ...</em>');
 			$(this).attr('disabled', true);
+			$('.crossword_question').removeClass('crossword_question');
 			control.checkRunTest();
 		});
 	}, //init

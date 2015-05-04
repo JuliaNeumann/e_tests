@@ -242,7 +242,7 @@ var view = {
 				//translate current IDs to database IDs
 				$('.instructions').html('<em>Checking ...</em>');
 				self.disableButtons(); //see js_general.js
-				$('.item_box').removeClass('incorrect_item border-color-5 font-color-5').addClass('border-theme-color').css('font-weight', 'normal');
+				$('.item_box').removeClass('incorrect_item border-color-5 font-color-5').addClass('border-theme-color').css('font-weight', 'normal').attr('draggable', false);
 				control.checkRunTest();
 			} //else
 		});
