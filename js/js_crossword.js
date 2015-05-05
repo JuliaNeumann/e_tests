@@ -108,6 +108,8 @@ var view = {
 		this.questions_container = $('#questions_container');
 		this.crossword_container = $('#crossword_container');
 		this.question_template = $('script[data-template="question"]').html();
+		this.animation_counter = 0;
+		this.animation_interval;
 		var self = this;
 
 		View.call(this); //make this inherit from View (see js_general.js)
@@ -162,7 +164,8 @@ var view = {
 				return;
 			} //if
 			self.disableButtons();
-			self.crossword_container.html('<em>Generating your crossword...</em>');
+			self.animation_counter = 0;
+			self.animation_interval = setInterval(self.generatingAnimation, 350);
 			control.generateCrossword();
 		});
 
@@ -406,6 +409,20 @@ var view = {
  		} //if
 	}, //focusAnswerFields
 
+	generatingAnimation : function() {
+	//initializes display of an animated message while crossword is being generated
+		var messages = ['<em>Generating your crossword &nbsp;...</em>', 
+						'<em>Generating your crossword .&nbsp;..</em>', 
+						'<em>Generating your crossword ..&nbsp;.</em>',
+						'<em>Generating your crossword ...&nbsp;</em>'];
+		var self = view; //'this' won't work here, because of calling in interval
+		self.animation_counter++;
+		if (self.animation_counter >= messages.length) {
+			self.animation_counter = 0;
+		} //if
+		self.crossword_container.html(messages[self.animation_counter]);
+	}, //generatingAnimation
+
 	markFieldAsIncorrect : function(my_field_id) {
 	//mark the field with the given ID attribute as incorrect
 		$('#' + my_field_id).removeClass('bg-color-4').addClass('font-color-5 bg-color-3').css({'font-weight': 'bold'});
@@ -531,6 +548,7 @@ var control = {
 		var worker = new Worker(root_path + "js/crossword_generator.js"); //create a web worker to do the calculation
 		worker.postMessage(words);
 		worker.onmessage = function(event) {
+			clearInterval(view.animation_interval);
 			var result = event.data;
 			crossword_test.grid_data.x = result.x_stop;
 			crossword_test.grid_data.y = result.y_stop;
