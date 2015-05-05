@@ -142,8 +142,8 @@ var view = {
 				alert("Please provide a question and answer in the input fields to add this question!");
 				return;
 			} //if
-			if (answer.split(" ").length > 1) {
-				alert("Every answer must consist of one word only!");
+			if (!control.checkCorrectAnswer(answer.toUpperCase())) {
+				alert("Every answer must consist of one word only and must only contain letters A-Z and numbers!");
 				$('#new_answer').focus();
 				return;
 			} //if
@@ -178,7 +178,14 @@ var view = {
 			var obj_id = $(this).closest('.non_editable').data("obj_id");
 			if ($(this).closest('.non_editable').hasClass('correct_answer')) {
 				new_text = new_text.toUpperCase();
-				control.changeCorrectAnswer(obj_id, new_text);
+				if (control.checkCorrectAnswer(new_text)) {
+					control.changeCorrectAnswer(obj_id, new_text);
+				} //if
+				else {
+					alert("Every answer must consist of one word only and must only contain letters A-Z and numbers!");
+					$(this).focus();
+					return;
+				} //else
 			} //if
 			else {
 				control.changeQuestionText(obj_id, new_text);
@@ -470,6 +477,15 @@ var control = {
 			crossword_test.questions.objects[my_question_id].edited = true;
 		} //if
 	}, //changeCorrectAnswer
+
+	checkCorrectAnswer : function(my_answer) {
+	//checks whether the given answer is a valid correct answer (no special characters etc.), if so returns true
+		var regex = new RegExp("^[A-Z0-9]*$"); //only match letters a-z and numbers
+    	if(regex.test(my_answer)){
+    		return true;
+    	} //if
+    	return false;
+	}, //checkCorrectAnswer
 
 	checkRunTest : function() {
 	//submits current solution of the user via AJAX, initializes display of feedback
