@@ -29,9 +29,18 @@ RUN A DRAG & DROP TEST
 	<header>
 		"<?php echo $test_data['test_name']; ?>"
 	</header>
-	<section id="test_container">
+	<section id="choose_option">
 		<div class="instructions">
-			Drag the items into the containers below and then click "Check" to see if you were right.
+			Choose how you want to run the test:
+		</div>
+		<div class="centered">
+			<button class="submit_button" id="option_one">One item at a time</button>
+			<button class="submit_button" id="option_all">All items at once</button>
+		</div>
+	</section>
+	<section class="hidden" id="test_container">
+		<div class="instructions">
+			Drag the item(s) into the containers below and then click "Check" to see if you were right.
 		</div><br>
 		<p id="items_container">
 			<em>Loading...</em>
@@ -41,7 +50,8 @@ RUN A DRAG & DROP TEST
 		</div>
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="check_test" id="check_test" value="Check" disabled>
-			<input type="submit" id="reset" class="submit_button hidden" value="Reset">
+			<input type="submit" id="continue_button" name="continue_button" class="submit_button hidden" value="Continue">
+			<input type="submit" id="reset" name="reset" class="submit_button hidden" value="Reset">
 		</div>
 	</section>
 <?php 

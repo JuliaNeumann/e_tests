@@ -232,18 +232,42 @@ var view = {
 		});
 
 		/*************************************************************/
+		//set run option
+		$('#option_one').click(function(e) {
+			e.preventDefault();
+			control.run_option = "one";
+			control.initRunShowOne();
+			$('#choose_option').hide();
+			$('#test_container').show();
+		});	
+		$('#option_all').click(function(e) {
+			e.preventDefault();
+			control.run_option = "all";
+			$('#choose_option').hide();
+			$('#test_container').show();
+		});	
+
+		/*************************************************************/
 		//check test (run mode)
 		$('#check_test').click(function(e) {
+			e.preventDefault();
 			if ($('#items_container > .item_box').length > 0) { //all test items must be inside a container
 				alert('Some items are still waiting to be dropped into a container! Please drag all items into the containers first.');
 			} //if
 			else {
-				//translate current IDs to database IDs
 				$('.instructions').html('<em>Checking ...</em>');
 				self.disableButtons(); //see js_general.js
 				$('.item_box').removeClass('incorrect_item border-color-5 font-color-5').addClass('border-theme-color').css('font-weight', 'normal').attr('draggable', false);
 				control.checkRunTest();
 			} //else
+		});
+		$('#continue_button').click(function(e) {
+			e.preventDefault();
+			$(this).hide();
+			$('#check_test').show();
+			$('.container_box').html('');
+			$('.instructions').html('Drag the item(s) into the containers below and then click "Check" to see if you were right.');
+			control.initRunNextItem();
 		});
 	}, //init
 
@@ -325,6 +349,14 @@ var view = {
 	//marks the given item as incorrect
 		$('#item_box_' + my_item_id).removeClass('border-theme-color').addClass('incorrect_item border-color-5 font-color-5').css('font-weight', 'bold');	
 	}, //displayIncorrectItem
+
+	displayContinueButton : function(my_feedback_msg) {
+	//in run mode: hides Check button and displays Continue button instead, displays feedback message
+		$('#check_test').hide();
+		$('#continue_button').show();
+		$('.instructions').html(my_feedback_msg);
+		this.enableButtons();
+	}, //displayContinueButton
 
 	enableInlineEditing: function(my_type, my_id) {
 	//adds classes to items & containers that enable editing of their text
@@ -417,6 +449,11 @@ var control = {
 
 	init: function(my_test_id) {
 	//initialize loading of test and display, according to action
+		//PROPERTIES:
+		this.run_option = null; //in run mode: indicates which run option (all or one) was chosen
+		this.current_item = 0; //in run mode: keeps track of which item is currently handled
+		this.user_score = 0;
+
 		Control.call(this); //make this inherit from Control (see js_general.js)
 
 		view.init();
@@ -488,22 +525,46 @@ var control = {
 	}, //checkContainerName
 
 	checkRunTest : function() {
-	//checks a test submission made in run mode
+	//checks a submission made in run mode
 		var temp_solution = {};
-		for (i = 0; i < dragdrop_test.items.counter; i++) {
-			var item_obj = dragdrop_test.items.objects[i];
-			var container_obj = dragdrop_test.containers.objects[dragdrop_test.solutions[i]];
+		var self = this;
+		var feedback_msg = '';
+		if (this.run_option == 'one') {
+			var item_obj = dragdrop_test.items.objects[this.current_item];
+			var container_obj = dragdrop_test.containers.objects[dragdrop_test.solutions[this.current_item]];
 			temp_solution[item_obj.db_id] = container_obj.db_id;
-		} //for
-		$.getJSON(root_path + 'php_dragdrop/dragdrop_managetests.php', {check_test : temp_solution, check_test_id : dragdrop_test.db_id}, function(feedback) {
-			view.displayScore(feedback.correct, dragdrop_test.items.counter);
-			for (var i = 0; i < dragdrop_test.items.counter; i++) {
+		} //else if
+		else if (this.run_option == 'all') {
+			for (i = 0; i < dragdrop_test.items.counter; i++) {
 				var item_obj = dragdrop_test.items.objects[i];
-				if (feedback[item_obj.db_id] == 0) { //mark incorrect items
-					view.displayIncorrectItem(i);
-				} //if
+				var container_obj = dragdrop_test.containers.objects[dragdrop_test.solutions[i]];
+				temp_solution[item_obj.db_id] = container_obj.db_id;
 			} //for
+		} //else if
+		$.getJSON(root_path + 'php_dragdrop/dragdrop_managetests.php', {check_test : temp_solution, check_test_id : dragdrop_test.db_id}, function(feedback) {
+			if (self.run_option == 'one') {
+				var item_obj = dragdrop_test.items.objects[self.current_item];
+				if (feedback[item_obj.db_id] == 0) { //mark incorrect item
+					view.displayIncorrectItem(self.current_item);
+					feedback_msg = "Sorry, that was not the right container. Click \"Continue\" to go on.";
+				} //if
+				else {
+					self.user_score++;
+					feedback_msg = "Congratulations, that was correct. Click \"Continue\" to go on.";
+				} //else
+				view.displayContinueButton(feedback_msg);
+			} //if
+			else if (self.run_option == 'all') {
+				view.displayScore(feedback.correct, dragdrop_test.items.counter);
+				for (var i = 0; i < dragdrop_test.items.counter; i++) {
+					var item_obj = dragdrop_test.items.objects[i];
+					if (feedback[item_obj.db_id] == 0) { //mark incorrect items
+						view.displayIncorrectItem(i);
+					} //if
+				} //for
+			} //else if
 		});
+
 	}, //checkRunTest
 
 	createDefaultTest : function(my_containers_number, my_items_number) {
@@ -554,6 +615,24 @@ var control = {
 		view.decreaseOpacity(e.target.id);
 		view.setDragImage(e, e.target.id);
 	}, //initDrag
+
+	initRunNextItem : function() {
+		this.current_item++;
+		if (this.current_item == dragdrop_test.items.counter) { //this was the last item
+			view.displayScore(this.user_score, dragdrop_test.items.counter);
+			view.setHTMLContent('container_table', '');
+		} //if
+		else {
+			view.addItemToView(dragdrop_test.items.objects[this.current_item]);
+			view.disableButtons();
+		} //else
+	}, //initRunNextItem
+
+	initRunShowOne : function() {
+	//in run mode: initializes showing one item at a time instead of all items at once
+		view.setHTMLContent('items_container', '');
+		view.addItemToView(dragdrop_test.items.objects[this.current_item]); //display first item
+	}, //initRunShowOne
 
 	retrieveAndDisplayTest : function(my_test_id, my_solution) {
 	//retrieves data of a test from the database, displays it in div test_container

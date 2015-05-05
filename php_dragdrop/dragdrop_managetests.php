@@ -147,7 +147,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 
 		$checked_items = array("correct" => 0);
 		foreach ($test_items as $item) {
-			if ($item['item_container_ID'] == $temp_solution[$item['item_ID']]) {
+			if (isset($temp_solution[$item['item_ID']]) && ($item['item_container_ID'] == $temp_solution[$item['item_ID']])) {
 				$checked_items[$item['item_ID']] = 1;
 				$checked_items["correct"]++;
 			}
