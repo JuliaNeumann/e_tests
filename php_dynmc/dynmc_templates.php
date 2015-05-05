@@ -45,7 +45,7 @@ TEMPLATES FOR DYNMC TESTS
 			<img src="<?php echo ROOT_PATH; ?>images/incorrect.png" class="pic_incorrect" alt="symbol">
 		</div>
 		<div class="css_td">
-			<input type="text" class="new_inputfield new_incorrect_answer" name="new_incorrect_answer_{{index}}" id="new_incorrect_answer_{{index}}" value="New Incorrect Answer...">
+			<input type="text" class="new_inputfield new_incorrect_answer" name="new_incorrect_answer_{{index}}" id="new_incorrect_answer_{{index}}" placeholder="New Incorrect Answer...">
 		</div>
 		<div class="css_td small_cell">
 			<div class="delete_new_answer_button font-color-1" data-index="{{index}}">X</div>
@@ -67,7 +67,7 @@ TEMPLATES FOR DYNMC TESTS
 <script type="text/template" data-template="add_question">
     <div class="question border-theme-color" id="new_question">
 		<div class="label_box  bg-theme-color font-color-4">
-			<div class="question_label"><input type="text" class="new_inputfield" name="new_question_text" id="new_question_text" value="New Question..."></div>
+			<div class="question_label"><input type="text" class="new_inputfield" name="new_question_text" id="new_question_text" placeholder="New Question..."></div>
 		</div>
 		<div class="question_box bg-color-4">
 			<div class="css_table question_table" id="new_question_table">
@@ -76,7 +76,7 @@ TEMPLATES FOR DYNMC TESTS
 						<img src="<?php echo ROOT_PATH; ?>images/correct.png" class="pic_correct" alt="symbol">
 					</div>
 					<div class="css_td">
-						<input type="text" class="new_inputfield" name="new_correct_answer" id="new_correct_answer" value="New Correct Answer...">
+						<input type="text" class="new_inputfield" name="new_correct_answer" id="new_correct_answer" placeholder="New Correct Answer...">
 					</div>
 				</div>
 				<div class="css_tr">
@@ -84,7 +84,7 @@ TEMPLATES FOR DYNMC TESTS
 						<img src="<?php echo ROOT_PATH; ?>images/incorrect.png" class="pic_incorrect" alt="symbol">
 					</div>
 					<div class="css_td">
-						<input type="text" class="new_inputfield new_incorrect_answer" name="new_incorrect_answer_0" id="new_incorrect_answer_0" value="New Incorrect Answer...">
+						<input type="text" class="new_inputfield new_incorrect_answer" name="new_incorrect_answer_0" id="new_incorrect_answer_0" placeholder="New Incorrect Answer...">
 					</div>
 				</div>
 			</div>

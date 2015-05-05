@@ -140,8 +140,8 @@ var view = {
 			var question = $.trim($('#new_question').val());
 			var answer = $.trim($('#new_answer').val());
 
-			if (question == '' || question == "New Question..." || answer == '' || answer == "New Answer...") {
-				alert("Please provide a question and answer in the input fields to add this question!");
+			if (question == '' || answer == '') {
+				alert("Please provide a question and an answer in the input fields to add this question!");
 				return;
 			} //if
 			if (!control.checkCorrectAnswer(answer.toUpperCase())) {
@@ -151,8 +151,8 @@ var view = {
 			} //if
 
 			control.addQuestion({question_text: question, correct_answer: answer});
-			$('#new_question').val('New Question...').select();
-			$('#new_answer').val('New Answer...');
+			$('#new_question').val('').select();
+			$('#new_answer').val('');
 		});
 
 		/*************************************************************/

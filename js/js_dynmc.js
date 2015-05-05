@@ -112,11 +112,11 @@ var view = {
 			e.preventDefault();
 			var question_text = $.trim($('#new_question_text').val());
 			var error = '';
-			if (question_text == '' || question_text == 'New Question...') {
+			if (question_text == '') {
 				error += "Please provide a question text! ";
 			} //if
 			var correct_answer = $.trim($('#new_correct_answer').val());
-			if (correct_answer == '' || correct_answer == 'New Correct Answer...') {
+			if (correct_answer == '') {
 				error += "Please provide a correct answer! "
 			} //if
 			var incorrect_answers = [];
@@ -126,7 +126,7 @@ var view = {
 				if (!($('#new_incorrect_row_' + i).hasClass('deleted'))) { //has not been deleted from display
 					counter++;
 					var answer = $.trim($('#new_incorrect_answer_' + i).val());
-					if (answer == '' || answer == 'New Incorrect Answer...') {
+					if (answer == '') {
 						error += "Please provide incorrect answer number " + counter + "! ";
 					} //if
 					if ((($.inArray(answer, incorrect_answers) !== -1) || (answer == correct_answer)) && !duplicate) {
@@ -142,9 +142,9 @@ var view = {
 			} //if
 			control.addQuestion({'question_text' : question_text, 'correct_answer' : correct_answer, 'incorrect_answers' : incorrect_answers});
 			control.current_option = 0;
-			$('#new_question_text').val('New Question...').select();
-			$('#new_correct_answer').val('New Correct Answer...');
-			$('.new_incorrect_answer').val('New Incorrect Answer...');
+			$('#new_question_text').val('').select();
+			$('#new_correct_answer').val('');
+			$('.new_incorrect_answer').val('');
 			$('.new_incorrect_row').remove();
 		});
 		$(document).on('click', '#add_new_incorrect', function(e) {

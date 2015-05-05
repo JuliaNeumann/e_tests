@@ -41,8 +41,8 @@ EDITING A CROSSWORD TEST
 			<tbody id="questions_container"></tbody>
 			<tbody id="new_question_tbody">
 				<tr id="new_question_row">
-					<td><input type="text" class="table_inputfield" name="new_question" id="new_question" value="New Question..."></td>
-					<td><input type="text" class="table_inputfield" name="new_answer" id="new_answer" value="New Answer..." maxlength="25"></td>
+					<td><input type="text" class="table_inputfield" name="new_question" id="new_question" placeholder="New Question..."></td>
+					<td><input type="text" class="table_inputfield" name="new_answer" id="new_answer" placeholder="New Answer..." maxlength="25"></td>
 				</tr>
 				<tr>
 					<td colspan="2"><input type="submit" class="submit_button" name="add_question" id="add_question" value="Add this Question"></td>
