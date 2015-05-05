@@ -112,7 +112,7 @@ var view = {
 	}, //init
 
 	hoverUpdate : function() {
-		var self = view; //this won't work here, because of calling in interval
+		var self = view; //'this' won't work here, because of calling in interval
 		self.hover_counter += 1;
 		if (self.hover_counter == 2) {
 			$('#description_' + self.current_hover).slideDown("slow");
