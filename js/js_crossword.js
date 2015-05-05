@@ -534,6 +534,10 @@ var control = {
 				question_object.number = null;
 			} //for
 			self.initGrid(true);
+			var unplaced_words = self.checkUnplacedWords();
+			if (unplaced_words.length > 0) {
+				alert('The following words could not be placed in the crossword: ' + unplaced_words.toString() + '. Delete or change these words and try generating a new crossword.');
+			} //if
 		} //worker.onmessage
 	}, //generateCrossword
 
