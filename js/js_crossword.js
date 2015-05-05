@@ -164,10 +164,10 @@ var view = {
 				return;
 			} //if
 			self.disableButtons();
-			self.crossword_container.html('<em>Generating your crossword <span id="animation_dots"></span></em>');
+			self.crossword_container.html('<em>Generating your crossword <span id="animation_dots">...</span></em>');
 			self.animation_counter = 0;
 			self.animation_interval = setInterval(self.generatingAnimation, 350);
-			control.generateCrossword();
+			control.initGenerateCrossword();
 		});
 
 		/*************************************************************/
@@ -449,7 +449,6 @@ var control = {
 
 		switch (action) {
 			case 'new':
-				$.getScript(root_path + "js/crossword_generator.js"); //load the crossword generator code
 				this.getTestNamesFromDb(0); //load test names from database for checking, see js_general.js
 				break;
 			case 'view':
@@ -465,6 +464,11 @@ var control = {
 			default:
 				break;
 		} //switch
+
+		if (typeof(Worker) === "undefined") { //no web worker support
+			$.getScript(root_path + "js/crossword_generator.js"); //load the crossword generator code, so it can be called directly by function calls
+		} //if
+
 	}, //init
 
 	addQuestion : function(my_question_object) {
@@ -531,7 +535,38 @@ var control = {
 		} //if
 	}, //deleteQuestion
 
-	generateCrossword : function() {
+	getQuestion : function(my_question_id) {
+	//returns the question with the given ID from the model
+		return crossword_test.questions.objects[my_question_id];
+	}, //getQuestion
+
+	handleGeneratedCrossword : function(my_crossword_data) {
+	//takes care of handling crossword delivered by the crossword generator
+		crossword_test.grid_data.x = my_crossword_data.x_stop;
+		crossword_test.grid_data.y = my_crossword_data.y_stop;
+		crossword_test.grid_data.edited = true;
+		this.words_edited = false;
+		for (var i = 0; i < my_crossword_data.placed_words.length; i++) {
+			var question_object = crossword_test.questions.objects[my_crossword_data.placed_words[i].word_id];
+			question_object.position = my_crossword_data.placed_words[i].position;
+			question_object.number = my_crossword_data.placed_words[i].number;
+			question_object.edited = true;
+			crossword_test.numbers[question_object.position.y + '_' + question_object.position.x] = question_object.number;
+	 		crossword_test.placed_words.push(question_object);
+		} //for
+		for (var i = 0; i < my_crossword_data.unplaced_words.length; i++) {
+			var question_object = crossword_test.questions.objects[my_crossword_data.unplaced_words[i].word_id];
+			question_object.position = null;
+			question_object.number = null;
+		} //for
+		this.initGrid(true);
+		var unplaced_words = this.checkUnplacedWords();
+		if (unplaced_words.length > 0) {
+			alert('The following words could not be placed in the crossword: ' + unplaced_words.toString() + '. Delete or change these words and try generating a new crossword.');
+		} //if
+	}, //handleGeneratedCrossword
+
+	initGenerateCrossword : function() {
 	//initializes generation of crossword, storing and displaying result
 		var words = [];
 		var self = this;
@@ -543,40 +578,21 @@ var control = {
 			} //if
 		} //for
 		crossword_test.resetGrid();
-		var worker = new Worker(root_path + "js/crossword_generator.js"); //create a web worker to do the calculation
-		worker.postMessage(words);
-		worker.onmessage = function(event) {
-			clearInterval(view.animation_interval);
-			var result = event.data;
-			crossword_test.grid_data.x = result.x_stop;
-			crossword_test.grid_data.y = result.y_stop;
-			crossword_test.grid_data.edited = true;
-			self.words_edited = false;
-			for (var i = 0; i < result.placed_words.length; i++) {
-				var question_object = crossword_test.questions.objects[result.placed_words[i].word_id];
-				question_object.position = result.placed_words[i].position;
-				question_object.number = result.placed_words[i].number;
-				question_object.edited = true;
-				crossword_test.numbers[question_object.position.y + '_' + question_object.position.x] = question_object.number;
-		 		crossword_test.placed_words.push(question_object);
-			} //for
-			for (var i = 0; i < result.unplaced_words.length; i++) {
-				var question_object = crossword_test.questions.objects[result.unplaced_words[i].word_id];
-				question_object.position = null;
-				question_object.number = null;
-			} //for
-			self.initGrid(true);
-			var unplaced_words = self.checkUnplacedWords();
-			if (unplaced_words.length > 0) {
-				alert('The following words could not be placed in the crossword: ' + unplaced_words.toString() + '. Delete or change these words and try generating a new crossword.');
-			} //if
-		} //worker.onmessage
-	}, //generateCrossword
-
-	getQuestion : function(my_question_id) {
-	//returns the question with the given ID from the model
-		return crossword_test.questions.objects[my_question_id];
-	}, //getQuestion
+		if (typeof(Worker) !== "undefined") { //Web Worker supported
+			var worker = new Worker(root_path + "js/crossword_generator.js"); //create a web worker to do the calculation
+			worker.postMessage(words);
+			worker.onmessage = function(event) {
+				clearInterval(view.animation_interval);
+				self.handleGeneratedCrossword(event.data);
+			} //worker.onmessage   
+		} //if 
+		else { //no web worker support -> use function calls
+			alert('Wait a few moments while your crossword is being generated!');
+			clearInterval(view.animation_interval); //animation will not work in this case
+		    var crossword_result = generateCrossword(words); //see crossword_generator.js
+		    self.handleGeneratedCrossword(crossword_result);
+		} //else
+	}, //initGenerateCrossword
 
 	initGrid : function(my_show_solution) {
 	//initializes the calculation and display of the crossword grid
@@ -615,7 +631,7 @@ var control = {
 				} //if
 				else {
 					self.initGrid(true);
-				} //
+				} //else
 			} //else
 		});
 	}, //retrieveAndDisplayTest
