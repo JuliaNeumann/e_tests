@@ -332,6 +332,14 @@ var view = {
 			self.displayScore(control.user_score, control.getNoOfQuestions());
 			self.questions_container.html('');
 		});
+
+		$('#download_as_png').click(function(e) {
+			e.preventDefault();
+			$.canvas = document.getElementById("myCanvas");
+			var my_image_code = $.canvas.toDataURL('image/png');
+
+			$('#test_container').append('<a href="' + my_image_code + '" download="download" >Download as jpeg</a>');
+		});
 	}, //init
 
 	addIncorrectAnswerToView : function(my_question_id, my_answer, my_answer_index) {
@@ -388,6 +396,47 @@ var view = {
 		$('#adding_msg').remove();
 		$('#add_question_from_db').show();
 	}, //cleanAfterAddingFromDb
+
+	createImg : function() {
+	//creates image of the test for export
+		var svg_width = this.questions_container.width() + 20;
+		var svg_height = this.questions_container.height() + 20;
+
+		var data = '<svg xmlns="http://www.w3.org/2000/svg" id="img_svg" width="' + svg_width + '" height="' + svg_height + '">' +
+		           '<foreignObject width="100%" height="100%">' +
+		           '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:12px">' +
+		             '<em>Test Name</em>' +
+		             this.questions_container.html() +
+		           '</div>' +
+		           '</foreignObject>' +
+		           '</svg>';
+
+		
+		/*var DOMURL = window.URL || window.webkitURL || window;
+
+		var img = new Image();
+		var svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+		var url = DOMURL.createObjectURL(svg);
+
+		img.onload = function () {
+		  ctx.drawImage(img, 0, 0);
+		  DOMURL.revokeObjectURL(url);
+		}
+
+		img.src = url;*/
+
+		$('#test_container').append(data);
+
+		$('foreignObject').find("*").each(function() { //loop through all descendants of the foreignObject element
+			var styles = dumpCSSText($(this)[0]); //function needs to be run on the native DOM element, not jQuery element
+			$(this).attr('style', styles); //attach all styles as inline styles, so they will be visible when copied to canvas
+		});
+
+		$('#img_svg').toImageNew();
+
+		
+
+	}, //createImg
 
 	deleteQuestionFromView : function(my_question_id) {
 	//deletes the given question from the display
@@ -677,6 +726,9 @@ var control = {
 				if (!my_solution) { //in run mode -> start with first question
 					self.runQuestion();
 				} //if
+				if (action == 'view') {
+					view.createImg();
+				} //if
 			} //else
 		});
 	}, //retrieveAndDisplayTest
@@ -701,3 +753,115 @@ var control = {
 $(document).ready(function() {
 	control.init(test_id);
 });
+
+$.fn.toImage = function() {
+    $(this).each(function() {
+        var svg$ = $(this);
+        var width = svg$.width();
+        var height = svg$.height();
+
+        // Create a blob from the SVG data
+        var svgData = new XMLSerializer().serializeToString(this);
+        var blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+
+        // Get the blob's URL
+        var domUrl = self.URL || self.webkitURL || self;
+        var blobUrl = domUrl.createObjectURL(blob);
+
+        // Load the blob into a temporary image
+        $('<img />')
+            .width(width)
+            .height(height)
+            .on('load', function() {
+                try {
+                    var canvas = document.getElementById("myCanvas");
+                    canvas.width = width;
+                    canvas.height = height;
+                    var ctx = canvas.getContext('2d');
+
+                    // Start with white background (optional; transparent otherwise)
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(0, 0, width, height);
+
+                    // Draw SVG image on canvas
+                    ctx.drawImage(this, 0, 0);
+
+                    // Replace SVG tag with the canvas' image
+                    /*svg$.replaceWith($('<img />').attr({
+                        src: canvas.toDataURL(),
+                        width: width,
+                        height: height
+                    }));*/
+                } finally {
+                    domUrl.revokeObjectURL(blobUrl);
+                }
+            })
+            .attr('src', blobUrl); 
+    });
+};
+
+$.fn.toImageNew = function() {
+    $(this).each(function() {
+        var svg$ = $(this);
+        var width = svg$.width();
+        var height = svg$.height();
+
+        // Create a blob from the SVG data
+        var svgData = new XMLSerializer().serializeToString(this);
+        var blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+
+        // Get the blob's URL
+        var domUrl = self.URL || self.webkitURL || self;
+        var blobUrl = domUrl.createObjectURL(blob);
+
+        var canvas = document.getElementById("myCanvas");
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext('2d');
+
+        var img = new Image();
+        img.crossOrigin = "anonymous";
+
+		img.onload = function () {
+			ctx.drawImage(img, 0, 0);
+			domUrl.revokeObjectURL(blobUrl);
+		}
+
+		img.src = blobUrl;
+                
+    });
+};
+
+$.fn.toImageOnly = function() {
+        $(this).each(function() {
+            var svg$ = $(this);
+            var width = svg$.width();
+            var height = svg$.height();
+
+            // Create a blob from the SVG data
+            var svgData = new XMLSerializer().serializeToString(this);
+            var blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+
+            // Get the blob's URL
+            var blobUrl = (self.URL || self.webkitURL || self).createObjectURL(blob);
+
+            // Load the blob into an image
+            $('<img />')
+                .width(width)
+                .height(height)
+                .on('load', function() {
+                    // Overwrite the SVG tag with the img tag
+                    svg$.replaceWith(this);
+                })
+                .attr('src', blobUrl);
+        });
+    };
+
+function dumpCSSText(element){
+  var s = '';
+  var o = getComputedStyle(element);
+  for(var i = 0; i < o.length; i++){
+    s+=o[i] + ':' + o.getPropertyValue(o[i])+';';
+  }
+  return s;
+}

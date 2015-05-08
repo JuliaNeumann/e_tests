@@ -269,6 +269,14 @@ var view = {
 			$('.instructions').html('Drag the item(s) into the containers below and then click "Check" to see if you were right.');
 			control.initRunNextItem();
 		});
+
+		$('#download_as_png').click(function(e) {
+			e.preventDefault();
+			$.canvas = document.getElementById("myCanvas");
+			var my_image_code = $.canvas.toDataURL('image/png');
+
+			$('#test_container').append('<a href="' + my_image_code + '" download="download" >Download as jpeg</a>');
+		});
 	}, //init
 
 	addContainerToView : function(my_container_object) {
@@ -323,6 +331,46 @@ var view = {
 			this.enableInlineEditing('item', my_item_object.current_id);
 		} //else if
 	}, //addItemToView
+
+	createImg : function() {
+	//creates image of the test for export
+		var test_container = $('#test_container');
+		var svg_width = test_container.width() + 20;
+		var svg_height = test_container.height() + 20;
+
+		var data = '<svg xmlns="http://www.w3.org/2000/svg" id="img_svg" width="' + svg_width + '" height="' + svg_height + '">' +
+		           '<foreignObject width="100%" height="100%">' +
+		           '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:12px">' +
+		             '<em>Test Name</em>' +
+		             test_container.html() +
+		           '</div>' +
+		           '</foreignObject>' +
+		           '</svg>';
+
+		
+		/*var DOMURL = window.URL || window.webkitURL || window;
+
+		var img = new Image();
+		var svg = new Blob([data], {type: 'image/svg+xml;charset=utf-8'});
+		var url = DOMURL.createObjectURL(svg);
+
+		img.onload = function () {
+		  ctx.drawImage(img, 0, 0);
+		  DOMURL.revokeObjectURL(url);
+		}
+
+		img.src = url;*/
+
+		$('#test_container').append(data);
+
+		$('foreignObject').find("*").each(function() { //loop through all descendants of the foreignObject element
+			var styles = dumpCSSText($(this)[0]); //function needs to be run on the native DOM element, not jQuery element
+			$(this).attr('style', styles); //attach all styles as inline styles, so they will be visible when copied to canvas
+		});
+
+		$('#img_svg').toImageNew();
+
+	}, //createImg
 
 	decreaseOpacity : function(my_element_id) {
 	//decreases the opacity of the item with the HTML ID attribute given
@@ -650,6 +698,10 @@ var control = {
 					if (action === "edit") { //in edit mode -> display solution right away
 						view.showSolution();
 					} //if
+
+					if (action == 'view') {
+						view.createImg();
+					} //if
 				} //if
 			} //else
 		});
@@ -684,3 +736,44 @@ var control = {
 $(document).ready(function() {
 	control.init(test_id);
 });
+
+$.fn.toImageNew = function() {
+    $(this).each(function() {
+        var svg$ = $(this);
+        var width = svg$.width();
+        var height = svg$.height();
+
+        // Create a blob from the SVG data
+        var svgData = new XMLSerializer().serializeToString(this);
+        var blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+
+        // Get the blob's URL
+        var domUrl = self.URL || self.webkitURL || self;
+        var blobUrl = domUrl.createObjectURL(blob);
+
+        var canvas = document.getElementById("myCanvas");
+        canvas.width = width;
+        canvas.height = height;
+        var ctx = canvas.getContext('2d');
+
+        var img = new Image();
+        img.crossOrigin = "anonymous";
+
+		img.onload = function () {
+			ctx.drawImage(img, 0, 0);
+			domUrl.revokeObjectURL(blobUrl);
+		}
+
+		img.src = blobUrl;
+                
+    });
+};
+
+function dumpCSSText(element){
+  var s = '';
+  var o = getComputedStyle(element);
+  for(var i = 0; i < o.length; i++){
+    s+=o[i] + ':' + o.getPropertyValue(o[i])+';';
+  }
+  return s;
+}

@@ -7,7 +7,7 @@ PAGE HEADER
 <!DOCTYPE html>
 <html  lang="en">
 	<head>
-		<meta charset="utf-8" />
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
         <title><?php echo $title; ?></title>
         <!--[if lt IE 9]>
   			<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
