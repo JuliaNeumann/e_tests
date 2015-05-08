@@ -34,7 +34,7 @@ EDITING DYNAMIC MC TEST
 		"<span id="test_name_container"><?php echo $test_data['test_name']; ?></span>"
 	</header>
 	<section id="test_container">
-		<p class="instructions">If you want to change questions, just click on the text to you want to edit. You can delete questions and incorrect answers by clicking on the 'X' signs that appear when you hover over them.</p>
+		<p class="instructions">If you want to change questions, just click on the text that you want to edit. You can delete questions and incorrect answers by clicking on the 'X' signs that appear when you hover over them.</p>
 		<div id="questions"><p><em>Loading ...</em></p></div>
 		<input type="submit" class="submit_button" name="add_question" id="add_question" value="Add a New Question">
 		<input type="submit" class="submit_button" name="questions_from_db" id="show_questions_from_db" value="Add Questions from Database...">
