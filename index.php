@@ -6,7 +6,7 @@ START PAGE OF APPLICATION
 	
 	//Page Variables:
 	$title = 'Home';
-	$header_text = 'E-Tests Editor';
+	$header_text = 'E-Test Editor';
 	$section = 'index';
 	$action = 'index';
 
