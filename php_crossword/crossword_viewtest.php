@@ -52,6 +52,8 @@ VIEWING A CROSSWORD TEST
 		<div id="crossword_container"></div>
 		<div class="right_aligned">
 			<input type="submit" id="show_solved" class="submit_button" value="Show Solved Test">
+			<input type="submit" id="download_as_png" class="submit_button" value="Download as PNG">
+			<input type="submit" id="download_as_jpeg" class="submit_button" value="Download as JPEG">
 		</div>
 	</section>
 <?php 

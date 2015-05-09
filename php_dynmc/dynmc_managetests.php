@@ -128,6 +128,8 @@ session_start();
 
 		$db_con = new Db_Connection();
 		$test_data = array("db_error" => '');
+		$test_data["test_name"] = $db_con->selectEntries(false, 'tests', array("where" => "test_ID = " . $_GET['test_id']))[0]['test_name'];
+		
 		$questions = [];
 
 		//get questions:

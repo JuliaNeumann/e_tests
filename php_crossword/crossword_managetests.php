@@ -93,6 +93,8 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 
 		$db_con = new Db_Connection();
 		$test_data = array("db_error" => '');
+		$test_data["test_name"] = $db_con->selectEntries(false, 'tests', array("where" => "test_ID = " . $_GET['test_id']))[0]['test_name'];
+		
 		$test_data["questions"] = $db_con->selectEntries(false, 'crossword_questions', array("where" => "question_test_ID = " . $_GET['test_id']));
 		$test_data["grid"] = $db_con->selectEntries(true, 'crossword_grid', array("where" => "grid_test_ID = " . $_GET['test_id']))[0];
 		if ($_GET['solution'] == 'false') { //in run mode -> replace solution words with dummies (to convey word length nevertheless)

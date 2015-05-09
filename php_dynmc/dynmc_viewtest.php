@@ -54,10 +54,10 @@ VIEWING A DYNAMIC MULTIPLE-CHOICE TEST
 		</div>
 		<div class="right_aligned">
 			<input type="submit" id="show_solved" class="submit_button" value="Show Solved Test">
-			<input type="submit" id="download_as_png" class="submit_button" value="Download as png">
+			<input type="submit" id="download_as_png" class="submit_button" value="Download as PNG">
+			<input type="submit" id="download_as_jpeg" class="submit_button" value="Download as JPEG">
 		</div>
 	</section>
-	<canvas id="myCanvas"/>
 <?php 
 	include_once INCLUDE_PATH . 'php_page_elements/page_footer.php'; 
 ?>

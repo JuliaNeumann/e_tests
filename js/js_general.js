@@ -126,6 +126,7 @@ function View() {
 		$(document).on('click', '.delete_notification_button', function() {
 			$(this).closest('.notification').remove();
 		}); 
+
 	} //initGeneralView
 
 	/*************************************************************/
@@ -202,6 +203,87 @@ function View() {
 	} //displayScore
 
 	/*************************************************************/
+	//creating and downloading images of displayed tests:
+	this.createImage = function(my_test_name, my_html_element, my_canvas, my_extension) {
+	//creates svg containing the given test name (string) and html element (jQuery object)
+	//if my_canvas: draws image to a canvas and initializes download as file with my_extension
+		var self = this;
+		var svg_width = my_html_element.width() + 20;
+		var svg_height = my_html_element.height() + 120;
+
+		var svg_element = '<svg xmlns="http://www.w3.org/2000/svg" id="img_svg" width="' + svg_width + '" height="' + svg_height + '"> \
+		           			<foreignObject width="100%" height="100%"> \
+		           				<div xmlns="http://www.w3.org/1999/xhtml" id="svg_img_container" style="padding: 10px"> \
+		             				<h3>' + my_test_name + '</h3><br />'
+		             				+ my_html_element.html() +
+		             				'<p class="image_footer">This image was created using the E-Test Editor by Julia Neumann, 2015</p>'
+		           				'</div> \
+		           			</foreignObject> \
+		           		  </svg>';
+		$('body').append(svg_element);
+
+		$('#svg_img_container').find("*").each(function() { //loop through all descendants of the foreignObject element
+			var styles_string = '';
+			var all_styles = getComputedStyle($(this)[0]); //function needs to be run on the native DOM element, not jQuery element
+			for (var i = 0; i < all_styles.length; i++) {
+			    styles_string += all_styles[i] + ':' + all_styles.getPropertyValue(all_styles[i]) + ';';
+			} //for
+			$(this).attr('style', styles_string); //attach all styles as inline styles, so they will be visible when converted to image
+		});
+
+        var svg_data = new XMLSerializer().serializeToString($('#img_svg')[0]); 
+        var blob = new Blob([svg_data], { type: "image/svg+xml;charset=utf-8" }); //create blob from the SVG data
+
+        var dom_url = window.URL || window.webkitURL || window;
+        var blob_url = dom_url.createObjectURL(blob); //get the blob URL
+
+        if (my_canvas) {
+        	$('body').append('<canvas id="img_canvas"></canvas>');
+        	var canvas = document.getElementById('img_canvas');
+	        canvas.width = svg_width;
+	        canvas.height = svg_height;
+	        var ctx = canvas.getContext('2d');
+
+	        if (my_extension == 'jpeg') { //set background of canvas to white for jpeg (transparent will get black otherwise)
+	        	ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, svg_width, svg_height);
+	        } //if
+
+	        var img = new Image(); //create image object from the blob URL
+	        img.crossOrigin = "anonymous";
+
+			img.onload = function () {
+				ctx.drawImage(img, 0, 0);
+				dom_url.revokeObjectURL(blob_url);
+				self.downloadImage(my_extension);
+			} //img.onload
+
+			img.src = blob_url;
+			$('#img_canvas').hide();
+	    } //if
+
+	    $('#img_svg').hide();
+	} //createImage
+
+	this.downloadImage = function(my_extension) {
+	//initializes download of image file with given extenstion, if possible
+		var canvas = document.getElementById('img_canvas');
+		try {
+			var my_image_code = canvas.toDataURL('image/' + my_extension);
+			$('body').append('<a id="download_' + my_extension + '_link" href="' + my_image_code + '" download="etest_image"><button type="button" id="download_button">Download as ' + my_extension + '</button></a>');
+			$('#download_button').click();
+			$('#download_' + my_extension + '_link').remove();
+		} //try
+		catch (error) {
+			console.log(error.message);
+			alert('Your browser does not support exporting tests as images. Try a different browser (the newest version of Firefox, for example), or choose the \'Print Test\' option instead.');
+		} //catch
+		$('#img_canvas').remove();
+		$('#img_svg').remove();
+	} //downloadImage
+
+	/*************************************************************/
+
 	this.initGeneralView();
 
 } //function View
