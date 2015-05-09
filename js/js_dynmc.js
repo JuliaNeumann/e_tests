@@ -83,7 +83,8 @@ var view = {
 		this.questions_container = $('#questions');
 		this.instructions_container = $('.instructions');
 		this.question_template = $('script[data-template="question"]').html();
-		this.answer_solved_template = $('script[data-template="answer_solved"]').html();
+		this.answer_solved_correct_template = $('script[data-template="answer_solved_correct"]').html();
+		this.answer_solved_incorrect_template = $('script[data-template="answer_solved_incorrect"]').html();
 		this.answer_unsolved_template = $('script[data-template="answer_unsolved"]').html();
 		this.new_incorrect_answer_template = $('script[data-template="new_incorrect_answer"]').html();
 		this.add_question_template = $('script[data-template="add_question"]').html();
@@ -352,8 +353,8 @@ var view = {
 	addIncorrectAnswerToView : function(my_question_id, my_answer, my_answer_index) {
 	//adds incorrect answer option to a question display
 	//params: my_question_id = INT, my_answer = 'string', my_answer_index = INT (position of answer in object's array)
-		var map = {"{{id}}" : my_question_id, "{{correct}}": "incorrect", "{{text}}": my_answer, "{{answer_index}}" : my_answer_index};
-		var answer_html = this.answer_solved_template.replace(/{{id}}|{{correct}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
+		var map = {"{{id}}" : my_question_id, "{{text}}": my_answer, "{{answer_index}}" : my_answer_index};
+		var answer_html = this.answer_solved_incorrect_template.replace(/{{id}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
 		$('#question_table_' + my_question_id).append(answer_html);
 		if (action == 'new' || action == 'edit') { //incorrect answer options can be deleted
 			$('#delete_cell_' + my_question_id + '_' + my_answer_index).append('<div class="delete_answer_button font-color-4" data-obj_id="' + my_question_id + '" data-answer_id="' + my_answer_index + '">X</div>');
@@ -382,8 +383,8 @@ var view = {
 			} //for
 		} //if
 		else if (my_solved) {
-			var map = {"{{id}}" : current_id, "{{correct}}": "correct", "{{text}}": my_question_object.correct_answer, "{{answer_index}}" : 0};
-			var answer_html = this.answer_solved_template.replace(/{{id}}|{{correct}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
+			var map = {"{{id}}" : current_id, "{{text}}": my_question_object.correct_answer, "{{answer_index}}" : 0};
+			var answer_html = this.answer_solved_correct_template.replace(/{{id}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
 			$('#question_table_' + current_id).append(answer_html);
 			for (var i = 0; i < my_question_object.incorrect_answers.length; i++) {
 				this.addIncorrectAnswerToView(current_id, my_question_object.incorrect_answers[i], i);
@@ -438,7 +439,7 @@ var view = {
 	markAnswerAsCorrect : function(my_correct, my_continue) {
 	//marks the current answer option as answered correctly & displays feedback
 	//params: my_correct = string ("correct" or "incorrect"), my_continue = bool (indicates whether to continue or question is finished)
-		$('.current_option_row').find('.pic_' + my_correct).attr('src', root_path + 'images/' + my_correct + '_green.png');
+		$('.current_option_row').find('.pic_' + my_correct).attr('stroke', '#32CD32');
 		if (my_continue) {
 			this.instructions_container.html('Well done! How about this answer option?');
 		} //if
@@ -450,7 +451,7 @@ var view = {
 	markAnswerAsIncorrect : function(my_correct) {
 	//marks the current answer option as answered incorrectly & displays feedback
 	//params: my_correct = string ("correct" or "incorrect")
-		$('.current_option_row').find('.pic_' + my_correct).attr('src', root_path + 'images/' + my_correct + '_red.png');
+		$('.current_option_row').find('.pic_' + my_correct).attr('stroke', '#AE0000');
 		this.instructions_container.html("Sorry! You have not solved this question correctly!");
 	}, //markAsCorrect
 
