@@ -61,6 +61,7 @@ VIEWING A DRAG & DROP TEST
 			<input type="submit" id="show_solved" class="submit_button" value="Show Solved Test">
 			<input type="submit" id="download_as_png" class="submit_button" value="Download as PNG">
 			<input type="submit" id="download_as_jpeg" class="submit_button" value="Download as JPEG">
+			<input type="submit" id="print_test" class="submit_button" value="Print Test">
 		</div>
 	</section>
 <?php 

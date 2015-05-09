@@ -67,7 +67,7 @@ function View() {
 	    	self_view.changeThemeColor(localStorage.getItem("etests_color"));
 		} //if
 		
-		$('.color_button').click(function(e) {
+		$(document).on('click', '.color_button', function(e) {
 			e.preventDefault();
 			var color_code = $(this).css('background-color');
 			self_view.changeThemeColor(color_code);
@@ -204,9 +204,9 @@ function View() {
 
 	/*************************************************************/
 	//creating and downloading images of displayed tests:
-	this.createImage = function(my_test_name, my_html_element, my_canvas, my_extension) {
+	this.createImage = function(my_test_name, my_html_element, my_extension) {
 	//creates svg containing the given test name (string) and html element (jQuery object)
-	//if my_canvas: draws image to a canvas and initializes download as file with my_extension
+	//draws image to a canvas and initializes download as file with my_extension or starts printing
 		var self = this;
 		var svg_width = my_html_element.width() + 20;
 		var svg_height = my_html_element.height() + 120;
@@ -237,32 +237,51 @@ function View() {
         var dom_url = window.URL || window.webkitURL || window;
         var blob_url = dom_url.createObjectURL(blob); //get the blob URL
 
-        if (my_canvas) {
-        	$('body').append('<canvas id="img_canvas"></canvas>');
-        	var canvas = document.getElementById('img_canvas');
-	        canvas.width = svg_width;
-	        canvas.height = svg_height;
-	        var ctx = canvas.getContext('2d');
+        //draw image to canvas and, if required, initialize download as image file
+    	$('body').append('<canvas id="img_canvas"></canvas>');
+    	var canvas = document.getElementById('img_canvas');
+        canvas.width = svg_width;
+        canvas.height = svg_height;
+        var ctx = canvas.getContext('2d');
 
-	        if (my_extension == 'jpeg') { //set background of canvas to white for jpeg (transparent will get black otherwise)
-	        	ctx.fillStyle = '#fff';
-                ctx.fillRect(0, 0, svg_width, svg_height);
-	        } //if
+        if (my_extension == 'jpeg') { //set background of canvas to white for jpeg (transparent will get black otherwise)
+        	ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, svg_width, svg_height);
+        } //if
 
-	        var img = new Image(); //create image object from the blob URL
-	        img.crossOrigin = "anonymous";
+        var img = new Image(); //create image object from the blob URL
+        img.crossOrigin = "anonymous";
 
-			img.onload = function () {
-				ctx.drawImage(img, 0, 0);
-				dom_url.revokeObjectURL(blob_url);
+		img.onload = function () {
+			try {
+				ctx.drawImage(img, 0, 0); //throws an error in IE
+			} //try
+			catch (error) {
+				console.log(error.message);
+				$('#img_canvas').remove();
+				$('#img_svg').remove();
+				alert('Your browser does not support exporting tests. Try a different browser (the newest version of Firefox, for example).');
+				return;
+			} //catch
+			dom_url.revokeObjectURL(blob_url);
+			$('#img_svg').remove();
+			if (my_extension !== false) {
 				self.downloadImage(my_extension);
-			} //img.onload
-
-			img.src = blob_url;
+			} //if
+			else {
+				var original_page_content = $('body').html();
+				var original_color = $('body').css('background-color');
+				$('body').css('background-color', 'white');
+				$('#content').replaceWith($('#img_canvas')); //replace all content with the canvas
+				window.print(); //trigger printing
+				$('body').css('background-color', original_color);
+				$('body').html(original_page_content); //restore original page content
+				$('#img_canvas').remove();
+			} //else
 			$('#img_canvas').hide();
-	    } //if
+		} //img.onload
 
-	    $('#img_svg').hide();
+		img.src = blob_url;
 	} //createImage
 
 	this.downloadImage = function(my_extension) {
@@ -273,13 +292,13 @@ function View() {
 			$('body').append('<a id="download_' + my_extension + '_link" href="' + my_image_code + '" download="etest_image"><button type="button" id="download_button">Download as ' + my_extension + '</button></a>');
 			$('#download_button').click();
 			$('#download_' + my_extension + '_link').remove();
+			$('#img_canvas').remove();
 		} //try
 		catch (error) {
 			console.log(error.message);
+			$('#img_canvas').remove();
 			alert('Your browser does not support exporting tests as images. Try a different browser (the newest version of Firefox, for example), or choose the \'Print Test\' option instead.');
 		} //catch
-		$('#img_canvas').remove();
-		$('#img_svg').remove();
 	} //downloadImage
 
 	/*************************************************************/

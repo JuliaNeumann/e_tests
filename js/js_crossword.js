@@ -135,13 +135,17 @@ var view = {
 
 		/*************************************************************/
 		//export options in view mode:
-		$('#download_as_png').click(function(e) {
+		$(document).on('click', '#download_as_png', function(e) {
 			e.preventDefault();
-			self.createImage(control.getTestName(), $('#crossword_container'), true, 'png');
+			self.createImage(control.getTestName(), $('#crossword_container'), 'png');
 		});
-		$('#download_as_jpeg').click(function(e) {
+		$(document).on('click', '#download_as_jpeg', function(e) {
 			e.preventDefault();
-			self.createImage(control.getTestName(), $('#crossword_container'), true, 'jpeg');
+			self.createImage(control.getTestName(), $('#crossword_container'), 'jpeg');
+		});
+		$(document).on('click', '#print_test', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#crossword_container'), false);
 		});
 
 		/*************************************************************/
@@ -393,7 +397,7 @@ var view = {
 			grid_string += '>' + my_words[i].number + ': ' + my_words[i].question_text + '</span><br>';
 		} //for
 		grid_string += '</div>';
-		this.crossword_container.html(grid_string);
+		$('#crossword_container').html(grid_string);
 		$('#crossword_grid').width(((parseInt(my_x) + 1) * 32) + 'px');
 
 		if (action == 'new' || action == 'edit') {

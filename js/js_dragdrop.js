@@ -113,27 +113,31 @@ var view = {
 		$(document).on('click', '#show_solved', function() {
 			self.showSolution();
 			$(this).attr('id', 'show_unsolved').val('Show Unsolved Test');
-			self.items_container.hide();
+			$('#items_container').hide();
 			self.unifyContainerHeights();
 		});
 		$(document).on('click', '#show_unsolved', function() {
 			$('.item_box').each(function() {
-				self.items_container.append($(this).css('display', 'inline'));
+				$('#items_container').append($(this).css('display', 'inline'));
 			});
 			$(this).attr('id', 'show_solved').val('Show Solved Test');
-			self.items_container.show();
+			$('#items_container').show();
 			$('.container_box').css({'height': 'auto', 'padding-bottom': '30px'});
 		});
 
 		/*************************************************************/
 		//export options in view mode:
-		$('#download_as_png').click(function(e) {
+		$(document).on('click', '#download_as_png', function(e) {
 			e.preventDefault();
-			self.createImage(control.getTestName(), $('#dragdrop_container'), true, 'png');
+			self.createImage(control.getTestName(), $('#dragdrop_container'), 'png');
 		});
-		$('#download_as_jpeg').click(function(e) {
+		$(document).on('click', '#download_as_jpeg', function(e) {
 			e.preventDefault();
-			self.createImage(control.getTestName(), $('#dragdrop_container'), true, 'jpeg');
+			self.createImage(control.getTestName(), $('#dragdrop_container'), 'jpeg');
+		});
+		$(document).on('click', '#print_test', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#dragdrop_container'), false);
 		});
 
 		/*************************************************************/

@@ -108,13 +108,17 @@ var view = {
 
 		/*************************************************************/
 		//export options in view mode:
-		$('#download_as_png').click(function(e) {
+		$(document).on('click', '#download_as_png', function(e) {
 			e.preventDefault();
-			self.createImage(control.getTestName(), self.questions_container, true, 'png');
+			self.createImage(control.getTestName(), $('#questions'), 'png');
 		});
-		$('#download_as_jpeg').click(function(e) {
+		$(document).on('click', '#download_as_jpeg', function(e) {
 			e.preventDefault();
-			self.createImage(control.getTestName(), self.questions_container, true, 'jpeg');
+			self.createImage(control.getTestName(), $('#questions'), 'jpeg');
+		});
+		$(document).on('click', '#print_test', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#questions'), false);
 		});
 
 		/*************************************************************/
@@ -368,7 +372,7 @@ var view = {
 		var current_id = my_question_object.current_id;
 		var question_html = this.question_template.replace(/{{id}}/g, current_id); //fill the template
 		question_html = question_html.replace(/{{text}}/g, my_question_object.question_text);
-		this.questions_container.append(question_html);
+		$('#questions').append(question_html);
 		this.questions_displayed++;
 
 		if ((action == "view") && !my_solved) {
@@ -475,7 +479,7 @@ var view = {
 
 	toggleSolution : function(my_solved) {
 	//changes display between solved (my_solved == true) and unsolved display
-		this.setHTMLContent(this.questions_container.attr('id'), '');
+		this.setHTMLContent('questions', '');
 		control.current_question = 0;
 		var counter = this.questions_displayed;
 		this.questions_displayed = 0;
