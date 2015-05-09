@@ -207,81 +207,80 @@ function View() {
 	this.createImage = function(my_test_name, my_html_element, my_extension) {
 	//creates svg containing the given test name (string) and html element (jQuery object)
 	//draws image to a canvas and initializes download as file with my_extension or starts printing
-		var self = this;
-		var svg_width = my_html_element.width() + 20;
-		var svg_height = my_html_element.height() + 120;
+		if (typeof SVGForeignObjectElement !== 'undefined') { //test for support of foreign object (currently not supported in IE!)
+			var self = this;
+			var svg_width = my_html_element.width() + 20;
+			var svg_height = my_html_element.height() + 120;
 
-		var svg_element = '<svg xmlns="http://www.w3.org/2000/svg" id="img_svg" width="' + svg_width + '" height="' + svg_height + '"> \
-		           			<foreignObject width="100%" height="100%"> \
-		           				<div xmlns="http://www.w3.org/1999/xhtml" id="svg_img_container" style="padding: 10px"> \
-		             				<h3>' + my_test_name + '</h3><br />'
-		             				+ my_html_element.html() +
-		             				'<p class="image_footer">This image was created using the E-Test Editor by Julia Neumann, 2015</p>'
-		           				'</div> \
-		           			</foreignObject> \
-		           		  </svg>';
-		$('body').append(svg_element);
+			var svg_element = '<svg xmlns="http://www.w3.org/2000/svg" id="img_svg" width="' + svg_width + '" height="' + svg_height + '"> \
+			           			<foreignObject width="100%" height="100%"> \
+			           				<div xmlns="http://www.w3.org/1999/xhtml" id="svg_img_container" style="padding: 10px"> \
+			             				<h3>' + my_test_name + '</h3><br />'
+			             				+ my_html_element.html() +
+			             				'<p class="image_footer">This image was created using the E-Test Editor by Julia Neumann, 2015</p>'
+			           				'</div> \
+			           			</foreignObject> \
+			           		  </svg>';
+			$('body').append(svg_element);
 
-		$('#svg_img_container').find("*").each(function() { //loop through all descendants of the foreignObject element
-			var styles_string = '';
-			var all_styles = getComputedStyle($(this)[0]); //function needs to be run on the native DOM element, not jQuery element
-			for (var i = 0; i < all_styles.length; i++) {
-			    styles_string += all_styles[i] + ':' + all_styles.getPropertyValue(all_styles[i]) + ';';
-			} //for
-			$(this).attr('style', styles_string); //attach all styles as inline styles, so they will be visible when converted to image
-		});
+			$('#svg_img_container').find("*").each(function() { //loop through all descendants of the foreignObject element
+				var styles_string = '';
+				var all_styles = getComputedStyle($(this)[0]); //function needs to be run on the native DOM element, not jQuery element
+				for (var i = 0; i < all_styles.length; i++) {
+				    styles_string += all_styles[i] + ':' + all_styles.getPropertyValue(all_styles[i]) + ';';
+				} //for
+				$(this).attr('style', styles_string); //attach all styles as inline styles, so they will be visible when converted to image
+			});
 
-        var svg_data = new XMLSerializer().serializeToString($('#img_svg')[0]); 
-        var blob = new Blob([svg_data], { type: "image/svg+xml;charset=utf-8" }); //create blob from the SVG data
+	        var svg_data = new XMLSerializer().serializeToString($('#img_svg')[0]); 
+	        var blob = new Blob([svg_data], { type: "image/svg+xml;charset=utf-8" }); //create blob from the SVG data
 
-        var dom_url = window.URL || window.webkitURL || window;
-        var blob_url = dom_url.createObjectURL(blob); //get the blob URL
+	        var dom_url = window.URL || window.webkitURL || window;
+	        var blob_url = dom_url.createObjectURL(blob); //get the blob URL
 
-        //draw image to canvas and, if required, initialize download as image file
-    	$('body').append('<canvas id="img_canvas"></canvas>');
-    	var canvas = document.getElementById('img_canvas');
-        canvas.width = svg_width;
-        canvas.height = svg_height;
-        var ctx = canvas.getContext('2d');
 
-        if (my_extension == 'jpeg') { //set background of canvas to white for jpeg (transparent will get black otherwise)
-        	ctx.fillStyle = '#fff';
-            ctx.fillRect(0, 0, svg_width, svg_height);
-        } //if
+	        //draw image to canvas and, if required, initialize download as image file
+	    	$('body').append('<canvas id="img_canvas" class="hidden"></canvas>');
+	    	var canvas = document.getElementById('img_canvas');
+	        canvas.width = svg_width;
+	        canvas.height = svg_height;
+	        var ctx = canvas.getContext('2d');
 
-        var img = new Image(); //create image object from the blob URL
-        img.crossOrigin = "anonymous";
+	        if (my_extension == 'jpeg') { //set background of canvas to white for jpeg (transparent will get black otherwise)
+	        	ctx.fillStyle = '#fff';
+	            ctx.fillRect(0, 0, svg_width, svg_height);
+	        } //if
 
-		img.onload = function () {
-			try {
+	        var img = new Image(); //create image object from the blob URL
+	        img.crossOrigin = "anonymous";
+
+			img.onload = function () {
+				
 				ctx.drawImage(img, 0, 0); //throws an error in IE
-			} //try
-			catch (error) {
-				console.log(error.message);
-				$('#img_canvas').remove();
+				dom_url.revokeObjectURL(blob_url);
 				$('#img_svg').remove();
-				alert('Your browser does not support exporting tests. Try a different browser (the newest version of Firefox, for example).');
-				return;
-			} //catch
-			dom_url.revokeObjectURL(blob_url);
-			$('#img_svg').remove();
-			if (my_extension !== false) {
-				self.downloadImage(my_extension);
-			} //if
-			else {
-				var original_page_content = $('body').html();
-				var original_color = $('body').css('background-color');
-				$('body').css('background-color', 'white');
-				$('#content').replaceWith($('#img_canvas')); //replace all content with the canvas
-				window.print(); //trigger printing
-				$('body').css('background-color', original_color);
-				$('body').html(original_page_content); //restore original page content
-				$('#img_canvas').remove();
-			} //else
-			$('#img_canvas').hide();
-		} //img.onload
+				if (my_extension !== false) {
+					self.downloadImage(my_extension);
+				} //if
+				else {
+					var original_page_content = $('body').html();
+					var original_color = $('body').css('background-color');
+					$('body').css('background-color', 'white');
+					$('#content').replaceWith($('#img_canvas').show()); //replace all content with the canvas
+					window.print(); //trigger printing
+					$('body').css('background-color', original_color);
+					$('body').html(original_page_content); //restore original page content
+					$('#img_canvas').remove();
+				} //else
+				$('#img_canvas').hide();
+			} //img.onload
 
-		img.src = blob_url;
+			img.src = blob_url;
+		} //if
+		else {
+			alert('Your browser does not support exporting tests. Try a different browser (the newest version of Firefox, for example).');
+		} //else
+
 	} //createImage
 
 	this.downloadImage = function(my_extension) {
