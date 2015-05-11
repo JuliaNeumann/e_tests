@@ -392,7 +392,7 @@ var view = {
 			} //else if
 			grid_string += '<span';
 			if (action == "run") {
-				grid_string += '  class="crossword_question" data-obj_id="' + my_words[i].current_id + '"'
+				grid_string += '  class="crossword_question" title="Click here to enter your answer!" data-obj_id="' + my_words[i].current_id + '"'
 			} //if
 			grid_string += '>' + my_words[i].number + ': ' + my_words[i].question_text + '</span><br>';
 		} //for

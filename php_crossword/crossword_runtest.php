@@ -31,7 +31,7 @@ RUN A CROSSWORD TEST
 	</header>
 	<section id="test_container">
 		<div class="instructions">
-			Click on the questions below to enter their solutions into the crossword! After filling in all the words, click "Check" to see if you were right.
+			Click on the questions below (in the 'ACROSS' and 'DOWN' lists) to enter their solutions into the crossword! After filling in all the words, click "Check" to see if you were right.
 		</div>
 		<p id="crossword_container"><em>Loading...</em></p>
 		<div class="right_aligned">
