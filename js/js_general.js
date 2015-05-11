@@ -328,7 +328,7 @@ function Control() {
 	//gets all test names that exist in the database via an AJAX request, returns them as indexed array, root_path must exist as global variable!
 	//params: my_test_id = INT (Database ID of the current test, which should be excluded, 0 for new test)
 		var self_control = this;
-		$.getJSON(root_path + 'php_support/manage_tests.php', {get_test_names : true, test_ID : my_test_id}, function(feedback) {
+		$.getJSON(root_path + 'php_support/manage_tests.php', {get_test_names : true, test_ID : my_test_id, test_type : section}, function(feedback) {
 			self_control.test_names = feedback;
 		});
 	} //getTestNamesFromDb

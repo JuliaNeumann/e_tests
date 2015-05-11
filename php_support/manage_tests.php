@@ -74,7 +74,11 @@ GENERAL MANAGE PAGE FOR INTERACTION WITH INTERFACE FORMS
 	
 	else if (isset($_GET['get_test_names'])) { //AJAX request for test name checking
 		$db_con = new Db_Connection();
-		$tests = $db_con->selectEntries(true, 'tests', array("select" => "test_name", "where" => "test_ID <>" . $_GET['test_ID']));
+		$test_types = array('dynmc' => 1, 'dragdrop' => 2, 'crossword' => 3);
+		//get all names of tests of same type and different ID (so that no two tests of same type with same name will exist)
+		$tests = $db_con->selectEntries(true, 'tests', array("select" => "test_name", 
+															"where" => "test_ID <> " . $_GET['test_ID'],
+															"and" => "test_type_ID = " . $test_types[$_GET['test_type']]));
 		foreach ($tests as $test) {
 			$test_names[] = html_entity_decode($test['test_name'], ENT_NOQUOTES|ENT_HTML5, "UTF-8"); //decode HTML entities (for making comparison to input in JS possible)
 		} //foreach
