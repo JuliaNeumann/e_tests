@@ -504,6 +504,7 @@ var control = {
 		this.current_option = null; //keeps track of currently handled answer option
 		this.options_counter = 0; //needed to create unique names for options in run mode
 		this.user_score = 0;
+		this.test_timestamp = null; //set when starting a test in run mode -> used to identify its data in the session
 
 		Control.call(this); //make this inherit from Control (see js_general.js)
 
@@ -631,7 +632,7 @@ var control = {
 	//evaluates the answer a user has given for the current options, initializes display of feedback
 		var question_object = dynmc_test.questions.objects[this.current_question];
 		var self = this;
-		$.getJSON(root_path + 'php_dynmc/dynmc_managetests.php', {user_answer : my_user_answer, question_ID : question_object.db_id}, function(feedback) {
+		$.getJSON(root_path + 'php_dynmc/dynmc_managetests.php', {user_answer : my_user_answer, question_ID : question_object.db_id, timestamp : self.test_timestamp}, function(feedback) {
 			if (feedback.answer_option == '0') { //incorrect answer has been hit
 				if (my_user_answer == '0') { //user was right -> show next answer option
 					view.markAnswerAsCorrect("incorrect", true);
@@ -664,7 +665,8 @@ var control = {
 	getNewAnswerOption : function() {
 	//retrieves next answer option from database, initialises displaying it
 		var question_object = dynmc_test.questions.objects[this.current_question];
-		$.get(root_path + 'php_dynmc/dynmc_managetests.php', {new_option : true, question_ID : question_object.db_id}, function(feedback) { 
+		var self = this;
+		$.get(root_path + 'php_dynmc/dynmc_managetests.php', {new_option : true, question_ID : question_object.db_id, timestamp : self.test_timestamp}, function(feedback) { 
 			if (feedback) {
 				view.showAnswerOption(feedback, false);
 			} //if
@@ -697,6 +699,7 @@ var control = {
 					self.addQuestion(feedback.questions[i]);	
 				} //for
 				if (!my_solution) { //in run mode -> start with first question
+					self.test_timestamp = feedback.timestamp;
 					self.runQuestion();
 				} //if
 			} //else

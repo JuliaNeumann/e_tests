@@ -131,6 +131,8 @@ session_start();
 		$test_data["test_name"] = $db_con->selectEntries(false, 'tests', array("where" => "test_ID = " . $_GET['test_id']))[0]['test_name'];
 		
 		$questions = [];
+		$timestamp = 'test_' . time(); //used to identify this test's information in the session in run mode (in case several tests are run at the same time)
+		$_SESSION[$timestamp] = array();
 
 		//get questions:
 		$lookups = $db_con->selectEntries(false, 'dynmc_lookup', array("where" => "lookup_test_ID = " . $_GET['test_id']));
@@ -139,12 +141,12 @@ session_start();
 			$questions[$i]['question_ID'] = $question_ID;
 			$question_data = $db_con->selectEntries(false, 'dynmc_questions', array("where" => "question_ID = " . $question_ID));
 			$questions[$i]['question_text'] = $question_data[0]['question_text'];
-			$_SESSION['options'][$question_ID] = array();
+			$_SESSION[$timestamp]['options'][$question_ID] = array();
 			if ($_GET['solution'] == 'true') {
 				$questions[$i]['correct_answer'] = $question_data[0]['question_correct_answer'];
 			} //if
 			else { //retrieve without solutions (so they are not accessible from browser when test is performed)
-				$_SESSION['options'][$question_ID][] = array(1, $question_data[0]['question_correct_answer']);
+				$_SESSION[$timestamp]['options'][$question_ID][] = array(1, $question_data[0]['question_correct_answer']);
 			} //else
 			$incorrect_answers = $db_con->selectEntries(false, 'dynmc_incorrect', array("where" => "incorrect_question_ID = " . $question_ID));
 			foreach ($incorrect_answers as $incorrect) {
@@ -152,16 +154,17 @@ session_start();
 					$questions[$i]['incorrect_answers'][] = $incorrect['incorrect_text'];
 				} //if
 				else {
-					$_SESSION['options'][$question_ID][] = array(0, $incorrect['incorrect_text']);
+					$_SESSION[$timestamp]['options'][$question_ID][] = array(0, $incorrect['incorrect_text']);
 				}
 			} //foreach
 			if ($_GET['solution'] != 'true') {
-				shuffle($_SESSION['options'][$question_ID]);
+				shuffle($_SESSION[$timestamp]['options'][$question_ID]);
 			} //if
 		} //foreach
 
 		if ($_GET['solution'] != 'true') { //randomize all questions for run mode
 			shuffle($questions);
+			$test_data['timestamp'] = $timestamp;
 		} //if
 
 		$test_data["questions"] = $questions;
@@ -218,9 +221,10 @@ session_start();
 	
 //GETTING ANSWER OPTION:
 	else if (isset($_GET['new_option'])) {
-		if (sizeof($_SESSION['options'][$_GET['question_ID']]) > 0) {
-			$_SESSION['current_option'] = array_shift($_SESSION['options'][$_GET['question_ID']]);
-			print $_SESSION['current_option'][1];
+		$timestamp = $_GET['timestamp'];
+		if (sizeof($_SESSION[$timestamp]['options'][$_GET['question_ID']]) > 0) {
+			$_SESSION[$timestamp]['current_option'] = array_shift($_SESSION[$timestamp]['options'][$_GET['question_ID']]);
+			print $_SESSION[$timestamp]['current_option'][1];
 		} //if
 	} //else if
 
@@ -228,16 +232,17 @@ session_start();
 	
 //CHECKING SUBMITTED ANSWER OPTION:
 	else if (isset($_GET['user_answer'])){
+		$timestamp = $_GET['timestamp'];
 		$question_ID = $_GET['question_ID'];
 		$feedback = array();
-		if ($_SESSION['current_option'][0] == 1) { //current option is the correct answer
+		if ($_SESSION[$timestamp]['current_option'][0] == 1) { //current option is the correct answer
 			$feedback['answer_option'] = '1';
-			$feedback['solved_options'] = $_SESSION['options'][$question_ID]; //send rest of answer options to display
+			$feedback['solved_options'] = $_SESSION[$timestamp]['options'][$question_ID]; //send rest of answer options to display
 		} //if
 		else {
 			$feedback['answer_option'] = '0';
 			if ($_GET['user_answer'] == '1') { //user has provided wrong answer
-				$feedback['solved_options'] = $_SESSION['options'][$question_ID]; //send rest of answer options to display
+				$feedback['solved_options'] = $_SESSION[$timestamp]['options'][$question_ID]; //send rest of answer options to display
 			} //if
 		} //else
 		print json_encode($feedback);
