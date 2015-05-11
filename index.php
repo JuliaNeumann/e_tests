@@ -61,7 +61,7 @@ START PAGE OF APPLICATION
 	foreach ($test_types as $type) {
 ?>
 		<button type="submit" name="test_type_button" class="test_type_button border-theme-color bg-color-4" value="<?php echo $type['type_string']; ?>">
-			<img src="<?php echo ROOT_PATH . $type['type_icon']; ?>" alt="<?php echo $type['type_label']; ?> Icon" width="80px" height="80px"><br>
+			<img class="test_type_icon" src="<?php echo ROOT_PATH . $type['type_icon']; ?>" alt="<?php echo $type['type_label']; ?> Icon" width="80px" height="80px"><br>
 			<div class="test_type_label"><?php echo $type['type_label']; ?></div>
 		</button>
 <?php

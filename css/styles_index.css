@@ -9,7 +9,7 @@ INDEX PAGE STYLE SHEET
 
 #select_test_table {
 	float: left;
-	width: 581px;
+	width: 603px;
 	margin-right: 10px;
 }
 
@@ -31,11 +31,11 @@ INDEX PAGE STYLE SHEET
 }
 
 .test_name_column {
-	width: 244px;
+	width: 266px;
 }
 
 #test_name_header {
-	width: 262px;
+	width: 284px;
 }
 
 .test_row {
@@ -50,15 +50,15 @@ INDEX PAGE STYLE SHEET
 }
 
 .test_type_button {
-	width: 170px;
+	width: 178px;
 	min-height: 150px;
 	border-width: 3px;
 	border-style: solid;
 	margin: 17px;
 	padding: 10px 5px;
 	text-align: center;
-	font-size: 9pt;
 }
+
 
 .test_type_column {
 	width: 172px;
@@ -74,8 +74,8 @@ INDEX PAGE STYLE SHEET
 	width: 186px;
 }
 
-.test_type_label {
-	font-weight: bold;
+.test_type_icon {
+	margin-bottom: 5px;
 }
 
 #type_button_container {
