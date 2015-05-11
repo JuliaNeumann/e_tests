@@ -23,12 +23,13 @@ RUNNING A DYNAMIC MULTIPLE-CHOICE TEST
 	require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 
 	$db_con = new Db_Connection();
-	$test_data = $db_con->selectEntries(true, 'tests', array("where" => "test_ID = " . $test_id))[0];
+	$test_data = $db_con->selectEntries(false, 'tests', array("where" => "test_ID = " . $test_id))[0];
+	$test_level = $db_con->selectEntries(true, 'test_levels', array("where" => "level_ID = " . $test_data['test_level_ID']))[0];
 
 	require_once INCLUDE_PATH . 'php_page_elements/page_header.php';
 ?>
 	<header>
-		"<?php echo $test_data['test_name']; ?>"
+		"<?php echo $test_data['test_name']; ?>" (Level: <?php echo $test_level['level_label']; ?>)
 	</header>
 	<section>
 		<p class="instructions"></p>
