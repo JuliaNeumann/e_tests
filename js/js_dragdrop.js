@@ -478,6 +478,12 @@ var control = {
 		view.init();
 		dragdrop_test.init();
 
+		//check browser support of Drag and Drop API:
+		var div = document.createElement('div');
+		if ((action != 'view') && (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div))) { //view mode does not require drag and drop functionality
+			alert('Your browser does not support HTML5 drag and drop. Please use a different broswer to ensure that this part of the e-test editor runs correctly!');
+		} //if
+
 		switch (action) {
 			case 'new':
 				this.createDefaultTest(2,2);
@@ -618,6 +624,7 @@ var control = {
 		view.toggleDragBorder(e, my_element, true);
 
 		var container_id = my_element.dataset.obj_id;
+		
 		var item = document.getElementById(e.dataTransfer.getData('text'));
 		view.addItemToContainer(item.dataset.obj_id, container_id);
 		dragdrop_test.storeSolvedItem(item.dataset.obj_id, container_id);
