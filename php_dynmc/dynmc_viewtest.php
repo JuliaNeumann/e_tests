@@ -47,7 +47,7 @@ VIEWING A DYNAMIC MULTIPLE-CHOICE TEST
 	</header>
 	<section id="test_container">
 		<div class="instructions">
-			Use the button below to change between the unsolved and the solved view of the test. 
+			Use the buttons below to change between the unsolved and the solved view of the test, and to print or save images of your test. 
 			To try a fully functional version, choose the "Run Test" option on the start page.
 		</div>
 		<div id="questions">
