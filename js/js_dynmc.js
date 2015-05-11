@@ -171,10 +171,15 @@ var view = {
 			$('.new_incorrect_answer').last().select();
 		});
 		$(document).on('click', '.delete_new_answer_button', function(e) {
-			if (confirm('Are you sure you want to delete this answer option?')) {	
-				var index = $(this).data("index");
-				$('#new_incorrect_row_' + index).hide().addClass('deleted');
+			if ($('.new_incorrect_row:not(.deleted)').length > 1) {
+				if (confirm('Are you sure you want to delete this answer option?')) {	
+					var index = $(this).data("index");
+					$('#new_incorrect_row_' + index).hide().addClass('deleted');
+				} //if
 			} //if
+			else {
+				alert('Every question must have at least one incorrect answer!');
+			} //else
 		});
 
 		/*************************************************************/
@@ -194,7 +199,7 @@ var view = {
 			} //else
 		});
 		$(document).on('mouseover', '.incorrect_row', function() {
-			if (($(this).find('.incorrect_answer').data('answer_id') != 0) && (action != "view")) {
+			if (action != "view") {
 				$(this).find('.delete_answer_button').css('display', 'inline');
 				$(this).removeClass('bg-color-4').addClass('bg-color-2').addClass('font-color-4');
 			} //if
@@ -314,7 +319,7 @@ var view = {
 			} //if
 
 			//submission, if check yielded no errors:
-			if (!error) {
+			if (!error && control.checkDoubleQuestions()) {
 				self.disableButtons(); //see js_general.js
 				self.setHTMLContent('test_container', '<em>Saving...</em>');
 				$('.db_questions').hide();
@@ -586,6 +591,44 @@ var control = {
 		dynmc_test.questions.objects[my_question_id].edited = true;
 	}, //changeQuestionText
 
+	checkDoubleQuestions : function() {
+	//checks for identical questions within a test, if there are any, asks the user for confirmation before returning true
+		var double_questions = [];
+		for (var i = 0; i < dynmc_test.questions.counter; i++) {
+			var question_a = dynmc_test.questions.objects[i];
+			if (!question_a.deleted) {
+				question_b_loop: //label for the following loop
+				for (var j = (i + 1); j < dynmc_test.questions.counter; j++) {
+					var question_b = dynmc_test.questions.objects[j];
+					if ((!question_b.deleted) && 
+						(this.decodeHTMLEntities(question_a.question_text) == this.decodeHTMLEntities(question_b.question_text)) && 
+						(this.decodeHTMLEntities(question_a.correct_answer) == this.decodeHTMLEntities(question_b.correct_answer)) &&
+						(question_a.incorrect_answers.length == question_b.incorrect_answers.length)) {
+							var temp_array = [];
+							for (var k = 0; k < question_b.incorrect_answers.length; k++) {
+								temp_array.push(this.decodeHTMLEntities(question_b.incorrect_answers[k]));
+							} //for
+							for (var l = 0; l < question_a.incorrect_answers.length; l++) {
+								if ($.inArray(this.decodeHTMLEntities(question_a.incorrect_answers[l]), temp_array) === -1) { //not all incorrect answers are the same
+									continue question_b_loop;
+								} //if
+							} //for
+						if ($.inArray(this.decodeHTMLEntities(question_a.question_text), double_questions) === -1) {
+							double_questions.push(this.decodeHTMLEntities(question_a.question_text));
+						} //if
+					} //if
+				} //for
+			} //if
+		} //for
+		if (double_questions.length == 0) {
+			return true;
+		} //if
+		else if (confirm("The following question(s) appear(s) in identical form more than once in your test: " + double_questions.toString() + ". Do you want to proceed anyway?")) {
+				return true;
+		} //if
+		return false;
+	}, //checkDoubleQuestions
+
 	checkIncorrectAnswers : function(my_question_id) {
 	//checks whether question has more than 1 incorrect answer
 		if (dynmc_test.questions.objects[my_question_id].incorrect_answers.length <= 1) {
@@ -614,6 +657,11 @@ var control = {
 		} //if
 		return true;
 	}, //checkNewIncorrectAnswer
+
+	decodeHTMLEntities : function(my_string) {
+	//returns a version of my_string with HTML entities decoded
+		return $('<textarea />').html(my_string).text();
+	}, //decodeHTMLEntities
 
 	deleteIncorrectAnswer : function(my_question_id, my_index) {
 	//deletes incorrect answer (at position my_index) from the model and view from the given question
