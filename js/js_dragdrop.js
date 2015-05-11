@@ -95,7 +95,9 @@ var view = {
 	init : function() {
 		//PROPERTIES:
 		this.items_displayed = 0;
+		this.item_number = 1; //used for generating default item texts
 		this.containers_displayed = 0;
+		this.container_number = 1; //used for generating default container texts
 		this.current_container_height = 0;
 		this.items_container = $('#items_container');
 		this.containers_container = $('#container_row');
@@ -144,11 +146,11 @@ var view = {
 		//adding new items & containers by button clicks:
 		$('#add_item').click(function(e) {
 			e.preventDefault();
-			control.addItem({item_text: '[ITEM ' + (self.items_displayed + 1) + ']'});
+			control.addItem({item_text: '[ITEM ' + self.item_number + ']'});
 		});
 		$('#add_container').click(function(e) {
 			e.preventDefault();
-			control.addContainer({container_text: '[CONTAINER ' + (self.containers_displayed + 1) + ']'});
+			control.addContainer({container_text: '[CONTAINER ' + self.container_number + ']'});
 		});
 
 		/*************************************************************/
@@ -292,6 +294,7 @@ var view = {
 		container_html = container_html.replace(/{{text}}/g, my_container_object.container_text);
 		this.containers_container.append(container_html);
 		this.containers_displayed++;
+		this.container_number++;
 
 		if (action == 'new' || action == 'edit' || action == 'run') { //make this a container where items can be dropped
 			var element = document.getElementById('container_' + my_container_object.current_id);
@@ -327,6 +330,7 @@ var view = {
 		item_html = item_html.replace(/{{text}}/g, my_item_object.item_text);
 		this.items_container.append(item_html);
 		this.items_displayed++;
+		this.item_number++;
 
 		if (action == 'new' || action == 'edit' || action == 'run') { //enable dragging
 			$('#item_box_' + my_item_object.current_id).attr('draggable', 'true');
