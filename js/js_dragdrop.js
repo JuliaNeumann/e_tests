@@ -113,16 +113,31 @@ var view = {
 		$(document).on('click', '#show_solved', function() {
 			self.showSolution();
 			$(this).attr('id', 'show_unsolved').val('Show Unsolved Test');
-			self.items_container.hide();
+			$('#items_container').hide();
 			self.unifyContainerHeights();
 		});
 		$(document).on('click', '#show_unsolved', function() {
 			$('.item_box').each(function() {
-				self.items_container.append($(this).css('display', 'inline'));
+				$('#items_container').append($(this).css('display', 'inline'));
 			});
 			$(this).attr('id', 'show_solved').val('Show Solved Test');
-			self.items_container.show();
+			$('#items_container').show();
 			$('.container_box').css({'height': 'auto', 'padding-bottom': '30px'});
+		});
+
+		/*************************************************************/
+		//export options in view mode:
+		$(document).on('click', '#download_as_png', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#dragdrop_container'), 'png');
+		});
+		$(document).on('click', '#download_as_jpeg', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#dragdrop_container'), 'jpeg');
+		});
+		$(document).on('click', '#print_test', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#dragdrop_container'), false);
 		});
 
 		/*************************************************************/
@@ -609,6 +624,11 @@ var control = {
 		return dragdrop_test.solutions[my_item_id];
 	}, //getCorrectContainer
 
+	getTestName : function(my_item_id) {
+	//returns name of the test
+		return dragdrop_test.test_name;
+	}, //getTestName
+
 	initDrag : function(e) {
 	//specifies what happens when an element is dragged -> ID of that element as dragged data
 		e.dataTransfer.setData('text', e.target.id); 
@@ -644,6 +664,7 @@ var control = {
 				alert('Test could not be retrieved correctly from database! ' + feedback.db_error);
 			} //if
 			else {
+				dragdrop_test.test_name = feedback.test_name;
 				self.setAndDisplayDragDropTest(feedback.items, feedback.containers);
 				if (my_solution) { //in all modes other than run -> set solution of test object
 					dragdrop_test.setTestSolution();

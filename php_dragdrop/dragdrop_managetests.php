@@ -98,7 +98,7 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 
 		$db_con = new Db_Connection();
 		$test_data = array("db_error" => '');
-
+		$test_data["test_name"] = $db_con->selectEntries(false, 'tests', array("where" => "test_ID = " . $_GET['test_id']))[0]['test_name'];
 		//get items & containers:
 		if ($_GET['solution'] == 'true') {
 			$test_data["items"] = $db_con->selectEntries(false, 'dragdrop_items', array("where" => "item_test_ID = " . $_GET['test_id']));

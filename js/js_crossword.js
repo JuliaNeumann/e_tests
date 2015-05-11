@@ -134,6 +134,21 @@ var view = {
 		});
 
 		/*************************************************************/
+		//export options in view mode:
+		$(document).on('click', '#download_as_png', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#crossword_container'), 'png');
+		});
+		$(document).on('click', '#download_as_jpeg', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#crossword_container'), 'jpeg');
+		});
+		$(document).on('click', '#print_test', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#crossword_container'), false);
+		});
+
+		/*************************************************************/
 		//adding new questions by button click:
 		$('#add_question').click(function(e) {
 			e.preventDefault();
@@ -382,7 +397,7 @@ var view = {
 			grid_string += '>' + my_words[i].number + ': ' + my_words[i].question_text + '</span><br>';
 		} //for
 		grid_string += '</div>';
-		this.crossword_container.html(grid_string);
+		$('#crossword_container').html(grid_string);
 		$('#crossword_grid').width(((parseInt(my_x) + 1) * 32) + 'px');
 
 		if (action == 'new' || action == 'edit') {
@@ -540,6 +555,11 @@ var control = {
 		return crossword_test.questions.objects[my_question_id];
 	}, //getQuestion
 
+	getTestName : function(my_item_id) {
+	//returns name of the test
+		return crossword_test.test_name;
+	}, //getTestName
+
 	handleGeneratedCrossword : function(my_crossword_data) {
 	//takes care of handling crossword delivered by the crossword generator
 		crossword_test.grid_data.x = my_crossword_data.x_stop;
@@ -621,6 +641,7 @@ var control = {
 				alert('Test could not be retrieved correctly from database! ' + feedback.db_error);
 			} //if
 			else {
+				crossword_test.test_name = feedback.test_name;
 				crossword_test.grid_data.x = feedback['grid']['grid_x'];
 				crossword_test.grid_data.y = feedback['grid']['grid_y'];
 				for (var i = 0; i < feedback.questions.length; i++) {

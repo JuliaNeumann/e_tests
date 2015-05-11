@@ -83,7 +83,8 @@ var view = {
 		this.questions_container = $('#questions');
 		this.instructions_container = $('.instructions');
 		this.question_template = $('script[data-template="question"]').html();
-		this.answer_solved_template = $('script[data-template="answer_solved"]').html();
+		this.answer_solved_correct_template = $('script[data-template="answer_solved_correct"]').html();
+		this.answer_solved_incorrect_template = $('script[data-template="answer_solved_incorrect"]').html();
 		this.answer_unsolved_template = $('script[data-template="answer_unsolved"]').html();
 		this.new_incorrect_answer_template = $('script[data-template="new_incorrect_answer"]').html();
 		this.add_question_template = $('script[data-template="add_question"]').html();
@@ -104,6 +105,21 @@ var view = {
 		$(document).on('click', '#show_unsolved', function() {
 			$(this).attr('id', 'show_solved').val('Show Solved Test');
 			self.toggleSolution(false);
+		});
+
+		/*************************************************************/
+		//export options in view mode:
+		$(document).on('click', '#download_as_png', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#questions'), 'png');
+		});
+		$(document).on('click', '#download_as_jpeg', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#questions'), 'jpeg');
+		});
+		$(document).on('click', '#print_test', function(e) {
+			e.preventDefault();
+			self.createImage(control.getTestName(), $('#questions'), false);
 		});
 
 		/*************************************************************/
@@ -337,8 +353,8 @@ var view = {
 	addIncorrectAnswerToView : function(my_question_id, my_answer, my_answer_index) {
 	//adds incorrect answer option to a question display
 	//params: my_question_id = INT, my_answer = 'string', my_answer_index = INT (position of answer in object's array)
-		var map = {"{{id}}" : my_question_id, "{{correct}}": "incorrect", "{{text}}": my_answer, "{{answer_index}}" : my_answer_index};
-		var answer_html = this.answer_solved_template.replace(/{{id}}|{{correct}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
+		var map = {"{{id}}" : my_question_id, "{{text}}": my_answer, "{{answer_index}}" : my_answer_index};
+		var answer_html = this.answer_solved_incorrect_template.replace(/{{id}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
 		$('#question_table_' + my_question_id).append(answer_html);
 		if (action == 'new' || action == 'edit') { //incorrect answer options can be deleted
 			$('#delete_cell_' + my_question_id + '_' + my_answer_index).append('<div class="delete_answer_button font-color-4" data-obj_id="' + my_question_id + '" data-answer_id="' + my_answer_index + '">X</div>');
@@ -357,7 +373,7 @@ var view = {
 		var current_id = my_question_object.current_id;
 		var question_html = this.question_template.replace(/{{id}}/g, current_id); //fill the template
 		question_html = question_html.replace(/{{text}}/g, my_question_object.question_text);
-		this.questions_container.append(question_html);
+		$('#questions').append(question_html);
 		this.questions_displayed++;
 
 		if ((action == "view") && !my_solved) {
@@ -367,8 +383,8 @@ var view = {
 			} //for
 		} //if
 		else if (my_solved) {
-			var map = {"{{id}}" : current_id, "{{correct}}": "correct", "{{text}}": my_question_object.correct_answer, "{{answer_index}}" : 0};
-			var answer_html = this.answer_solved_template.replace(/{{id}}|{{correct}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
+			var map = {"{{id}}" : current_id, "{{text}}": my_question_object.correct_answer, "{{answer_index}}" : 0};
+			var answer_html = this.answer_solved_correct_template.replace(/{{id}}|{{text}}|{{answer_index}}/g, function(my_str){ return map[my_str]; });
 			$('#question_table_' + current_id).append(answer_html);
 			for (var i = 0; i < my_question_object.incorrect_answers.length; i++) {
 				this.addIncorrectAnswerToView(current_id, my_question_object.incorrect_answers[i], i);
@@ -423,7 +439,7 @@ var view = {
 	markAnswerAsCorrect : function(my_correct, my_continue) {
 	//marks the current answer option as answered correctly & displays feedback
 	//params: my_correct = string ("correct" or "incorrect"), my_continue = bool (indicates whether to continue or question is finished)
-		$('.current_option_row').find('.pic_' + my_correct).attr('src', root_path + 'images/' + my_correct + '_green.png');
+		$('.current_option_row').find('.pic_' + my_correct).attr('stroke', '#32CD32');
 		if (my_continue) {
 			this.instructions_container.html('Well done! How about this answer option?');
 		} //if
@@ -435,7 +451,7 @@ var view = {
 	markAnswerAsIncorrect : function(my_correct) {
 	//marks the current answer option as answered incorrectly & displays feedback
 	//params: my_correct = string ("correct" or "incorrect")
-		$('.current_option_row').find('.pic_' + my_correct).attr('src', root_path + 'images/' + my_correct + '_red.png');
+		$('.current_option_row').find('.pic_' + my_correct).attr('stroke', '#AE0000');
 		this.instructions_container.html("Sorry! You have not solved this question correctly!");
 	}, //markAsCorrect
 
@@ -464,7 +480,7 @@ var view = {
 
 	toggleSolution : function(my_solved) {
 	//changes display between solved (my_solved == true) and unsolved display
-		this.setHTMLContent(this.questions_container.attr('id'), '');
+		this.setHTMLContent('questions', '');
 		control.current_question = 0;
 		var counter = this.questions_displayed;
 		this.questions_displayed = 0;
@@ -660,6 +676,11 @@ var control = {
 		return dynmc_test.questions.counter;
 	}, //getNoOfQuestions
 
+	getTestName : function(my_item_id) {
+	//returns name of the test
+		return dynmc_test.test_name;
+	}, //getTestName
+
 	retrieveAndDisplayTest : function(my_test_id, my_solution) {
 	//retrieves data of a test from the database, initializes its display and stores it in model
 	//params: my_test_id = INT; my_solution = bool (determines whether solution should be retrieved or not)
@@ -670,6 +691,7 @@ var control = {
 				alert('Test could not be retrieved correctly from database! ' + feedback.db_error);
 			} //if
 			else {
+				dynmc_test.test_name = feedback.test_name;
 				view.setHTMLContent(view.questions_container.attr('id'), '');
 				for (i = 0; i < feedback.questions.length; i++) {
 					self.addQuestion(feedback.questions[i]);	

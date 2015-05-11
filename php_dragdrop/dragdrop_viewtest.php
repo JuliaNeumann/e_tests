@@ -49,14 +49,19 @@ VIEWING A DRAG & DROP TEST
 			Use the button below to change between the unsolved and the solved view of the test. 
 			To try a fully functional version, choose the "Run Test" option on the start page.
 		</div><br>
-		<p id="items_container">
-			<em>Loading...</em>
-		</p>
-		<div class="css_table" id="container_table">
-			<div class="css_tr" id="container_row"></div>
+		<div id="dragdrop_container">
+			<div id="items_container">
+				<em>Loading...</em>
+			</div>
+			<div class="css_table" id="container_table">
+				<div class="css_tr" id="container_row"></div>
+			</div>
 		</div>
 		<div class="right_aligned">
 			<input type="submit" id="show_solved" class="submit_button" value="Show Solved Test">
+			<input type="submit" id="download_as_png" class="submit_button" value="Download as PNG">
+			<input type="submit" id="download_as_jpeg" class="submit_button" value="Download as JPEG">
+			<input type="submit" id="print_test" class="submit_button" value="Print Test">
 		</div>
 	</section>
 <?php 
