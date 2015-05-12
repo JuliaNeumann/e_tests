@@ -5,7 +5,6 @@ MANAGING DYNAMIC MULTIPLE-CHOICE TESTS
 *************************************************************************************************************************/
 
 require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
-session_start();
 
 /************************************************************************************************************************/
 
@@ -38,6 +37,19 @@ session_start();
 		$db_con->deleteEntries(false, 'dynmc_lookup', array("where" => "lookup_question_ID = " . $my_question_id,
 															"and" => "lookup_test_ID = " . $my_test_id));
 	} //function deleteQuestion
+
+	function resumeAndCheckSession() {
+	//resumes and checks session that is needed in run mode, causes script to die if session check fails
+		session_start();
+		if (!isset($_SESSION['ejfdsh8jkj2'])) { //if not accessed after session properly started by this script before 
+			dieIncorrectAccess();
+		} //if
+		elseif (isset($_SESSION['user_ip'])) {
+			if ($_SESSION['user_ip'] != $_SERVER['REMOTE_ADDR']){ //prevent hijacking
+				dieIncorrectAccess();
+			} //if
+		} //elseif
+	} //function resumeAndCheckSession
 
 /************************************************************************************************************************/
 
@@ -125,14 +137,25 @@ session_start();
 //RETRIEVING EXISTING TEST DATA:
 
 	else if (isset($_GET['test_id'])) {
+		$timestamp = 'test_' . time(); //used to identify this test's information in the session in run mode (in case several tests are run at the same time)
+		
+		//start session (in run mode):
+		if ($_GET['solution'] != 'true') {
+			session_start();
+		    if (!isset($_SESSION['ejfdsh8jkj2'])) { //prevent session fixation
+			 	session_regenerate_id(); //generate new session ID
+			    $_SESSION['ejfdsh8jkj2'] = 1; //set variable to mark session as genuine
+			}
+		    $_SESSION['user_ip'] = $_SERVER['REMOTE_ADDR']; //prevent session hijacking
+		    $_SESSION[$timestamp] = array();
+		} //if
 
+	    //retrieve data from DB:
 		$db_con = new Db_Connection();
 		$test_data = array("db_error" => '');
 		$test_data["test_name"] = $db_con->selectEntries(false, 'tests', array("where" => "test_ID = " . $_GET['test_id']))[0]['test_name'];
 		
 		$questions = [];
-		$timestamp = 'test_' . time(); //used to identify this test's information in the session in run mode (in case several tests are run at the same time)
-		$_SESSION[$timestamp] = array();
 
 		//get questions:
 		$lookups = $db_con->selectEntries(false, 'dynmc_lookup', array("where" => "lookup_test_ID = " . $_GET['test_id']));
@@ -141,11 +164,11 @@ session_start();
 			$questions[$i]['question_ID'] = $question_ID;
 			$question_data = $db_con->selectEntries(false, 'dynmc_questions', array("where" => "question_ID = " . $question_ID));
 			$questions[$i]['question_text'] = $question_data[0]['question_text'];
-			$_SESSION[$timestamp]['options'][$question_ID] = array();
 			if ($_GET['solution'] == 'true') {
 				$questions[$i]['correct_answer'] = $question_data[0]['question_correct_answer'];
 			} //if
 			else { //retrieve without solutions (so they are not accessible from browser when test is performed)
+				$_SESSION[$timestamp]['options'][$question_ID] = array();
 				$_SESSION[$timestamp]['options'][$question_ID][] = array(1, $question_data[0]['question_correct_answer']);
 			} //else
 			$incorrect_answers = $db_con->selectEntries(false, 'dynmc_incorrect', array("where" => "incorrect_question_ID = " . $question_ID));
@@ -221,6 +244,8 @@ session_start();
 	
 //GETTING ANSWER OPTION:
 	else if (isset($_GET['new_option'])) {
+		resumeAndCheckSession();
+
 		$timestamp = $_GET['timestamp'];
 		if (sizeof($_SESSION[$timestamp]['options'][$_GET['question_ID']]) > 0) {
 			$_SESSION[$timestamp]['current_option'] = array_shift($_SESSION[$timestamp]['options'][$_GET['question_ID']]);
@@ -232,6 +257,8 @@ session_start();
 	
 //CHECKING SUBMITTED ANSWER OPTION:
 	else if (isset($_GET['user_answer'])){
+		resumeAndCheckSession();
+
 		$timestamp = $_GET['timestamp'];
 		$question_ID = $_GET['question_ID'];
 		$feedback = array();
@@ -246,6 +273,24 @@ session_start();
 			} //if
 		} //else
 		print json_encode($feedback);
+	} //else if
+
+/*************************************************************************************************************************/
+	
+//CLOSE DOWN SESSION WHEN NOT NEEDED ANYMORE:
+	else if (isset($_GET['close_session'])){
+		resumeAndCheckSession();
+
+		$_SESSION = array(); //destroy session variables
+        if (ini_get('session.use_cookies')) { //if session information is stored in cookies, delete as well 
+            $cookie_parameters = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 2592000,
+                    $cookie_parameters['path'],
+                    $cookie_parameters['domain'],
+                    $cookie_parameters['secure'],
+                    $cookie_parameters['httponly']);
+        } //if
+        session_destroy();
 	} //else if
 
 /*************************************************************************************************************************/

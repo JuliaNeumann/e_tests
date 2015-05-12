@@ -689,6 +689,9 @@ var control = {
 				else {
 					view.markAnswerAsIncorrect("correct");
 					self.current_question++;
+					if (control.current_question == control.getNoOfQuestions()) { //this was the last question -> close down session
+						$.get(root_path + 'php_dynmc/dynmc_managetests.php', {close_session : true});
+					} //if
 					view.endQuestion(feedback.solved_options);
 				} //else
 			} //if
@@ -701,6 +704,9 @@ var control = {
 					view.markAnswerAsIncorrect("incorrect");
 				} //else
 				self.current_question++;
+				if (control.current_question == control.getNoOfQuestions()) { //this was the last question -> close down session
+					$.get(root_path + 'php_dynmc/dynmc_managetests.php', {close_session : true});
+				} //if
 				view.endQuestion(feedback.solved_options);
 			} //else
 		});
