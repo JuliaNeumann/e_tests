@@ -159,4 +159,11 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 
 		print json_encode($checked_items);
 	}//else if
+
+/*************************************************************************************************************************/
+
+	else {
+		dieIncorrectAccess();
+	} //else
+	
 ?>

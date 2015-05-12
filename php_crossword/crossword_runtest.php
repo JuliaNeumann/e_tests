@@ -9,6 +9,8 @@ RUN A CROSSWORD TEST
 	$section = 'crossword';
 	$action = 'run';
 
+	require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
+
 	if (isset($_POST['selected_test_id'])) {
 		$test_id = $_POST['selected_test_id'];
 	} //if
@@ -16,10 +18,8 @@ RUN A CROSSWORD TEST
 		$test_id = $_GET['selected_test_id'];
 	} //else if
 	else {
-		die('This page has not been accessed in the correct way!');
+		dieIncorrectAccess();
 	} //else
-
-	require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 
 	$db_con = new Db_Connection();
 	$test_data = $db_con->selectEntries(false, 'tests', array("where" => "test_ID = " . $test_id))[0];

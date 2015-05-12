@@ -10,6 +10,8 @@ VIEWING A DYNAMIC MULTIPLE-CHOICE TEST
 	$section = 'dynmc';
 	$action = 'view';
 
+	require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
+
 	if (isset($_GET['test_id'])) {
 		$test_id = $_GET['test_id'];
 	} //if
@@ -17,10 +19,8 @@ VIEWING A DYNAMIC MULTIPLE-CHOICE TEST
 		$test_id = $_POST['selected_test_id'];
 	} //else if
 	else {
-		die('This page has not been accessed in the correct way!');
+		dieIncorrectAccess();
 	} //else
-
-	require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 
 	$db_con = new Db_Connection();
 	$test_data = $db_con->selectEntries(false, 'tests', array("where" => "test_ID = " . $test_id))[0];

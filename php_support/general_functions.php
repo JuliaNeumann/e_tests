@@ -27,6 +27,13 @@ PHP GENERAL FUNCTIONS
 
 /*************************************************************************************************************************/
 
+	function dieIncorrectAccess() {
+	//causes script to die, printing message about incorrect access
+		die('This page has not been accessed in the correct way! Click <a href="' . ROOT_PATH . 'index.php">here</a> to go to the start page of the E-Test Editor.');
+	} //function dieIncorrectAccess
+
+/*************************************************************************************************************************/
+
 	function printAttr($my_attr, $my_value) {
 	//if value is set, prints HTML attribute with that value
 		if (isset($my_value) && ($my_value != '')) {

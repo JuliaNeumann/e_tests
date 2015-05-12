@@ -8,8 +8,9 @@ GENERAL MANAGE PAGE FOR INTERACTION WITH INTERFACE FORMS
 	$error = false;
 	$error_msg = '';
 
-	/*************************************************************************************************************************/
+/*************************************************************************************************************************/
 
+//REDIRECTION FROM INDEX PAGE:
 	if (isset($_POST['test_type_button'])) {
 		switch ($_POST['test_type_button']) {
 			case 'new_idea':
@@ -70,9 +71,10 @@ GENERAL MANAGE PAGE FOR INTERACTION WITH INTERFACE FORMS
 		die();
 	} //else if
 
-	/*************************************************************************************************************************/
-	
-	else if (isset($_GET['get_test_names'])) { //AJAX request for test name checking
+/*************************************************************************************************************************/
+
+//AJAX REQUEST FOR CHECKING TEST NAME:
+	else if (isset($_GET['get_test_names'])) {
 		$db_con = new Db_Connection();
 		$test_types = array('dynmc' => 1, 'dragdrop' => 2, 'crossword' => 3);
 		//get all names of tests of same type and different ID (so that no two tests of same type with same name will exist)
@@ -84,4 +86,11 @@ GENERAL MANAGE PAGE FOR INTERACTION WITH INTERFACE FORMS
 		} //foreach
 		print json_encode($test_names);
 	} //else if
+
+/*************************************************************************************************************************/
+
+	else {
+		dieIncorrectAccess();
+	} //else
+	
 ?>
