@@ -48,6 +48,17 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 	border-style: solid;
 }
 
+.label_box, .css_td {
+	/*make text break up into lines rather than overflow*/
+	word-break: break-word;
+   -webkit-hyphens: auto;
+   -moz-hyphens: auto;
+   -ms-hyphens: auto;
+   hyphens: auto;
+   -ms-word-break: break-all;
+   word-break: break-all;
+}
+
 .medium_cell {
 	width: 12%;
 }
@@ -73,6 +84,7 @@ DYNAMIC MULTIPLE CHOICE STYLE SHEET
 
 #select_question_from_db {
 	width: 100%;
+	overflow: auto;
 }
 
 .show_pic, .hide_pic {

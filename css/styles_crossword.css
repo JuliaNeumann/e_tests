@@ -91,3 +91,14 @@ CROSSWORD STYLE SHEET
 .table_inputfield {
 	width: 97%;
 }
+
+td {
+	/*make text break up into lines rather than overflow*/
+	word-break: break-word;
+   -webkit-hyphens: auto;
+   -moz-hyphens: auto;
+   -ms-hyphens: auto;
+   hyphens: auto;
+   -ms-word-break: break-all;
+   word-break: break-all;
+}
