@@ -26,6 +26,15 @@ PHP GENERAL FUNCTIONS
 	} //function createNewTestGeneral
 
 /*************************************************************************************************************************/
+
+	function printAttr($my_attr, $my_value) {
+	//if value is set, prints HTML attribute with that value
+		if (isset($my_value) && ($my_value != '')) {
+			echo ' ' . $my_attr . '="' . $my_value . '"';
+		} //if
+	} //function printAttr
+
+/*************************************************************************************************************************/
 	
 	function updateTestGeneral($my_test_data) {
 	//updates entry in table 'tests', returns true on success
@@ -48,15 +57,5 @@ PHP GENERAL FUNCTIONS
 			return 'The function updateTestGeneral has not been provided with the correct parameters!';
 		} //else
 	} //function updateTestGeneral
-
-/*************************************************************************************************************************/
-
-	function printAttr($my_attr, $my_value) {
-	//if value is set, prints HTML attribute with that value
-		if (isset($my_value) && ($my_value != '')) {
-			echo ' ' . $my_attr . '="' . $my_value . '"';
-		} //if
-	} //function 
-
 
 ?>
