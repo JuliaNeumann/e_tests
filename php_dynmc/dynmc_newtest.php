@@ -42,7 +42,7 @@ CREATING A NEW DYNAMIC MC TEST
 <?php
 		for ($i = 0; $i < sizeof($questions); $i++) { 
 ?>
-			<option value="<?php echo $questions[$i]['question_ID']; ?>"><?php echo $questions[$i]['question_text']; ?> (ID: <?php echo $questions[$i]['question_ID']; ?>)</option>
+			<option value="<?php echo $questions[$i]['question_ID']; ?>"><?php echo $questions[$i]['question_text']; ?> (ID: <?php echo $questions[$i]['question_ID']; ?>, created: <?php echo $questions[$i]['question_created']; ?>)</option>
 <?php
 		}
 ?>

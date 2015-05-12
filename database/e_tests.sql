@@ -117,6 +117,7 @@ CREATE TABLE IF NOT EXISTS `dynmc_questions` (
   `question_ID` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `question_text` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
   `question_correct_answer` varchar(1000) COLLATE utf8_unicode_ci NOT NULL,
+  `question_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`question_ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
