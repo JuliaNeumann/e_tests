@@ -11,6 +11,10 @@ CROSSWORD STYLE SHEET
 	margin-right: 0px;
 }
 
+#crossword_container {
+	overflow: auto;
+}
+
 #crossword_grid {
 	margin: 10px auto;
 	border-width: 1px;
