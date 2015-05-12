@@ -207,7 +207,7 @@ function View() {
 	this.createImage = function(my_test_name, my_html_element, my_extension) {
 	//creates svg containing the given test name (string) and html element (jQuery object)
 	//draws image to a canvas and initializes download as file with my_extension or starts printing
-		if (typeof SVGForeignObjectElement !== 'undefined') { //test for support of foreign object (currently not supported in IE!)
+		if ((typeof SVGForeignObjectElement !== 'undefined') && (!!document.createElement('canvas').getContext)) { //test for support of foreign object (currently not supported in IE!) and canvas
 			var self = this;
 			var svg_width = my_html_element.width() + 20;
 			var svg_height = my_html_element.height() + 120;
