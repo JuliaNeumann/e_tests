@@ -324,6 +324,11 @@ function Control() {
 		return true;
 	} //checkTestName
 
+	this.decodeHTMLEntities = function(my_string) {
+	//returns a version of my_string with HTML entities decoded (needed for checks for double questions)
+		return $('<textarea />').html(my_string).text();
+	} //decodeHTMLEntities
+
 	this.getTestNamesFromDb = function(my_test_id) {
 	//gets all test names that exist in the database via an AJAX request, returns them as indexed array, root_path must exist as global variable!
 	//params: my_test_id = INT (Database ID of the current test, which should be excluded, 0 for new test)

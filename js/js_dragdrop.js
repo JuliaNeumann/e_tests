@@ -241,7 +241,7 @@ var view = {
 			} //if
 
 			//submission, if check yielded no errors:
-			if (!error) {
+			if (!error && control.checkDoubleItems()) {
 				self.disableButtons(); //see js_general.js
 				self.items_container.html('<em>Saving...</em>');
 				control.saveTest();
@@ -551,6 +551,31 @@ var control = {
 		} //for
 		return true;
 	}, //checkContainerName
+
+	checkDoubleItems : function() {
+	//checks for identical items within a test, if there are any, asks the user for confirmation before returning true
+		var double_items = [];
+		for (var i = 0; i < dragdrop_test.items.counter; i++) {
+			var item_a = dragdrop_test.items.objects[i];
+			if (!item_a.deleted) {
+				for (var j = (i + 1); j < dragdrop_test.items.counter; j++) {
+					var item_b = dragdrop_test.items.objects[j];
+					if ((!item_b.deleted) && 
+						(this.decodeHTMLEntities(item_a.item_text) == this.decodeHTMLEntities(item_b.item_text)) && 
+						($.inArray(this.decodeHTMLEntities(item_a.item_text), double_items) === -1)) {
+							double_items.push(this.decodeHTMLEntities(item_a.item_text));
+						} //if
+					} //if
+			} //if
+		} //for
+		if (double_items.length == 0) {
+			return true;
+		} //if
+		else if (confirm("The following item(s) appear(s) in identical form more than once in your test: " + double_items.toString() + ". Do you want to proceed anyway?")) {
+				return true;
+		} //if
+		return false;
+	}, //checkDoubleItems
 
 	checkRunTest : function() {
 	//checks a submission made in run mode

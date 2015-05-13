@@ -658,11 +658,6 @@ var control = {
 		return true;
 	}, //checkNewIncorrectAnswer
 
-	decodeHTMLEntities : function(my_string) {
-	//returns a version of my_string with HTML entities decoded
-		return $('<textarea />').html(my_string).text();
-	}, //decodeHTMLEntities
-
 	deleteIncorrectAnswer : function(my_question_id, my_index) {
 	//deletes incorrect answer (at position my_index) from the model and view from the given question
 		dynmc_test.questions.objects[my_question_id].incorrect_answers.splice(my_index, 1); //remove from object

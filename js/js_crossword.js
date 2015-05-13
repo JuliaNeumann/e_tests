@@ -267,7 +267,7 @@ var view = {
 			} //
 
 			//submission, if check yielded no errors:
-			if (!error) {
+			if (!error && control.checkDoubleQuestions()) {
 				if (confirm("Pressing OK will save your crossword in the state you see displayed. If you do not like the arrangement of the words, or made changes to your answers after creating the crossword, you should create a new crossword before saving.")) {
 					self.disableButtons(); //see js_general.js
 					$('#test_container').html('<em>Saving...</em>');
@@ -520,6 +520,32 @@ var control = {
     	} //if
     	return false;
 	}, //checkCorrectAnswer
+
+	checkDoubleQuestions : function() {
+	//checks for identical questions within a test, if there are any, asks the user for confirmation before returning true
+		var double_questions = [];
+		for (var i = 0; i < crossword_test.questions.counter; i++) {
+			var question_a = crossword_test.questions.objects[i];
+			if (!question_a.deleted) {
+				for (var j = (i + 1); j < crossword_test.questions.counter; j++) {
+					var question_b = crossword_test.questions.objects[j];
+					if ((!question_b.deleted) && 
+						(this.decodeHTMLEntities(question_a.question_text) == this.decodeHTMLEntities(question_b.question_text)) && 
+						(this.decodeHTMLEntities(question_a.correct_answer) == this.decodeHTMLEntities(question_b.correct_answer)) && 
+						($.inArray(this.decodeHTMLEntities(question_a.question_text), double_questions) === -1)) {
+							double_questions.push(this.decodeHTMLEntities(question_a.question_text));
+						} //if
+					} //if
+			} //if
+		} //for
+		if (double_questions.length == 0) {
+			return true;
+		} //if
+		else if (confirm("The following question(s) appear(s) in identical form more than once in your test: " + double_questions.toString() + ". Do you want to proceed anyway?")) {
+				return true;
+		} //if
+		return false;
+	}, //checkDoubleQuestions
 
 	checkRunTest : function() {
 	//submits current solution of the user via AJAX, initializes display of feedback
