@@ -28,9 +28,7 @@ CREATING A NEW DRAG & DROP TEST
 			</div>
 		</div>
 		<div id="items_container"></div>
-		<div class="css_table" id="container_table">
-			<div class="css_tr" id="container_row"></div>
-		</div>
+		<div id="containers_container"></div>
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="save_test" id="save_test" value="Save Test">
 		</div>

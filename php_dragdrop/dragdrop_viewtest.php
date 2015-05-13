@@ -54,9 +54,7 @@ VIEWING A DRAG & DROP TEST
 			<div id="items_container">
 				<em>Loading...</em>
 			</div>
-			<div class="css_table" id="container_table">
-				<div class="css_tr" id="container_row"></div>
-			</div>
+			<div id="containers_container"></div>
 		</div>
 		<div class="right_aligned">
 			<input type="submit" id="show_solved" class="submit_button" value="Show Solved Test">

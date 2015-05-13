@@ -46,9 +46,7 @@ RUN A DRAG & DROP TEST
 		<p id="items_container">
 			<em>Loading...</em>
 		</p>
-		<div class="css_table" id="container_table">
-			<div class="css_tr" id="container_row"></div>
-		</div>
+		<div id="containers_container"></div>
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="check_test" id="check_test" value="Check" disabled>
 			<input type="submit" id="continue_button" name="continue_button" class="submit_button hidden" value="Continue">
