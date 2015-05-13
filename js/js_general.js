@@ -212,32 +212,41 @@ function View() {
 			var svg_width = my_html_element.width() + 20;
 			var svg_height = my_html_element.height() + 120;
 
-			var svg_element = '<svg xmlns="http://www.w3.org/2000/svg" id="img_svg" width="' + svg_width + '" height="' + svg_height + '"> \
+			//get all CSS rules that apply to the elements in my_html_element
+			var css = '';
+		    var style_sheets = document.styleSheets;
+		    for (var i = 0; i < style_sheets.length; i++) { //loop through all rules in the stylesheets
+				var rules = style_sheets[i].cssRules;
+				if (rules != null) {
+					for (var j = 0; j < rules.length; j++) {
+						var rule = rules[j];
+						if (typeof(rule.style) != "undefined") {
+							var matched_elements = my_html_element[0].querySelectorAll(rule.selectorText);
+							if (matched_elements.length > 0) { //rule applied to some elements inside my_html_element
+								css += rule.selectorText + " { " + rule.style.cssText + " }\n";
+							} //if
+						} //if
+					} //for
+				} //if
+		    } //for
+
+		    //generate SVG element + URL:
+			var svg_element = $('<svg xmlns="http://www.w3.org/2000/svg" id="img_svg" width="' + svg_width + '" height="' + svg_height + '"> \
+			           			<style type="text/css"><![CDATA[\n' + css + '\n]]></style> \
 			           			<foreignObject width="100%" height="100%"> \
-			           				<div xmlns="http://www.w3.org/1999/xhtml" id="svg_img_container" style="padding: 10px"> \
+			           				<div xmlns="http://www.w3.org/1999/xhtml" id="svg_img_container" style="font-family:Calibri;font-size:12pt;padding:10px"> \
 			             				<h3>' + my_test_name + '</h3><br />'
 			             				+ my_html_element.html() +
-			             				'<p class="image_footer">This image was created using the E-Test Editor by Julia Neumann, 2015</p>'
-			           				'</div> \
+			             				'<p style="font-size:10pt;text-align:right;color:#848484">This image was created using the E-Test Editor by Julia Neumann, 2015</p> \
+			           				</div> \
 			           			</foreignObject> \
-			           		  </svg>';
-			$('body').append(svg_element);
+			           		  </svg>');
 
-			$('#svg_img_container').find("*").each(function() { //loop through all descendants of the foreignObject element
-				var styles_string = '';
-				var all_styles = getComputedStyle($(this)[0]); //function needs to be run on the native DOM element, not jQuery element
-				for (var i = 0; i < all_styles.length; i++) {
-				    styles_string += all_styles[i] + ':' + all_styles.getPropertyValue(all_styles[i]) + ';';
-				} //for
-				$(this).attr('style', styles_string); //attach all styles as inline styles, so they will be visible when converted to image
-			});
-
-	        var svg_data = new XMLSerializer().serializeToString($('#img_svg')[0]); 
+	        var svg_data = new XMLSerializer().serializeToString(svg_element[0]); 
 	        var blob = new Blob([svg_data], { type: "image/svg+xml;charset=utf-8" }); //create blob from the SVG data
 
 	        var dom_url = window.URL || window.webkitURL || window;
 	        var blob_url = dom_url.createObjectURL(blob); //get the blob URL
-
 
 	        //draw image to canvas and, if required, initialize download as image file
 	    	$('body').append('<canvas id="img_canvas" class="hidden"></canvas>');
@@ -258,7 +267,6 @@ function View() {
 				
 				ctx.drawImage(img, 0, 0); //throws an error in IE
 				dom_url.revokeObjectURL(blob_url);
-				$('#img_svg').remove();
 				if (my_extension !== false) {
 					self.downloadImage(my_extension);
 				} //if
