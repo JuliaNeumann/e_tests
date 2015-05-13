@@ -90,6 +90,8 @@ td {
 }
 
 #type_button_container {
+	display: -webkit-flex; /*for Safari*/
+	-webkit-align-items: flex-start;
 	display: flex;
 	align-items: flex-start; /*forces items to be aligned at top of container, otherwise line-breaks cause problems*/
 }

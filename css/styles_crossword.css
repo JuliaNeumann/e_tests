@@ -26,6 +26,7 @@ CROSSWORD STYLE SHEET
 }
 
 .cw_row {
+	display: -webkit-flex; /*for Safari*/
 	display: flex;
 }
 
