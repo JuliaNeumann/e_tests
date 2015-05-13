@@ -12,12 +12,10 @@ TEMPLATES FOR DRAG&DROP TESTS
 </script>
 
 <script type="text/template" data-template="container">
-    <div class="css_td container_cell" id="container_cell_{{id}}">
-		<div class="container border-theme-color" data-obj_id="{{id}}" id="container_{{id}}">
-			<div class="label_box bg-theme-color font-color-4" data-obj_id="{{id}}" id="label_box_{{id}}">
-				<div class="container_label" data-obj_id="{{id}}" id="label_{{id}}">{{text}}</div>
-			</div>
-			<div class="container_box bg-color-4" data-obj_id="{{id}}" id="container_box_{{id}}"></div>
+	<div class="container border-theme-color" data-obj_id="{{id}}" id="container_{{id}}">
+		<div class="label_box bg-theme-color font-color-4" data-obj_id="{{id}}" id="label_box_{{id}}">
+			<div class="container_label" data-obj_id="{{id}}" id="label_{{id}}">{{text}}</div>
 		</div>
+		<div class="container_box bg-color-4" data-obj_id="{{id}}" id="container_box_{{id}}"></div>
 	</div>
 </script>

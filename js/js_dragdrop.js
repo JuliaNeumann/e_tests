@@ -100,7 +100,7 @@ var view = {
 		this.container_number = 1; //used for generating default container texts
 		this.current_container_height = 0;
 		this.items_container = $('#items_container');
-		this.containers_container = $('#container_row');
+		this.containers_container = $('#containers_container');
 		this.item_template = $('script[data-template="item"]').html();
 		this.container_template = $('script[data-template="container"]').html();
 
@@ -305,11 +305,9 @@ var view = {
 		} //if
 		if (action == 'new' || action == 'edit') { 
 			this.enableInlineEditing('container', my_container_object.current_id);
-			if (this.containers_displayed >= 4) { //don't allow creation of more than 4 containers
-				$('#add_container').prop('disabled', true);
-			} //if
 		} //else if
-		this.fixContainerTable();
+		this.fixContainerWidth();
+		this.fixContainerLabelHeight();
 	}, //addContainerToView
 
 	addItemToContainer : function(my_item_id, my_container_id) {
@@ -350,12 +348,10 @@ var view = {
 
 	deleteContainerFromView : function(my_container_id) {
 	//removes the container with the ID from the view
-		$('#container_cell_' + my_container_id).remove();
+		$('#container_' + my_container_id).remove();
 		this.containers_displayed--;
-		this.fixContainerTable();
-		if (this.containers_displayed < 4) { //allow creation of up to 4 containers
-			$('#add_container').prop('disabled', false);
-		} //if
+		this.fixContainerWidth();
+		this.fixContainerLabelHeight();
 	}, //deleteContainerFromView
 
 	deleteItemFromView : function(my_item_id) {
@@ -406,11 +402,18 @@ var view = {
 		$('.label_box').css('min-height', current_height);
 	}, //fixContainerLabelHeight
 
-	fixContainerTable: function() {
-	//fixes width of table cells, so they do not 'jump' when their content is modified
-		var cell_width = 100 / parseInt(this.containers_displayed);
-		$('.container_cell').css('width', cell_width + '%');
-	}, //fixContainerTable
+	fixContainerWidth : function() {
+	//sets width of containers, according to currenz number of containers
+		if (this.containers_displayed == 2) {
+			$('.container').width('48.5%');
+		} //if
+		else if (this.containers_displayed == 3) {
+			$('.container').width('31.8%');
+		} //else if
+		else {
+			$('.container').width('192px');
+		} //else if
+	}, //fixContainerWidth
 
 	resetOpacity : function(my_element_id) {
 	//sets the opacity of the item with the HTML ID attribute given to normal
@@ -651,7 +654,7 @@ var control = {
 		this.current_item++;
 		if (this.current_item == dragdrop_test.items.counter) { //this was the last item
 			view.displayScore(this.user_score, dragdrop_test.items.counter);
-			view.setHTMLContent('container_table', '');
+			view.setHTMLContent('containers_container', '');
 		} //if
 		else {
 			view.addItemToView(dragdrop_test.items.objects[this.current_item]);

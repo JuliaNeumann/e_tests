@@ -6,6 +6,12 @@ DRAG&DROP STYLE SHEET
 .container {
 	border-width: 3px;
 	border-style: solid;
+	display: -webkit-flex; /*for Safari*/
+	-webkit-flex-flow: column;
+	-moz-flex-flow: column;
+	display: flex;
+	flex-flow: column;
+	margin: 3px;
 }
 
 .container_box {
@@ -17,8 +23,15 @@ DRAG&DROP STYLE SHEET
 	display: inline;
 }
 
-#container_table {
-	width: 800px;
+#containers_container {
+	width: 100%;
+	display: -webkit-flex; /*for Safari*/
+	-webkit-align-items: flex-start;
+	-webkit-flex-flow: row wrap;
+	-moz-flex-flow: row wrap;
+	display: flex;
+	align-items: flex-start; /*forces items to be aligned at top of container, otherwise line-breaks cause problems*/
+	flex-flow: row wrap;
 }
 
 .delete_button {
@@ -50,6 +63,7 @@ DRAG&DROP STYLE SHEET
 	padding: 5px;
 	font-weight: bold;
 	margin-bottom: 0px;
+	overflow: hidden;
 }
 
 .test_item {
@@ -65,4 +79,5 @@ DRAG&DROP STYLE SHEET
    hyphens: auto;
    -ms-word-break: break-all;
    word-break: break-all;
+   word-wrap: break-word;
 }
