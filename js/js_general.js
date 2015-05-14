@@ -215,14 +215,13 @@ function View() {
 			//get all CSS rules that apply to the elements in my_html_element
 			var css = '';
 		    var style_sheets = document.styleSheets;
-		    for (var i = 0; i < style_sheets.length; i++) { //loop through all rules in the stylesheets
+		    for (var i = 0; i < style_sheets.length; i++) { //loop through all rules in all stylesheets
 				var rules = style_sheets[i].cssRules;
 				if (rules != null) {
 					for (var j = 0; j < rules.length; j++) {
 						var rule = rules[j];
 						if (typeof(rule.style) != "undefined") {
-							var matched_elements = my_html_element[0].querySelectorAll(rule.selectorText);
-							if (matched_elements.length > 0) { //rule applied to some elements inside my_html_element
+							if (my_html_element.find(rule.selectorText).length > 0) { //rule applies to some elements inside my_html_element
 								css += rule.selectorText + " { " + rule.style.cssText + " }\n";
 							} //if
 						} //if
