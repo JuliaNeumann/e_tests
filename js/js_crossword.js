@@ -298,9 +298,9 @@ var view = {
 		$(document).on('keyup', '.letter_input_field', function(e) {
 			var x = parseInt($(this).data('x'));
 			var y = parseInt($(this).data('y'));
-			if (e.which != 8) { //button other than delete button is pressed
-				var letter = $(this).val().toUpperCase();
-				$(this).val(letter);
+			var field_content = $.trim($(this).val().toUpperCase());
+			if (field_content != '') { //something has been entered
+				$(this).val(field_content);
 				if ($('#input_' + (y + 1) + '_' + x).length) {
 					$('#input_' + (y + 1) + '_' + x).select();
 				} //if
