@@ -161,7 +161,11 @@ var view = {
 			$('#new_question_text').val('').select();
 			$('#new_correct_answer').val('');
 			$('.new_incorrect_answer').val('');
-			$('.new_incorrect_row').remove();
+			$('.new_incorrect_row').each(function() {
+				if ($(this).attr('id') != 'new_incorrect_row_0') {
+					$(this).remove();
+				} //if
+			});
 		});
 		$(document).on('click', '#add_new_incorrect', function(e) {
 			e.preventDefault();
