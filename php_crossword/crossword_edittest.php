@@ -31,7 +31,7 @@ EDITING A CROSSWORD TEST
 	<section id="test_container">
 		<div class="instructions">
 			Click on questions and answers to edit them.<br> 
-			When you have entered all questions and answers, press 'Create Crossword'.
+			When you have entered all questions and answers, press 'Create Crossword'. Then click 'Save Test' to store the changes in the database.
 		</div>
 		<table id="questions_table">
 			<thead>
@@ -51,11 +51,9 @@ EDITING A CROSSWORD TEST
 		</table>
 		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="create_crossword" id="create_crossword" value="Create Crossword" disabled>
-		</div>
-		<div id="crossword_container"></div>
-		<div class="right_aligned">
 			<input type="submit" class="submit_button" name="save_test" id="save_test" value="Save Test">
 		</div>
+		<div id="crossword_container"></div>
 	</section>
 <?php 
 	include_once INCLUDE_PATH . 'php_page_elements/page_footer.php'; 
