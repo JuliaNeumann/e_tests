@@ -66,7 +66,7 @@ var crossword_test = { //test object to hold the test data produced / edited her
 		 		var current_x = question.position.x;
 		 		var current_y = question.position.y;
 		 		for (var j = 0; j < question.correct_answer.length; j++) {
-		 			this.grid[current_y][current_x] = (my_show_words) ? question.correct_answer.charAt(j) : '&nbsp;';
+		 			this.grid[current_y][current_x] = (my_show_words) ? question.correct_answer.charAt(j) : '';
 		 			(question.position.orientation == 0) ? current_x++ : current_y++;
 		 		} //for
 		 	} //if
