@@ -126,7 +126,7 @@ section {
 
 #title_header {
 	margin-bottom: 17px;
-	/*border-top: 17px solid white;*/
+	border-top: 17px solid white;
 	font-size: 2em;
 }
 
@@ -177,10 +177,7 @@ footer a {
 }
 
 #home_link_container {
-	margin-bottom: 5px;
-	border-top: 2px solid white;
-	min-height: 10px;
-	font-size: 0.8em;
+	float: right;
 }
 
 h3 {
