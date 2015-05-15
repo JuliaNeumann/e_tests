@@ -29,7 +29,11 @@ CREATING A NEW CROSSWORD TEST
 				<th id="header_question">Question</th>
 				<th id="header_answer">Answer</th>
 			</thead>
-			<tbody id="questions_container"></tbody>
+			<tbody id="questions_container">
+				<tr><!-- force Firefox to display correctly -->
+					<td colspan="2"></td>
+				</tr>
+			</tbody>
 			<tbody id="new_question_tbody">
 				<tr id="new_question_row">
 					<td><input type="text" class="table_inputfield" name="new_question" id="new_question" placeholder="New Question..."></td>
