@@ -27,6 +27,7 @@ function E_Test(my_type_string) {
 		var submission_data = {'test_name' : this.test_name, 'test_type_string' : this.test_type, 'test_level' : this.test_level, 'test_ID' : this.db_id};
 		var current_test_type = this.test_type;
 		$.post(root_path + 'php_' + this.test_type + '/' + this.test_type + '_managetests.php', {save_test : submission_data, test_data: this.test_data, action: my_action}, function(feedback) {
+			action = 'view';
 			if (isNaN(feedback)) {
 				alert('An error occurred while saving your test: ' + feedback + ' Please check the table of tests to see which data has been stored incorrectly.');
 				window.location.href = root_path + 'index.php';
@@ -99,12 +100,10 @@ function View() {
 		});
 
 		/*************************************************************/
-		//warn when editing/creating a test is interrupted by click on home link:
-		$('#home_link').click(function(e) {
-			if (action == "edit" || action =="new") {
-				if(!confirm("When leaving this page, your changes will be lost and the test will not be saved. Leave anyway?")) {
-					e.preventDefault();
-				} //if
+		//warn when editing/creating a test is interrupted by click on home link, back button etc.:
+		$(window).bind("beforeunload", function() {
+		    if (action == "edit" || action =="new") {
+		    	return "When leaving this page, your changes will be lost and the test will NOT be saved. Click 'Save Test' if you want to store your test data in the database. Leave anyway?";
 			} //if
 		});
 
@@ -175,6 +174,27 @@ function View() {
 		} //if
 		return true;
 	} //checkForm
+
+	this.checkTextFieldsInside = function(my_html_element) {
+	//checks all text fields inside my_html_element, if one or more empty, asks for confirmation before proceeding, returns true if ok
+	//params: my_html_element = jQuery object
+		var empty_fields = false;
+		my_html_element.find(':text, textarea').each(function() {
+			$(this).val($.trim($(this).val())); //prepare for test
+			if (($(this).val() != '') && !($(this).hasClass('deleted'))) {
+				empty_fields = true;
+			} //if
+		});
+		if (empty_fields) {
+			if (confirm("One or more form fields are filled. Please note that only questions you have added with the 'Add this Question' button will be taken into account. Proceed anyway?")) {
+				return true;
+			} //if
+			else {
+				return false;
+			} //else
+		} //if
+		return true;
+	} //checkTextFieldsInside
 
 	/*************************************************************/
 	//handle buttons:

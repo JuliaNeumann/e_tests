@@ -173,16 +173,18 @@ var view = {
 		/*************************************************************/
 		//generate crossword by button click:
 		$('#create_crossword').click(function() {
-			$('#save_test').hide();
-			if (self.questions_displayed < 2) { //at least two questions -> allow crossword creation
-				alert("Please add more words to your crossword test!");
-				return;
-			} //if
-			self.disableButtons();
-			self.crossword_container.html('<em>Generating your crossword <span id="animation_dots">...</span></em>');
-			self.animation_counter = 0;
-			self.animation_interval = setInterval(self.generatingAnimation, 350);
-			control.initGenerateCrossword();
+			if (self.checkTextFieldsInside($('#new_question_row'))) {
+				$('#save_test').hide();
+				if (self.questions_displayed < 2) { //at least two questions -> allow crossword creation
+					alert("Please add more words to your crossword test!");
+					return;
+				} //if
+				self.disableButtons();
+				self.crossword_container.html('<em>Generating your crossword <span id="animation_dots">...</span></em>');
+				self.animation_counter = 0;
+				self.animation_interval = setInterval(self.generatingAnimation, 350);
+				control.initGenerateCrossword();
+			} //if 
 		});
 
 		/*************************************************************/
@@ -264,7 +266,10 @@ var view = {
 			else if (control.words_edited) {
 				alert('You have edited one or more answers, but not generated a new grid. Please press "Create Crossword" before saving your test.');
 				error = true;
-			} //
+			} //else if
+			else if (!self.checkTextFieldsInside($('#new_question_row'))) {
+				error = true;
+			} //else if
 
 			//submission, if check yielded no errors:
 			if (!error && control.checkDoubleQuestions()) {

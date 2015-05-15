@@ -178,6 +178,7 @@ var view = {
 			if ($('.new_incorrect_row:not(.deleted)').length > 1) {
 				if (confirm('Are you sure you want to delete this answer option?')) {	
 					var index = $(this).data("index");
+					$('#new_incorrect_answer_' + index).addClass('deleted');
 					$('#new_incorrect_row_' + index).hide().addClass('deleted');
 				} //if
 			} //if
@@ -321,6 +322,9 @@ var view = {
 				alert('Your test must contain at least one question!');
 				error = true;
 			} //if
+			else if (!self.checkTextFieldsInside($('#new_question'))) {
+				error = true;
+			} //else if
 
 			//submission, if check yielded no errors:
 			if (!error && control.checkDoubleQuestions()) {
