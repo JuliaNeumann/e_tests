@@ -99,10 +99,6 @@ footer {
 	border-bottom: 17px solid white;
 }
 
-footer a {
-	color: #E5E5E5;
-}
-
 header, section, footer, aside, nav, main, article, figure { /*ensure HTML5 semantic elements to be displayed correctly in old browsers*/
     display: block; 
 }
@@ -113,8 +109,8 @@ header, footer {
 	padding: 5px;
 }
 
-.push { /*makes footer stay at bottom of page*/
-    height: 70px;
+.push { /*makes footer stay at bottom of page, same height as footer*/
+    height: 46px;
 }
 
 section {
@@ -128,11 +124,17 @@ section {
 	padding: 0px;
 }
 
+#title_header {
+	margin-bottom: 17px;
+	border-top: 17px solid white;
+	font-size: 2em;
+}
+
 #wrapper { /*makes footer stay at bottom of page*/
     min-height: 100vh;
     height: auto !important;
     height: 100%;
-    margin: 0 auto -70px; /*negative value of the footer's & .push height */
+    margin: 0 auto -46px; /*negative value of the footer's & .push height */
 }
 
 /*************************************************************************************************************************/
@@ -152,8 +154,8 @@ button:focus, input[type="submit"]:focus { /*remove the default color border tha
 	outline: 0;
 }
 
-#contact_link {
-	margin-left: 52px; /*width of #color_chooser*/
+#app_icon {
+	margin-left: 71px; /*width of #color_chooser*/
 }
 
 .delete_notification_button {
@@ -168,6 +170,14 @@ button:focus, input[type="submit"]:focus { /*remove the default color border tha
 	font-style: italic;
 	color: #AE0000;
 	display: inline;
+}
+
+footer a {
+	color: #E5E5E5;
+}
+
+#home_link_container {
+	float: right;
 }
 
 h3 {
@@ -204,12 +214,6 @@ label {
 	opacity: 0.5;
 }
 
-#title_header {
-	margin-bottom: 17px;
-	border-top: 17px solid white;
-	font-size: 2em;
-}
-
 /*************************************************************************************************************************/
 
 /*POSITIONS / DISPLAY*/
@@ -232,7 +236,8 @@ label {
 
 #color_chooser {
 	float: right;
-	width: 52spx;
+	width: 71px;
+	margin-top: 5px;
 }
 
 .color_button {

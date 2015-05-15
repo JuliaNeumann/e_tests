@@ -49,4 +49,13 @@ PAGE HEADER
 				<header id="title_header">
 					<img src="<?php echo ROOT_PATH; ?>images/<?php echo $section; ?>_icon_white.png" id="page_icon" alt="Icon" width="35px" height="35px">
 					<?php echo $header_text; ?>
+					<span id="home_link_container">
+<?php 
+					if ($section != "index") {
+?>
+						<a href="<?php echo ROOT_PATH; ?>index.php" id="home_link"><button type="button" class="submit_button">Home</button></a>
+<?php
+					} //if
+?>	
+					</span>
 				</header>
