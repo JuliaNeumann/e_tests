@@ -28,14 +28,15 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 	//deletes question from a test, checks if exists in other tests -> if so, only deletes lookup
 		global $db_con;
 
-		$question_check = $db_con->selectEntries(false, 'dynmc_lookup', array("where" => "lookup_question_ID = " . $my_question_id,
-																							"and" => "lookup_test_ID <> " . $my_test_id));
-		if (sizeof($question_check) == 0) { //question only belongs to this test -> delete question (else only lookup)
+		$db_con->deleteEntries(false, 'dynmc_lookup', array("where" => "lookup_question_ID = " . $my_question_id,
+															"and" => "lookup_test_ID = " . $my_test_id,
+															"limit" => "1"));
+
+		$question_check = $db_con->selectEntries(false, 'dynmc_lookup', array("where" => "lookup_question_ID = " . $my_question_id));
+		if (sizeof($question_check) == 0) { //question not associated with any test anymore -> delete question (else only lookup)
 			$db_con->deleteEntries(false, 'dynmc_questions', array("where" => "question_ID = " . $my_question_id));
 			$db_con->deleteEntries(false, 'dynmc_incorrect', array("where" => "incorrect_question_ID = " . $my_question_id));
 		} //if
-		$db_con->deleteEntries(false, 'dynmc_lookup', array("where" => "lookup_question_ID = " . $my_question_id,
-															"and" => "lookup_test_ID = " . $my_test_id));
 	} //function deleteQuestion
 
 	function resumeAndCheckSession() {
@@ -90,14 +91,29 @@ require_once $_SERVER['DOCUMENT_ROOT'] . '/e_tests/php_support/config.php';
 					}  //else if
 					//EDITED QUESTION:
 					else if ($question['edited'] == 'true') {
-						$question_check = $db_con->selectEntries(false, 'dynmc_lookup', array("where" => "lookup_question_ID = " . $question['db_id'],
-																								"and" => "lookup_test_ID <> " . $test_id));
-						if (sizeof($question_check) > 0) { //question also belongs to another test -> delete lookup and insert as new question
+						$save_to_change = true;
+						$question_check = $db_con->selectEntries(false, 'dynmc_lookup', array("where" => "lookup_question_ID = " . $question['db_id']));
+						if (sizeof($question_check) > 1) { //question used more than once
+							$save_to_change = false;
+						} //if
+						else { //check whether question appears again unchanged in this test
+							for ($j = 0; $j < $test_data['questions']['counter']; $j++) {
+								$question_b = $test_data['questions']['objects'][$j];
+								if (($question_b['current_id'] != $question['current_id']) &&
+									($question_b['added_from_db'] == "true") &&
+									($question_b['db_id'] == $question['db_id']) &&
+									($question_b['edited'] == "false")) {
+									$save_to_change = false;
+								} //if
+							} //for
+						} //else
+						if (!$save_to_change) { //original question is still needed -> delete lookup and insert as new question
 							$db_con->deleteEntries(false, 'dynmc_lookup', array("where" => "lookup_question_ID = " . $question['db_id'],
-																				"and" => "lookup_test_ID = " . $test_id));
+																				"and" => "lookup_test_ID = " . $test_id,
+																				"limit" => "1"));
 							insertNewQuestion($question, $test_id);
 						} //if
-						else { //question only belongs to this test -> update
+						else { //question only belongs to this test once -> update
 							$db_con->updateEntry(false, 
 												'dynmc_questions', 
 												array("question_text" => $question['question_text'], "question_correct_answer" => $question['correct_answer']),

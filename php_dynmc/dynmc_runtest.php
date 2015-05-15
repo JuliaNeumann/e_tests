@@ -32,7 +32,7 @@ RUNNING A DYNAMIC MULTIPLE-CHOICE TEST
 		"<?php echo $test_data['test_name']; ?>" (Level: <?php echo $test_level['level_label']; ?>)
 	</header>
 	<section>
-		<p class="instructions"></p>
+		<div class="instructions"></div>
 		<div id="questions">
 			<em>Loading...</em>
 		</div>

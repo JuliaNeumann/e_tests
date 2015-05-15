@@ -167,7 +167,8 @@ class Db_Connection {
 			//set default values:
 			$my_arguments = array_merge(array( //replaces default values with values given, if necessary
 				"where" => null, //possible value: 'column = value, ...'
-				"and" => null //possible value: 'column = value, ...'
+				"and" => null, //possible value: 'column = value, ...'
+				"limit" => null //possible value: INT
 			), $my_arguments);
 			
 			$delete_query = "DELETE FROM $my_table ";
@@ -177,6 +178,9 @@ class Db_Connection {
 			} //if
 			if ($my_arguments["and"]) {
 				$delete_query .= " AND " . $my_arguments["and"];
+			} //if
+			if ($my_arguments["limit"]) {
+				$delete_query .= " LIMIT " . $my_arguments["limit"];
 			} //if
 
 
