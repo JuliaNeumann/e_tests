@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `test_types` (
 INSERT INTO `test_types` (`type_ID`, `type_string`, `type_label`, `type_description`, `type_icon`) VALUES
 (1, 'dynmc', 'Dynamic Multiple-Choice', 'This type of test consists of questions, for each of which several answer options (only one of them being correct) are provided. Unlike traditional multiple-choice questions, these questions are not displayed as a whole. Rather, users are given one answer option at a time, and have to decide whether this single option is correct or not, before (on success), the next option is displayed.', 'images/dynmc_icon.png'),
 (2, 'dragdrop', 'Drag &amp; Drop', 'A Drag &amp; Drop Test consists of several containers with labels that describe the category the container represents. Users are then given a number of terms or phrases, which they have to assign to the correct category by dragging them into the container representing said category.', 'images/dragdrop_icon.png'),
-(3, 'crossword', 'Crossword Puzzle', 'Crossword Puzzle Tests present users with a number of questions, the answers to which they have to fill into the correct position of a grid representing all the solutions to the questions. If desired, a final solution word consisting of letters from the single answers can be added.', 'images/crossword_icon.png');
+(3, 'crossword', 'Crossword Puzzle', 'Crossword Puzzle Tests present users with a number of questions. The answers to these questions are positioned in a grid in vertical or horizontal direction.', 'images/crossword_icon.png');
 
 -- --------------------------------------------------------
 
