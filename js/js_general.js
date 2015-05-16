@@ -219,7 +219,8 @@ function View() {
 	//display score of the user on page in run mode
 		$('.instructions').html('Your score: ' + my_correct + ' out of ' + my_all + ' correct!');
 		$('#check_test').hide();
-		$('#reset').show().attr('disabled', false);
+		$('#reset').show();
+		this.enableButtons();
 	} //displayScore
 
 	/*************************************************************/
