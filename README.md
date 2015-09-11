@@ -1,5 +1,5 @@
 # E Tests
-## Master Thesis Project (MA program "Linguistics and Web Technology", University of Marburg, 2015)
+#### Master Thesis Project (MA program "Linguistics and Web Technology", University of Marburg, 2015)
 
 This application offers the user the posibility to create, manage and run three types of interactive online tests, which could be used in an online e-learning platform. 
 
