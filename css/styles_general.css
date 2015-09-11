@@ -110,7 +110,7 @@ header, footer {
 }
 
 .push { /*makes footer stay at bottom of page, same height as footer*/
-    height: 46px;
+    height: 51px;
 }
 
 section {
@@ -134,7 +134,7 @@ section {
     min-height: 100vh;
     height: auto !important;
     height: 100%;
-    margin: 0 auto -46px; /*negative value of the footer's & .push height */
+    margin: 0 auto -51px; /*negative value of the footer's & .push height */
 }
 
 /*************************************************************************************************************************/
